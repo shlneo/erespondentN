@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Личный кабинет - ErespondentN{% endblock %}
+{% block content %}
+
+<div class = "account_cont">
+    <div class = "privetstvie_cont">
+        <a href = "/profile/session">Добро пожаловать{{' ' + current_user.fio.split()[0] + ' ' + current_user.fio.split()[1] if current_user.fio else ''}}</a>
+    </div>
+    <div class = "account_functions">
+        <div class = "account_links">
+            <button class = "account_buttons" onclick="window.location.href='/profile/common'">
+                <div class="first_path">
+                    <img src="{{ url_for('static', filename='img/people.png')}}"  alt="">
+                    <span>Параметры профиля</span>
+                </div>
+                <svg fill="#002762" height="12" viewBox="0 0 7 12" width="7" xmlns="http://www.w3.org/2000/svg" style="margin-left: 4px;"><path d="M5.83327 4.23243L2.00911 0.410763C1.85043 0.267295 1.64267 0.19034 1.42882 0.195832C1.21498 0.201323 1.01143 0.288839 0.860333 0.440261C0.709232 0.591683 0.622148 0.795412 0.617111 1.00927C0.612074 1.22312 0.68947 1.43073 0.833274 1.5891L4.65494 5.41076C4.81117 5.56704 4.89893 5.77896 4.89893 5.99993C4.89893 6.2209 4.81117 6.43282 4.65494 6.5891L0.833274 10.4108C0.677017 10.5671 0.589277 10.7792 0.589356 11.0002C0.589434 11.2213 0.677324 11.4333 0.833691 11.5895C0.990058 11.7458 1.20209 11.8335 1.42315 11.8334C1.64421 11.8334 1.85618 11.7455 2.01244 11.5891L5.83327 7.76743C6.30195 7.29861 6.56524 6.66284 6.56524 5.99993C6.56524 5.33702 6.30195 4.70125 5.83327 4.23243Z"></path></svg>
+            </button>
+            <button class = "account_buttons" onclick="window.location.href='/FAQ'">
+                <div class="first_path">
+                    <img src="{{ url_for('static', filename='img/faq.png')}}"  alt="">
+                    <span>Ответы на вопросы</span>
+                </div>
+                <svg fill="#002762" height="12" viewBox="0 0 7 12" width="7" xmlns="http://www.w3.org/2000/svg" style="margin-left: 4px;"><path d="M5.83327 4.23243L2.00911 0.410763C1.85043 0.267295 1.64267 0.19034 1.42882 0.195832C1.21498 0.201323 1.01143 0.288839 0.860333 0.440261C0.709232 0.591683 0.622148 0.795412 0.617111 1.00927C0.612074 1.22312 0.68947 1.43073 0.833274 1.5891L4.65494 5.41076C4.81117 5.56704 4.89893 5.77896 4.89893 5.99993C4.89893 6.2209 4.81117 6.43282 4.65494 6.5891L0.833274 10.4108C0.677017 10.5671 0.589277 10.7792 0.589356 11.0002C0.589434 11.2213 0.677324 11.4333 0.833691 11.5895C0.990058 11.7458 1.20209 11.8335 1.42315 11.8334C1.64421 11.8334 1.85618 11.7455 2.01244 11.5891L5.83327 7.76743C6.30195 7.29861 6.56524 6.66284 6.56524 5.99993C6.56524 5.33702 6.30195 4.70125 5.83327 4.23243Z"></path></svg>
+            </button>
+            {%if current_user.type == 'Администратор' or current_user.type == 'Респондент'%}
+                <button class = "button_account_add_report blue_button" onclick="window.location.href='/report-area'" type="" class = "">
+                    <span style = "font-size: 20px;">+</span>
+                    <span>Добавить отчет</span>
+                </button>
+            {%else%}
+            {%endif%}
+            {%if current_user.type == 'Администратор' or current_user.type == 'Аудитор'%}
+             <button class = "account_buttons" onclick="window.location.href='/audit-area/not_viewed?year={{previous_year}}&quarter={{previous_quarter}}';">
+                <div class="first_path">
+                    <img src="{{ url_for('static', filename='img/audit_icon.png')}}"  alt="">
+                    <span>Проверка отчетов</span>
+                </div>
+                <svg fill="#002762" height="12" viewBox="0 0 7 12" width="7" xmlns="http://www.w3.org/2000/svg" style="margin-left: 4px;"><path d="M5.83327 4.23243L2.00911 0.410763C1.85043 0.267295 1.64267 0.19034 1.42882 0.195832C1.21498 0.201323 1.01143 0.288839 0.860333 0.440261C0.709232 0.591683 0.622148 0.795412 0.617111 1.00927C0.612074 1.22312 0.68947 1.43073 0.833274 1.5891L4.65494 5.41076C4.81117 5.56704 4.89893 5.77896 4.89893 5.99993C4.89893 6.2209 4.81117 6.43282 4.65494 6.5891L0.833274 10.4108C0.677017 10.5671 0.589277 10.7792 0.589356 11.0002C0.589434 11.2213 0.677324 11.4333 0.833691 11.5895C0.990058 11.7458 1.20209 11.8335 1.42315 11.8334C1.64421 11.8334 1.85618 11.7455 2.01244 11.5891L5.83327 7.76743C6.30195 7.29861 6.56524 6.66284 6.56524 5.99993C6.56524 5.33702 6.30195 4.70125 5.83327 4.23243Z"></path></svg>
+            </button>
+            <button class = "account_buttons" id = "link_stats">
+                <div class="first_path">
+                    <img src="{{ url_for('static', filename='img/report.png')}}"  alt="">
+                    <span>Статистика</span>
+                </div>
+                <svg fill="#002762" height="12" viewBox="0 0 7 12" width="7" xmlns="http://www.w3.org/2000/svg" style="margin-left: 4px;"><path d="M5.83327 4.23243L2.00911 0.410763C1.85043 0.267295 1.64267 0.19034 1.42882 0.195832C1.21498 0.201323 1.01143 0.288839 0.860333 0.440261C0.709232 0.591683 0.622148 0.795412 0.617111 1.00927C0.612074 1.22312 0.68947 1.43073 0.833274 1.5891L4.65494 5.41076C4.81117 5.56704 4.89893 5.77896 4.89893 5.99993C4.89893 6.2209 4.81117 6.43282 4.65494 6.5891L0.833274 10.4108C0.677017 10.5671 0.589277 10.7792 0.589356 11.0002C0.589434 11.2213 0.677324 11.4333 0.833691 11.5895C0.990058 11.7458 1.20209 11.8335 1.42315 11.8334C1.64421 11.8334 1.85618 11.7455 2.01244 11.5891L5.83327 7.76743C6.30195 7.29861 6.56524 6.66284 6.56524 5.99993C6.56524 5.33702 6.30195 4.70125 5.83327 4.23243Z"></path></svg>
+            </button>
+        {%else%}
+        {%endif%}
+
+        {%if current_user.type == 'Администратор'%}
+            <button class = "account_buttons" onclick="window.location.href='/admin'">
+                <div class="first_path">
+                    <img src="{{ url_for('static', filename='img/icon_admin-panel.png')}}"  alt="">
+                    <span>Админ-панель</span>
+                </div>
+                <svg fill="#002762" height="12" viewBox="0 0 7 12" width="7" xmlns="http://www.w3.org/2000/svg" style="margin-left: 4px;"><path d="M5.83327 4.23243L2.00911 0.410763C1.85043 0.267295 1.64267 0.19034 1.42882 0.195832C1.21498 0.201323 1.01143 0.288839 0.860333 0.440261C0.709232 0.591683 0.622148 0.795412 0.617111 1.00927C0.612074 1.22312 0.68947 1.43073 0.833274 1.5891L4.65494 5.41076C4.81117 5.56704 4.89893 5.77896 4.89893 5.99993C4.89893 6.2209 4.81117 6.43282 4.65494 6.5891L0.833274 10.4108C0.677017 10.5671 0.589277 10.7792 0.589356 11.0002C0.589434 11.2213 0.677324 11.4333 0.833691 11.5895C0.990058 11.7458 1.20209 11.8335 1.42315 11.8334C1.64421 11.8334 1.85618 11.7455 2.01244 11.5891L5.83327 7.76743C6.30195 7.29861 6.56524 6.66284 6.56524 5.99993C6.56524 5.33702 6.30195 4.70125 5.83327 4.23243Z"></path></svg>
+            </button>
+        {%else%}
+        {%endif%}
+            
+        </div>
+        <div class = "account_messages">
+            <div class = "account_messageArea">
+                <img src="{{ url_for('static', filename='img/icon_messages.png')}}"  alt="">
+                <span>Уведомления</span>
+            </div>
+            <div class = "message_cont">
+                {% if messages %}
+                    {% for row in messages %}
+                    <div class = "mes">
+                        <div class = "time_mes">{{ row.create_time.strftime('%Y-%m-%d %H:%M') }} {%if row.sender_id == None%} {%else%} - {{row.sender.email}} {%endif%}</div>
+                        <div class = "text_mes">{{row.text}}</div>
+                    </div>
+                    {%endfor%}
+                {%else%} 
+                <div class = "mes">
+                    <a class = "text_mes">Нет уведомлений</a>
+                </div>
+                {%endif%} 
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="load_stats_modal" class="modal">
+    <div class="modal-content">
+        <div class = "modal-header">
+            <h3 class = "change-position">Загрузка статистики</h3>
+            <a class="close" id = "Closeperiod_modal">&times;</a>
+        </div>
+        <div class="modal-middle-text">
+            <a>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>, чтобы загрузить отчет об списке <strong>отчитавшихся организаций</strong>.</a>
+        </div>
+        <form action="/load_org_stat" method="POST">
+            <table class="modal_table">      
+                <tr>
+                    <td>Год</td>
+                    <td>
+                        <div class="input-container">
+                            <button class = "inc_button" type="button" onclick="coppy_decrement_year()">-</button>
+                            <input  class = "inc_dis_input" type="text" id="coppy_quantity_year" value="{{previous_year}}" name="modal_report_year" readonly>
+                            <button class = "dis_button" type="button" onclick="coppy_increment_year()">+</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Квартал</td>
+                    <td>
+                        <div class="input-container">
+                            <button class = "inc_button" type="button" onclick="coppy_decrement_quarter()">-</button>
+                            <input  class = "inc_dis_input" type="text" id="coppy_quantity_quarter" value="{{previous_quarter}}" name="modal_report_quarter" readonly>
+                            <button class = "dis_button" type="button" onclick="coppy_increment_quarter()">+</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="model_but_area" >
+                <button 
+                    type="submit" 
+                    class="blue_button">Выбранный период
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

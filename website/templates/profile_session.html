@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Сессии - ErespondentN{% endblock %}
+{% block content %}
+
+<div class="profile_page">
+    <div class="rotation-fromareas">
+        <div class="rotation-fromareas_info">
+            <span>
+                <a class="hover_a" href="/account">Профиль</a>
+            </span>
+            <span>
+                <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
+            </span>
+            <span>
+                <a>Сессии</a>
+            </span>
+        </div>
+    </div>
+    <div class="contener_row">
+        <nav class="left_menu">
+            <ul class="sticky_status" id="status-reportList">
+                <li onclick="window.location.href='/profile/common'">
+                    <a class="left_menu_text">Общее</a>
+                    <img class="left_menu_img" src="{{ url_for('static', filename='img/obsh.png')}}" alt="">
+                </li>
+                <li onclick="window.location.href='/profile/password'">
+                    <a>Безопасность</a>
+                    <img class="left_menu_img" src="{{ url_for('static', filename='img/pass.png')}}" alt="">
+                </li>
+                <li class="active_li" onclick="window.location.href='/profile/session'">
+                    <a>Сессии</a>
+                    <img class="left_menu_img" src="{{ url_for('static', filename='img/out.png')}}" alt="">
+                </li>
+                <li onclick="window.location.href='/logout'">
+                    <a>Выйти</a>
+                    <img class="left_menu_img" src="{{ url_for('static', filename='img/stop.png')}}" alt="">
+                </li>
+            </ul>
+        </nav>
+        <div class="personal-info_area">
+            <a class="name_of_card">Это устройство</a>
+            <div class="this_device">
+                <div class="first_floor">
+                    <img src="{{ url_for('static', filename='img/this_pc.png')}}" alt="">
+                    <div class="text_area">
+                        <a class="this_device_name">{{current_session.device_name}}</a>
+                        <a class="this_device_app">{{current_session.device_app}}</a>
+                        <!-- <a class="this_device_place">{{current_session.device_place}}</a> -->
+
+                        <a class="this_device_last_active">Последняя активность: {{ current_session.last_active.strftime('%d.%m.%Y %H:%M') }}</a> 
+                        <a class="this_device_ip">IP: {{current_session.ip_address}}</a> 
+                        <hr class="border: none; border-bottom: 1px solid rgb(56, 56, 56); border-top: none">
+                    </div>
+                </div>
+                
+                <form action="/sessions/clear-others" method="POST" style="display: inline; padding-bottom: 0;">
+                    <button type="submit" class="second_floor" style="width: 100%;">
+                        <img src="{{ url_for('static', filename='img/stop.png')}}" alt="">
+                        <div class="end_all_sessions">Завершить другие сеансы</div>
+                    </button>
+                </form>
+            </div>
+
+            <a class="name_of_card" style="margin-top: 50px;">Активные сеансы</a>
+            {% if other_sessions %}
+                {% for s in other_sessions %}
+                <div class="this_device">
+                    <div class="first_floor">
+                        <img src="{{ url_for('static', filename='img/this_pc.png')}}" alt="">
+                        <div class="text_area">
+                            <a class="this_device_name">{{ s.device_name }}</a>
+                            <a class="this_device_app">{{ s.device_app }}</a>
+                            <!-- <a class="this_device_place">{{ s.device_place }}</a> -->
+                            <a class="this_device_last_active">Последняя активность: {{ s.last_active.strftime('%d.%m.%Y %H:%M') }}</a>
+                            <a class="this_device_ip">IP: {{ s.ip_address }}</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {%else%}
+            <div class="this_device">
+                <div class="first_floor">
+                    <div class="text_area">
+                        <a class="this_device_name">В данный момент</a>
+                        <a class="this_device_app">Нет других активных сессий</a>
+                    </div>
+                </div>
+            </div>
+
+            {% endif %}
+
+            <a class="name_of_card" style="margin-top: 50px;">Автоматически завершать сеансы</a>
+            <div class="this_device">
+                <div class="first_floor">
+                    <div class="text_area">
+                        <a class="this_device_name">Если сеанс не активен</a>
+                        <a class="this_device_app">{%if current_user.type == 'Аудитор' or current_user.type == 'Администратор'%}9 часов {%else%}60 мин. {%endif%}</a>
+                    </div>
+                </div>
+            </div>
+
+            <a class="name_of_card" style="margin-top: 50px;">Автоматически удалять аккаунт</a>
+            <div class="this_device">
+                <div class="first_floor">
+                    <div class="text_area">
+                        <a class="this_device_name">Если сеанс не активен</a>
+                        <a class="this_device_app">1 год</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

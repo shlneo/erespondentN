@@ -1,0 +1,12 @@
+.vscode
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+
+.venv/
+.env
+
+website/__pycache__
+website/static/files/ministerstvo
+website/static/files/organizations

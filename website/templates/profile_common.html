@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+{% block title %}Общее - ErespondentN{% endblock %}
+{% block content %}
+
+<div class="profile_page">
+    <div class = "rotation-fromareas">
+        <div class = "rotation-fromareas_info"> 
+            <span>
+                <a class = "hover_a" href="/account">Профиль</a>
+            </span>
+            <span> 
+                <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
+            </span>
+            <span>
+                <a>Общее</a>
+            </span>
+        </div>
+    </div>
+    <div class="contener_row">
+        <nav class = "left_menu">
+            <ul class="sticky_status" id="status-reportList">
+                <li class="active_li" onclick="window.location.href='/profile/common'">
+                    <a class="left_menu_text">Общее</a>
+                    <img class="left_menu_img" src="{{ url_for('static', filename='img/obsh.png')}}" alt="">
+                </li>
+                <li onclick="window.location.href='/profile/password'">
+                    <a>Безопасность</a>
+                    <img class="left_menu_img" src="{{ url_for('static', filename='img/pass.png')}}" alt="">
+                </li>
+                <li onclick="window.location.href='/profile/session'">
+                    <a>Сессии</a>
+                    <img class="left_menu_img" src="{{ url_for('static', filename='img/out.png')}}" alt="">
+                </li>
+                <li onclick="window.location.href='/logout'">
+                    <a>Выйти</a>
+                    <img class="left_menu_img" src="{{ url_for('static', filename='img/stop.png')}}" alt="">
+                </li>
+            </ul>
+        </nav>
+        <div class="personal-info_area">
+            
+                <form action="/add-personal-parametrs" method="POST">
+                    <table>
+                        <tr>
+                            <td><span title = "Уровень доступа к функциям">Тип пользователя &#42;</span></div></td>
+                            <td><input type="text" value="{{current_user.type}}" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>Фамилия</td>
+                            <td>                    
+                                <div class="clear-input_container">
+                                    <input type="text" name="second_name_common" placeholder="Введите фамилию" 
+                                    value="{{current_user.fio.split()[0] if current_user.fio else ''}}" 
+                                    required id="second_name_input" maxlength="50">
+                                    <span class="clear-btn">
+                                        &times;
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Имя</td>
+                            <td>                    
+                                <div class="clear-input_container">
+                                    <input type="text" name="name_common" placeholder="Введите имя" 
+       value="{{current_user.fio.split()[1] if current_user.fio else ''}}" 
+       required id="name_input" maxlength="50">
+                                    <span class="clear-btn">
+                                         &times;
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span title = "Не обязательно для заполнения">Отчество &#42;</span></td>
+                            <td>                    
+                                <div class="clear-input_container">
+                                    <input type="text" name="patronymic_common" placeholder="Введите отчество (не обязательно)" 
+       value="{{current_user.fio.split()[2] if current_user.fio else ''}}" 
+       id="patronymic_input" maxlength="50">
+                                    <span class="clear-btn">
+                                        &times;
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span title = "Организация за которую отчитываются">Предприятие &#42;</span></td>
+                            <td style = "display: flex; flex-direction: row;">
+                                <input 
+                                    class = "pred_name" type="text" style = "{%if count_reports == 0 and current_user.type != 'Аудитор'%}
+                                    border-top-right-radius: 0;
+                                    border-bottom-right-radius: 0; 
+                                    background: white; 
+                                    width: calc(100% - 70px);
+                                    {%else%} {%endif%}" 
+                                    placeholder="Наименование предприятия"  name = "full_name_common" value="{{ current_user.organization.full_name if current_user.organization else '' }}" readonly>
+                                    {%if count_reports == 0 and current_user.type != 'Аудитор'%}
+                                        <a class="show_organiz" id = "link_chooseOrgModal"> 
+                                            <img class="left_menu_img" src="{{ url_for('static', filename='img/icon_blue_touch.png')}}" alt="">
+                                        </a>
+                                    {%else%} {%endif%}
+                            </td>
+                        </tr>
+                        {%if current_user.type != 'Аудитор'%}
+                            <tr>
+                                <td><span title = "Общестатистический код предприятий и организаций">ОКПО &#42;</span></td>
+                                <td>    
+                                    <input 
+                                    type="text" 
+                                    name = "okpo_common" 
+                                    placeholder="Окпо предприятия" 
+                                    value="{{current_user.organization.okpo if current_user.organization.okpo else ''}}" readonly>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span title = "Учетный номер плательщика (может быть пусто)">УНП &#42;</span></td>
+                                <td>    
+                                    <input 
+                                    type="text" 
+                                    name = "ynp_common" 
+                                    placeholder="Унп предприятия (может быть пусто)" 
+                                    value="{{current_user.organization.ynp if current_user.organization.ynp else ''}}" readonly>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span title = "Республиканский орган государственного управления">Министерство &#42;</span></td>
+                                <td>    
+                                    <input 
+                                        type="text" 
+                                        name = "ministry_common"  
+                                        placeholder="Министерство предприятия" 
+                                        value="{{current_user.organization.ministry if current_user.organization.ministry else ''}}" readonly>
+                                </td>
+                            </tr>
+                        {%else%}
+                        {%endif%}
+                    </table>
+                    <table>
+                        <tr>
+                            <td>E-mail</td>
+                            <td>                        
+                                <input type="text" value="{{current_user.email}}" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Номер телефона</td>
+                            <td>
+                                <div class="clear-input_container">
+                                    <input 
+                                        type="text" 
+                                        name="telephone_common" 
+                                        placeholder="Введите номер телефона" 
+                                        value="{{current_user.telephone if current_user.telephone else ''}}" 
+                                        required 
+                                        id="telephone_input"  maxlength="12">
+                                    <span class="clear-btn">
+                                         &times; 
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <button class = "blue_button" type="submit">
+                        Сохранить изменения
+                    </button>
+                </form>
+        </div>
+    </div>
+</div>
+
+<div id="chooseOrgModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="change-position">Поиск организации</h3>
+            <a class="close">&times;</a>
+        </div>
+        <div class="modal-middle-text">
+            <a>Введите наименование вашей организации.</a>
+        </div>
+        <div class="search-cont">
+            <label for="search_organization">Поиск</label>
+            <input name="search_organization" class="search_input" type="text" placeholder="Наименование предприятия">
+        </div>
+        <div class="spravochniki_area">
+            <table class="table_report-area">
+                <tbody id="chooserOganizationTableBody">
+                  
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.querySelector('input[name="search_organization"]');
+        const tableBody = document.getElementById("chooserOganizationTableBody");
+        const chooseOrgModal = document.getElementById("chooseOrgModal");
+        const linkChooseOrgModal = document.getElementById("link_chooseOrgModal");
+        const closeChooseOrgModal = chooseOrgModal.querySelector(".close");
+    
+        if (!searchInput || !tableBody || !chooseOrgModal || !linkChooseOrgModal || !closeChooseOrgModal) {
+            console.error("Ошибка: Один или несколько элементов не найдены.");
+            return;
+        }
+    
+        let searchQuery = "";
+    
+        function loadOrganizations(query = "") {
+            console.log(`Запрос: /api/organizations?q=${query}`);
+    
+            fetch(`/api/organizations?q=${query}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Ошибка HTTP: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Ответ API:", data);
+    
+                    tableBody.innerHTML = ""; 
+    
+                    if (!data.organizations.length) {
+                        tableBody.innerHTML = "<tr><td colspan='2'>Нет данных</td></tr>";
+                        return;
+                    }
+    
+                    data.organizations.forEach(org => {
+                        const row = document.createElement("tr");
+                        row.dataset.id = org.id;
+                        row.innerHTML = `
+                            <td>${org.full_name}</td>
+                            <td>${org.okpo}</td>
+                            <td style="display: none;">${org.ynp}</td>
+                            <td style="display: none;">${org.ministry}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error("Ошибка загрузки организаций:", error));
+        }
+    
+        let debounceTimer;
+        searchInput.addEventListener("input", function () {
+            clearTimeout(debounceTimer);
+            searchQuery = this.value.trim().toUpperCase(); // ищем в верхнем регистре, мол иначе не воркает
+            debounceTimer = setTimeout(() => loadOrganizations(searchQuery), 300);
+        });
+    
+
+        tableBody.addEventListener("click", function (event) {
+            if (event.target.tagName === "TD") {
+                let row = event.target.closest("tr");
+                let orgData = {
+                    full_name: row.cells[0].textContent.trim(),
+                    okpo: row.cells[1].textContent.trim(),
+                    ynp: row.cells[2].textContent.trim(),
+                    ministry: row.cells[3].textContent.trim()
+                };
+    
+                document.querySelector('input[name="full_name_common"]').value = orgData.full_name;
+                document.querySelector('input[name="okpo_common"]').value = orgData.okpo;
+                document.querySelector('input[name="ynp_common"]').value = orgData.ynp;
+                document.querySelector('input[name="ministry_common"]').value = orgData.ministry;
+    
+                chooseOrgModal.classList.remove("active");
+            }
+        });
+    
+
+        linkChooseOrgModal.addEventListener("click", function () {
+            chooseOrgModal.classList.add("active");
+        });
+    
+
+        closeChooseOrgModal.addEventListener("click", function () {
+            chooseOrgModal.classList.remove("active");
+        });
+    
+
+        chooseOrgModal.addEventListener("click", function (event) {
+            if (event.target === chooseOrgModal) {
+                chooseOrgModal.classList.remove("active");
+            }
+        });
+    });
+
+    document.getElementById('second_name_input').addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+        if (!/^[A-Za-zА-Яа-яЁё]$/.test(char)) {
+            e.preventDefault();
+        }
+    });
+    
+    document.getElementById('name_input').addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+        if (!/^[A-Za-zА-Яа-яЁё]$/.test(char)) {
+            e.preventDefault(); 
+        }
+    });    
+    
+    document.getElementById('patronymic_input').addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+        if (!/^[A-Za-zА-Яа-яЁё]$/.test(char)) {
+            e.preventDefault();
+        }
+    });
+
+    document.getElementById('telephone_input').addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+        const currentValue = this.value;
+
+        if (!/^[0-9]$/.test(char) && !(char === '+' && currentValue.length === 0)) {
+            e.preventDefault();
+        }
+    });
+</script>
+{% endblock %}
+

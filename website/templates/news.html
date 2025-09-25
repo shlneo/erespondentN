@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Новости - ErespondentN{% endblock %}
+{% block content %}
+<div class="blurred-background"></div>
+<div class="info_page">
+    <div class = "rotation-fromareas">
+        <div class = "rotation-fromareas_info"> 
+            <span>
+                <a class = "hover_a" href="/">ErespondentN</a>
+            </span>
+            <span> 
+                <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
+            </span>
+            <span>
+                <a>Новости</a>
+            </span>
+        </div>
+    </div>
+    <div class="news_cont">
+        <div class="news_grid">
+            {% if all_news %}
+            {% for all_news in all_news %}
+            <a href="/news/{{ all_news.id }}">
+                <div class="latest_news news_item">
+                    <img class="news_img" src="{{ url_for('static', filename='img/news/' + all_news.img_name) }}" alt="news image">
+                    <div class="news_content">
+                        <h3 class="news_title">{{ all_news.title[:65] }}{% if all_news.title|length > 65 %}...{% endif %}</h3>
+                        <p class="news_text">{{ all_news.text[:50] }}{% if all_news.text|length > 50 %}...{% endif %}</p>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+            {% else %}
+                <p>Новости отсутствуют.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
