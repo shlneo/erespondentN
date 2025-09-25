@@ -1,11 +1,14 @@
 # erespondentN
 
-<!-- ![PyPI - Downloads](https://img.shields.io/pypi/dd/markitdown) -->
 ![Python](https://img.shields.io/badge/python-3.10-blue)
 [![Built by shlneo](https://img.shields.io/badge/Built%20by-Shlneo%20-blue)](https://github.com/shlneo)
 
+### Info
+
+The web application automates the processes of respondents forming reports in the form of departmental quarterly reports — "Information on consumption rates and (or) marginal levels of consumption of fuel and energy resources."
+
 ### Version
- 
+
 3.7.14 - byPostgre
 
 ### Requirements
