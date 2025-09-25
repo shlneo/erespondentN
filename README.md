@@ -25,7 +25,7 @@ The web application automates the processes of respondents forming reports in th
 
 ### Installation app
 
-1. Clone the `quant` repository.
+1. Clone the `erespondentN` repository.
 
 2. Create a virtual environment:
 ```bash 
