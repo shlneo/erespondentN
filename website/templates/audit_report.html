@@ -8,12 +8,12 @@
                 <nav>
                     <ul>          
                         <section>
-                            <div class = "functions_menu">                  
-                                <li id = "addCommentLink">
+                            <div class="functions_menu {% if current_version.status in ['Одобрен', 'Готов к удалению', 'Есть замечания'] %}disabled{% endif %}">               
+                                <li id="addCommentLink" >
                                     <img src="{{ url_for('static', filename='img/icon_send.png')}}" alt="">
                                     <a>Отправить</a>
                                 </li>                                  
-                            </div>  
+                            </div>
                             <a class="functions_menu_name">
                                 Сообщение
                             </a>
@@ -75,13 +75,20 @@
     <div class = "rotation-fromareas">
         <div class = "rotation-fromareas_info"  style = "margin: 20px 30px;"> 
             <span>
-                <a class = "hover_a" href="javascript:void(0)" onclick="smartBack()">Вернуться к отчетам</a>
+                <a class = "hover_a" href="javascript:void(0)" onclick="smartBack()">Вернуться</a>
             </span>
             <span> 
                 <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
             </span>
             <span>
-                <a>Отчет № {{id_report}}</a>
+                <a>Отчет</a>
+                <a class="rotation-fromareas-status">
+                    {% if current_version.status == 'Отправлен' %}
+                        Не просмотрен
+                    {% else %}
+                        {{ current_version.status }}
+                    {% endif %}
+                </a>
             </span>
         </div>
     </div>
@@ -609,7 +616,7 @@
             <a class="close" id = "CloseaddComment">&times;</a>
         </div>
         <div class="modal-middle-text">
-            <div>Если присутствует <strong>ошибка</strong> в отчете, <strong>укажите</strong> её.</div>
+            <div>Если присутствует <strong>ошибка</strong> в отчете, <strong>укажите</strong> её, <strong>eсли она есть</strong>.</div>
         </div>
         <div class="spravochniki_area">
             <form method="POST" action="/send-comment">
@@ -701,32 +708,6 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var currentStatus = "{{ current_version.status }}";
-    
-        if (currentStatus !== 'Отправлен') {
-            updateauditVeiwButtonStyle(false);
-        } else {
-            updateauditVeiwButtonStyle(true);
-        }
-    });
-
-    function updateauditVeiwButtonStyle(activecommentLink) {
-        var addCommentLink = document.getElementById('addCommentLink');
-        
-        if (activecommentLink) {
-            addCommentLink.style.opacity = '1';
-            addCommentLink.style.cursor = 'pointer';
-            addCommentLink.querySelector('img').style.filter = 'none';
-            addCommentLink.querySelector('a').style.filter = 'none';
-        } else {
-            addCommentLink.style.opacity = '0.5';
-            addCommentLink.style.cursor = 'not-allowed';
-            addCommentLink.querySelector('img').style.filter = 'grayscale(100%)';
-            addCommentLink.querySelector('a').style.filter = 'grayscale(100%)';
-        }
-    }
-
     function smartBack() {
         const ref = document.referrer;
         if (ref.includes('modal=addCommentModal') && history.length > 2) {
@@ -735,7 +716,6 @@
             history.back();
         }
     }
-
 </script>
 
 <script src="{{ url_for('static', filename='js/audit_report.js') }}"></script>

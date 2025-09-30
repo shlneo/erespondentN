@@ -228,7 +228,7 @@ def parse_int(value):
     except (ValueError, TypeError):
         return None
 
-@auth.route('/login', methods=['GET', 'POST'])
+@auth.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -268,7 +268,7 @@ def logout():
     flash('Выполнен выход из аккаунта.', 'success')
     return response
 
-@auth.route('/sign', methods=['GET', 'POST'])
+@auth.route('/sign', methods=['POST'])
 def sign():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -294,7 +294,7 @@ def sign():
             flash('Введите данные для регистрации.', 'error')    
     return redirect(url_for('views.sign'))
 
-@auth.route('/kod', methods=['GET', 'POST'])
+@auth.route('/kod', methods=['POST'])
 def kod():
     if request.method == 'POST':
         input_code = ''.join([
@@ -346,7 +346,7 @@ def clear_other_sessions():
         flash(f'Удалено {count} других сессий.', 'success')
     return redirect(url_for('views.profile_session'))
 
-@auth.route('/add-personal-parametrs', methods=['GET', 'POST'])
+@auth.route('/add-personal-parametrs', methods=['POST'])
 @login_required 
 @session_required
 def add_personal_parametrs():
@@ -389,7 +389,7 @@ def add_personal_parametrs():
         
     return redirect(url_for('views.profile_common'))
 
-@auth.route('/profile/password', methods=['GET', 'POST'])
+@auth.route('/profile/password', methods=['POST'])
 @login_required
 def profile_password():
     if request.method == 'POST':
@@ -550,25 +550,25 @@ def update_report():
 
             sent_version_exists = any(version.status == 'Отправлен' for version in versions)
             if sent_version_exists:
-                flash('После отправки изменение отчета недоступно', 'error')
+                flash('После отправки изменение отчета недоступно.', 'error')
                 return redirect(url_for('views.report_area'))
             
             confirmed_version_exists = any(version.status == 'Одобрен' for version in versions)
             if confirmed_version_exists:
-                flash('Одобренные отчеты не подлежат редактированию', 'error')
+                flash('Одобренные отчеты не подлежат редактированию.', 'error')
                 return redirect(url_for('views.report_area'))
             
             if existing_report and existing_report.id != id:
-                flash('Отчет с таким годом и кварталом уже существует', 'error')
+                flash('Отчет с таким годом и кварталом уже существует.', 'error')
                 return redirect(url_for('views.report_area'))
 
             current_report.okpo = okpo
             current_report.year = year
             current_report.quarter = quarter
             db.session.commit()
-            flash('Параметры обновлены', 'success')
+            flash('Параметры обновлены.', 'success')
         else:
-            flash('Отчет не найден', 'error')
+            flash('Отчет не найден.', 'error')
 
         return redirect(url_for('views.report_area'))
     
@@ -635,9 +635,9 @@ def сopy_report():
                 )
                 db.session.add(new_section)
             db.session.commit()
-            flash('Отчет скопирован', 'success')
+            flash('Отчет скопирован.', 'success')
         else:
-            flash('Отчет с таким годом и квараталом уже существует, копирование eror','error')
+            flash('Отчет с таким годом и квараталом уже существует.','error')
         return redirect(url_for('views.report_area'))
 
 @auth.route('/delete-report/<report_id>', methods=['POST'])
@@ -651,11 +651,11 @@ def delete_report(report_id):
         if current_report:   
             sent_version_exists = any(version.status == 'Отправлен' for version in versions)
             if sent_version_exists:
-                flash('Отправленный отчет не подлежит удалению', 'error')
+                flash('Отправленный отчет не подлежит удалению.', 'error')
                 return redirect(url_for('views.report_area'))  
             confirmed_version_exists = any(version.status == 'Одобрен' for version in versions)
             if confirmed_version_exists:
-                flash('Данный отчет не подлежит удалению', 'error')
+                flash('Данный отчет не подлежит удалению.', 'error')
                 return redirect(url_for('views.report_area'))
             for ticket in tickets:
                 db.session.delete(ticket)        
@@ -666,7 +666,7 @@ def delete_report(report_id):
                 db.session.delete(version)
             db.session.delete(current_report)
             db.session.commit()
-            flash('Отчет удален', 'success')
+            flash('Отчет удален.', 'success')
         return redirect(url_for('views.report_area'))
 
 @auth.route('/add-section-param', methods=['POST'])
@@ -675,7 +675,7 @@ def delete_report(report_id):
 def add_section_param():
     if request.method == 'POST':
         current_version_id = request.form.get('current_version')
-        name = request.form.get('name_of_product')
+        add_id_product = request.form.get('add_id_product')
         oked = request.form.get('oked_add')
         produced = request.form.get('produced_add')
         Consumed_Quota = request.form.get('Consumed_Quota_add')
@@ -691,14 +691,9 @@ def add_section_param():
         Consumed_Total_Quota = Decimal(Consumed_Total_Quota) if Consumed_Total_Quota else Decimal(0)
         Consumed_Total_Fact = Decimal(Consumed_Total_Fact) if Consumed_Total_Fact else Decimal(0)
 
-   
-        if not name:
-            flash('Поле "Продукция" обязательно для заполнения.', 'error')
-            return redirect(request.referrer)
-
-        current_product = DirProduct.query.filter_by(NameProduct=name.strip()).first()
+        current_product = DirProduct.query.filter_by(id=add_id_product).first()
         if not current_product:
-            flash(f'Продукт с названием "{name}" не найден в справочнике.', 'error')
+            flash(f'Продукт не найден в справочнике.', 'error')
             return redirect(request.referrer)
         else:
             current_version = Version_report.query.filter_by(id=current_version_id).first()
@@ -808,11 +803,11 @@ def add_section_param():
 
                         flash('Продукция была добавлена.', 'success')
                     else:
-                        flash('Ошибка при обновлении', 'error')   
+                        flash('Ошибка при обновлении.', 'error')   
                 else:
-                    flash('Редактирование отправленного/одобренного отчета недоступно', 'error')
+                    flash('Редактирование отправленного/одобренного отчета недоступно.', 'error')
             else:
-                flash('Версия не найдена', 'error')
+                flash('Версия не найдена.', 'error')
     return redirect(request.referrer)
         
 @auth.route('/change-section', methods=['POST'])
@@ -921,13 +916,13 @@ def change_section():
                     current_version.status = "Заполнение"
                     current_version.sent_time = None
                     db.session.commit()
-                    flash('Параметры обновлены', 'success')
+                    flash('Параметры обновлены.', 'success')
                 else:
-                    flash('Ошибка при обновлении', 'error')   
+                    flash('Ошибка при обновлении.', 'error')   
             else:
-                flash('Редактирование отправленного/одобренного отчета недоступно', 'error')
+                flash('Редактирование отправленного/одобренного отчета недоступно.', 'error')
         else:
-            flash('Версия не найдена', 'error')
+            flash('Версия не найдена.', 'error')
         if(current_section.section_number == 1):
             return redirect(url_for('views.report_section', report_type='fuel', id=id_version))
         elif(current_section.section_number == 2):
@@ -959,7 +954,7 @@ def remove_section(id):
 
                     db.session.delete(delete_section)
                     db.session.commit()
-                    flash('Продукция была удалена', 'success')
+                    flash('Продукция была удалена.', 'success')
                     if current_version:
                         current_version.change_time = current_utc_time()
                         db.session.commit()
@@ -969,9 +964,9 @@ def remove_section(id):
                 else: 
                     flash('Ошибка при удалении', 'error')
             else:
-                flash('Редактирование отправленного/одобренного отчета недоступно', 'error')  
+                flash('Редактирование отправленного/одобренного отчета недоступно.', 'error')  
         else:
-            flash('Версия не найдена', 'error')
+            flash('Версия не найдена.', 'error')
 
         match section_numberDELsection:
             case 1:
@@ -1125,7 +1120,7 @@ def change_category_report():
             db.session.add(user_message)
             db.session.commit()
     
-            # send_email(status_itog, user.email, 'change_status')
+            send_email(status_itog, user.email, 'change_status')
 
             flash(f'Статус вашего отчета №{current_version.id} был изменен.', 'success')
             return redirect(request.referrer) 
@@ -1268,7 +1263,6 @@ def generate_excel_report(version_id):
             cell.font = Font(name='Times New Roman', size=11)
             cell.alignment = left
 
-        # Параметры печати для листа (А4 альбомная, масштаб по ширине и высоте)
         ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
         ws.page_setup.paperSize = ws.PAPERSIZE_A4
         ws.page_setup.fitToWidth = 1
@@ -1321,7 +1315,6 @@ def generate_excel_report(version_id):
         for cell_range in merged_cells.keys():
             ws.merge_cells(cell_range)
 
-        # Параметры печати для листа (А4 альбомная, масштаб по ширине и высоте)
         ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
         ws.page_setup.paperSize = ws.PAPERSIZE_A4
         ws.page_setup.fitToWidth = 1
@@ -1594,29 +1587,20 @@ def format_number(value, decimal_places=None):
         return '0'
     
     try:
-        # Преобразуем в строку и очищаем
         str_value = str(value).strip()
-        
-        # Заменяем точки на запятые (если есть оба разделителя)
         str_value = str_value.replace('.', ',').replace(',', '.', 1) if '.' in str_value and ',' in str_value else str_value
-        # Приводим к единому формату с точкой
         str_value = str_value.replace(',', '.')
         
-        # Пробуем преобразовать в float
         num = float(str_value)
-        
-        # Если decimal_places не указан, определяем автоматически
         if decimal_places is None:
             if '.' in str_value:
                 decimal_places = len(str_value.split('.')[1])
             else:
                 decimal_places = 0
         
-        # Форматируем число
         if decimal_places == 0:
             return f"{int(round(num))}"
         else:
-            # Используем точку как разделитель, затем заменяем на запятую
             formatted = f"{num:.{decimal_places}f}"
             return formatted.replace('.', ',')
             
@@ -1634,8 +1618,6 @@ def send_zip_file(zip_buffer):
         mimetype='application/zip',
         headers={"Content-Disposition": "attachment;filename=reports_DBF.zip"}
     )
-
-
 
 
 from collections import defaultdict
@@ -1670,7 +1652,6 @@ def create_xml_for_version(version):
     row_data_el = etree.SubElement(report_el, "ROW_DATA")
     sections_el = etree.SubElement(row_data_el, "SECTIONS")
 
-    # Группируем по SectionNumber
     sections_by_number = defaultdict(list)
     for section in version.sections:
         sections_by_number[section.section_number].append(section)
@@ -1678,7 +1659,6 @@ def create_xml_for_version(version):
     special_codes_order = ["9001", "9010", "9100"]
 
     for section_number, group in sections_by_number.items():
-        # Сначала спец-продукты: 9001, 9010, 9100 — в нужном порядке
         for code in special_codes_order:
             for section in group:
                 product = section.product
@@ -1699,7 +1679,6 @@ def create_xml_for_version(version):
                         "Comment": section.note or ""
                     })
 
-        # Теперь — все остальные, исключая уже добавленные коды
         sort_index_counter = 1
         for section in group:
             product = section.product

@@ -9,7 +9,7 @@
                 <nav>
                     <ul> 
                         <section>    
-                            <div class = "functions_menu">
+                            <div class="functions_menu {% if current_version.status in ['Отправлен', 'Одобрен'] %}disabled{% endif %}">
                                 <li data-action="link_addSection_modal">
                                     <img src="{{ url_for('static', filename='img/icon_new_file.png')}}" alt="">
                                     <a>Добавить</a>
@@ -80,13 +80,14 @@
     <div class = "rotation-fromareas">
         <div class = "rotation-fromareas_info"  style = "margin: 20px 30px;"> 
             <span>
-                <a class = "hover_a" href="/report-area">Вернуться к отчетам</a>
+                <a class = "hover_a" href="/report-area">Вернуться</a>
             </span>
             <span> 
                 <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
             </span>
             <span>
-                <a>Отчет № {{id_report}}</a>
+                 <a>Отчет</a>
+                <a class = "rotation-fromareas-status">{{current_version.status}}</a>
             </span>
         </div>
     </div>
@@ -333,9 +334,9 @@
                         {% for row in dirProduct %}
                             <tr data-id="{{ row.id }}">
                                 <td>{{row.CodeProduct}}</td>
-                                <td style=" text-align: left;">{{row.NameProduct}}</td>
+                                <td style=" white-space: wrap; text-align: left;">{{row.NameProduct}}</td>
                                 <td>{{row.unit.NameUnit}}</td>
-                                <td style="display:none;">{{row.Id}}</td>
+                                <td style="display: none;">{{row.id}}</td>
                             </tr>
                         {% endfor %}
                         <tr id="noResultsRow" style="display: none;">
@@ -701,12 +702,12 @@
 </div>
 
 <div id="contextMenu_report" class="white-panel">
-    <button id = "link_changefuel_modal">
+    <button id="link_changefuel_modal" class="{% if current_version.status in ['Отправлен', 'Одобрен'] %}disabled{% endif %}">
         <span>Редактировать</span>
     </button>
 
-    <form id="remove_section_form"  method="POST" action="/remove_section/">
-        <button type="submit" id="remove_section">   
+    <form id="remove_section_form" method="POST" action="/remove_section/">
+        <button type="submit" id="remove_section" class="{% if current_version.status in ['Отправлен', 'Одобрен'] %}disabled{% endif %}">
             <span>Удалить</span>
         </button>
     </form>

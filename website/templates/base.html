@@ -11,6 +11,7 @@
   </head>
   <body>  
     <div class="overlay hidden"></div>
+    {% if not hide_header %}
     <header class="fixed-header">
       <div class="header-left">
          <nav>
@@ -50,6 +51,19 @@
         </div>
       </div>
     </header>
+    {% endif %}
+
+    {% if hide_circle_buttons %}
+    <div class="circle-buttons-container">
+      <button class="circle-button" onclick="window.location.href='/login'">
+        <img src="{{ url_for('static', filename='img/people.png') }}" alt="{{ _('Логин') }}" class="circle-button-icon">
+      </button>
+      <button class="circle-button" onclick="window.location.href='/'">
+        <img src="{{ url_for('static', filename='img/logo_blue.png') }}" alt="{{ _('Главная') }}" class="circle-button-icon">
+      </button>
+    </div>
+    {% endif %}
+
     <main> 
       {% with messages = get_flashed_messages(with_categories=true) %} 
         {% if messages %}

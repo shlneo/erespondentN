@@ -302,7 +302,60 @@ numeric_dotInputs.forEach(function(input) {
 });
 /* end numbers + dot only */
 
+function initResizableTables() {
+    const tables = document.querySelectorAll('.table_report-area');
+    tables.forEach(table => {
+        const thElements = table.querySelectorAll('th.resizable');
+        let isResizing = false;
+        let startX = 0;
+        let startWidth = 0;
+        let currentTh = null;
+
+        thElements.forEach(th => {
+            const resizer = th.querySelector('.resizer');
+            if (resizer) {
+                resizer.addEventListener('mousedown', function(e) {
+                    isResizing = true;
+                    startX = e.clientX;
+                    startWidth = th.offsetWidth;
+                    currentTh = th;
+                    document.body.style.cursor = 'col-resize';
+                    e.preventDefault();
+                });
+            }
+        });
+
+        table.addEventListener('mousemove', function(e) {
+            if (isResizing) {
+                const newWidth = startWidth + (e.clientX - startX);
+                currentTh.style.width = newWidth + 'px';
+                currentTh.style.minWidth = newWidth + 'px';
+            }
+        });
+
+        table.addEventListener('mouseup', function() {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.cursor = '';
+            }
+        });
+
+        table.addEventListener('mouseleave', function() {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.cursor = '';
+            }
+        });
+    });
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
+    if(document.querySelector('.table_report-area')){
+        initResizableTables();
+    }
+
+
     const menuButton = document.getElementById('menu-button');   
     const img = menuButton.querySelector('img'); 
     
@@ -422,45 +475,6 @@ document.addEventListener('DOMContentLoaded', function () {
         event.stopPropagation();
     });
     /* end hoveruser panel */
-
-    /* change size column in table */
-    const table = document.querySelector('.table_report-area');
-    const thElements = table.querySelectorAll('th.resizable');
-    let isResizing = false;
-    let startX = 0;
-    let startWidth = 0;
-    let currentTh = null;
-
-    thElements.forEach(th => {
-        const resizer = th.querySelector('.resizer');
-        if (resizer) {
-            resizer.addEventListener('mousedown', function(e) {
-                isResizing = true;
-                startX = e.clientX;
-                startWidth = th.offsetWidth;
-                currentTh = th;
-                document.body.style.cursor = 'col-resize';
-                e.preventDefault();
-            });
-        }
-    });
-
-    document.addEventListener('mousemove', function(e) {
-        if (isResizing) {
-            const newWidth = startWidth + (e.clientX - startX);
-            currentTh.style.width = newWidth + 'px';
-            currentTh.style.minWidth = newWidth + 'px';
-        }
-    });
-
-    document.addEventListener('mouseup', function() {
-        if (isResizing) {
-            isResizing = false;
-            document.body.style.cursor = '';
-        }
-    });
-    /* end change size column in table */
-
 
     /* for report_area*/
     var reportRows = document.querySelectorAll('.report_row');

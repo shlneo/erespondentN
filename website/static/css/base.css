@@ -16,6 +16,12 @@ a{
     text-decoration: none;
 }
 
+input{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
 html::-webkit-scrollbar {
     width: 11px;
 }
@@ -60,7 +66,7 @@ body.dimmed {
     --blue-back-hover: #0067ac;
 
     --moreblue_text: darkblue;
-    
+    --gray_text: rgb(170, 170, 170);
 }
 
 .blurred-background {
@@ -302,6 +308,42 @@ input[type="checkbox"]:checked::before {
 }
 
 /*--------------------------------*/
+
+.circle-buttons-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 12px;
+  z-index: 5;
+}
+
+.circle-button {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.circle-button:hover {
+  background-color: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.circle-button-icon {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+}
+
 
 /*header*/
 
@@ -813,6 +855,25 @@ main {
     align-items: center;
     padding: 30px;    
     border-radius: 5px;
+}
+
+.text-area{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 6px;
+    padding: 8px 0;
+}
+
+.title-ab-func{
+    font-size: 12.5px;
+    color: rgb(56, 56, 56);
+    max-width: fit-content;
+    max-width: 300px;
+    text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
 }
 
 .link_cont{
@@ -1764,21 +1825,25 @@ main {
     width: 100%;
 }
 
+
+
 .rotation-fromareas_info {
     display: flex;
     flex-direction: row;
     justify-content: left;
-
+    overflow-y: auto;
     margin: 70px 0 70px 82px;
-
+    white-space: nowrap;
+    padding-bottom: 10px;
+    padding-top: 5px;
     align-items: center;
 }
 
 .rotation-fromareas_info span {
     display: flex;
-
     align-items: end;
     margin: 0 10px;
+    align-items: center;
 }
 
 .rotation-fromareas_info span img{
@@ -1791,7 +1856,16 @@ main {
     font-weight: 500;
     text-decoration: none; 
     font-size: 16px;
-    color: black;
+
+}
+
+.rotation-fromareas-status{
+    background-color: var(--color1);
+    color: white;
+    padding: 4px 9px;
+    margin-left: 11px;
+    border-radius: 6px;
+    border: none;
 }
 
 .hover_a {
@@ -1980,6 +2054,9 @@ main {
     font-weight: 400; 
     margin-left: 50px;   
     transition: border-color 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 
 .show_organiz{
@@ -2376,6 +2453,13 @@ main {
     margin-bottom: 5px;
 }
 
+.functions_menu.disabled{
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+    filter: grayscale(0.8);
+}
+
 #filtr_section {
     display: block;
     max-height: 0;
@@ -2494,7 +2578,7 @@ main {
     background-color: white;
     border: 1px solid #3333;
     border-radius: 5px;
-    z-index: 999; 
+    z-index: 2; 
     display: none; 
     position: absolute;
     flex-direction: column;
@@ -2512,6 +2596,16 @@ main {
     cursor: pointer;
     width: 100%;
 }
+
+.white-panel button:disabled,
+.white-panel button.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+    background-color: #f5f5f5;
+    color: #999999;
+}
+
 
 .white-panel button:hover {
     background-color: #e0e0e0;
@@ -2609,7 +2703,17 @@ th .resizer {
     font-size: 14px;
     border: 1px solid #dddddd;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
+
+.table_report-area tr td input{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;   
+}
+
 
 /*-----------------vers*/
 .versions_row {
@@ -2655,8 +2759,9 @@ th .resizer {
     align-items: center;
 }
 
+.show-tickets_button img.rotated,
 .show-versions_button img.rotated {
-    transform: rotate(-90deg);
+    transform: rotate(-135deg);
 }
 
 /*-----------------vers end*/
@@ -2717,26 +2822,26 @@ th .resizer {
 
 .close_black {
     display: block;
-    width: 15px;
-    transform: rotate(45deg);
+    width: 17px;
+
     transition: transform 0.5s;
-    animation: pulse-shadow 1.5s infinite; /* Добавляем анимацию */
+    animation: pulse-glow 1.5s infinite;
 }
 
-@keyframes pulse-shadow {
+.close_black:hover{
+    transform: scale(1.1);
+}
+
+@keyframes pulse-glow {
     0% { 
-        box-shadow: 0 0 5px #259dff; /* Начальное состояние */
+        filter: drop-shadow(0 0 5px #259dff) drop-shadow(0 0 2px #259dff);
     }
     50% {
-        box-shadow: 0 0 15px #259dff; /* Увеличиваем тень */
+        filter: drop-shadow(0 0 20px #259dff) drop-shadow(0 0 15px #259dff) drop-shadow(0 0 10px #259dff);
     }
     100% {
-        box-shadow: 0 0 5px #259dff; /* Возвращаемся к начальному состоянию */
+        filter: drop-shadow(0 0 5px #259dff) drop-shadow(0 0 2px #259dff);
     }
-}
-
-.show-tickets_button img.rotated {
-    transform: rotate(-90deg);
 }
 
 /*-----------------ticket end*/
@@ -2798,6 +2903,9 @@ th .resizer {
     border: 1px solid rgb(255, 255, 255);  
     font-weight: 500; 
     margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 
 /* ----------------------modal_window begin */

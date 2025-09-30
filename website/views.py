@@ -117,7 +117,7 @@ def translate_status(status):
     }
     return status_map.get(status)
 
-@views.route('/')
+@views.route('/', methods=['GET'])
 def beginPage():
     user_data = User.query.filter_by(type="Респондент").count()
     organization_data = Organization.query.count()
@@ -133,21 +133,27 @@ def beginPage():
                            previous_year=get_report_year()
                            )
 
-@views.route('/sign')
+@views.route('/sign', methods=['GET'])
 def sign():
     return render_template('sign.html', 
-                           user=current_user
+                           user=current_user,
+            hide_header=True,
+            hide_circle_buttons=True,
                            )
 
-@views.route('/login')
+@views.route('/login', methods=['GET'])
 def login():
-    return render_template('login.html', user=current_user)
+    return render_template('login.html', user=current_user,
+            hide_header=True,
+            hide_circle_buttons=True,)
 
-@views.route('/kod')
+@views.route('/kod', methods=['GET'])
 def kod():
-    return render_template('kod.html', user=current_user)
+    return render_template('kod.html', user=current_user,
+            hide_header=True,
+            hide_circle_buttons=True,)
 
-@views.route('/account')
+@views.route('/account', methods=['GET'])
 @login_required
 @session_required
 def account():
@@ -158,7 +164,7 @@ def account():
                            current_user=current_user, 
                            messages=messages)
 
-@views.route('/profile/common')
+@views.route('/profile/common', methods=['GET'])
 @login_required
 @session_required
 def profile_common():
@@ -168,7 +174,7 @@ def profile_common():
                         count_reports=count_reports
                         )
 
-@views.route('/profile/session')
+@views.route('/profile/session', methods=['GET'])
 @login_required
 @session_required
 def profile_session():
@@ -190,7 +196,7 @@ def profile_session():
         other_sessions=other_sessions
     )
 
-@views.route('/api/organizations')
+@views.route('/api/organizations', methods=['GET'])
 @login_required
 @session_required
 def get_organizations():
@@ -219,13 +225,13 @@ def get_organizations():
         "has_next": pagination.has_next
     })
 
-@views.route('/profile/password')
+@views.route('/profile/password', methods=['GET'])
 @login_required
 @session_required
 def profile_password():
     return render_template('profile_password.html', user=current_user)
 
-@views.route('/report-area')
+@views.route('/report-area', methods=['GET'])
 @profile_complete
 @login_required
 @session_required
@@ -250,7 +256,7 @@ def report_area():
                            version=version,
                            open_report_id=open_report_id)
 
-@views.route('/report-area/<string:report_type>/<int:id>')
+@views.route('/report-area/<string:report_type>/<int:id>', methods=['GET'])
 @profile_complete
 @login_required
 @session_required
@@ -289,7 +295,7 @@ def report_section(report_type, id):
         current_version=current_version
     )
 
-@views.route('/audit-area/<status>')
+@views.route('/audit-area/<status>', methods=['GET'])
 @login_required
 @profile_complete
 @session_required
@@ -307,7 +313,7 @@ def audit_area(status):
                            previous_year=get_report_year()
                            )
 
-@views.route('/audit-area/report/<int:id>')
+@views.route('/audit-area/report/<int:id>', methods=['GET'])
 @login_required
 @session_required
 @profile_complete
@@ -335,13 +341,13 @@ def audit_report(id):
         tickets=tickets
     )
 
-@views.route('/FAQ')
+@views.route('/FAQ', methods=['GET'])
 def FAQ():
     return render_template('FAQ.html', 
         current_user=current_user
     )
 
-@views.route('/FAQ/<int:id>')
+@views.route('/FAQ/<int:id>', methods=['GET'])
 def FAQ_question(id):
     if (id < 15):
         return render_template(f'Questions/{id}.html', 
@@ -350,7 +356,7 @@ def FAQ_question(id):
     else:
         return render_template('404.html'), 404
 
-@views.route('/news/<int:id>')
+@views.route('/news/<int:id>', methods=['GET'])
 def news_post(id):
     post = News.query.filter_by(id = id).first()
     return render_template(f'Posts/1.html', 
@@ -358,7 +364,7 @@ def news_post(id):
         post=post
     )
 
-@views.route('/news')
+@views.route('/news', methods=['GET'])
 def news():
     all_news = News.query.filter_by().all()
     return render_template('news.html', 
@@ -366,9 +372,8 @@ def news():
         all_news=all_news
     )
 
-@views.route('/contacts')
+@views.route('/contacts', methods=['GET'])
 def contacts():
     return render_template('contacts.html', 
         current_user=current_user
     )
-
