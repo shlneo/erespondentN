@@ -52,8 +52,6 @@ pyyaml
 apscheduler
 psycopg2-binary
 selenium
-email_validator
-flask-socketio
 eventlet
 lxml
 python-dotenv
