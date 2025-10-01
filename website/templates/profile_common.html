@@ -17,28 +17,10 @@
         </div>
     </div>
     <div class="contener_row">
-        <nav class = "left_menu">
-            <ul class="sticky_status" id="status-reportList">
-                <li class="active_li" onclick="window.location.href='/profile/common'">
-                    <a class="left_menu_text">Общее</a>
-                    <img class="left_menu_img" src="{{ url_for('static', filename='img/obsh.png')}}" alt="">
-                </li>
-                <li onclick="window.location.href='/profile/password'">
-                    <a>Безопасность</a>
-                    <img class="left_menu_img" src="{{ url_for('static', filename='img/pass.png')}}" alt="">
-                </li>
-                <li onclick="window.location.href='/profile/session'">
-                    <a>Сессии</a>
-                    <img class="left_menu_img" src="{{ url_for('static', filename='img/out.png')}}" alt="">
-                </li>
-                <li onclick="window.location.href='/logout'">
-                    <a>Выйти</a>
-                    <img class="left_menu_img" src="{{ url_for('static', filename='img/stop.png')}}" alt="">
-                </li>
-            </ul>
-        </nav>
+        {% block left_menu %}
+            {{ super() }}
+        {% endblock %}
         <div class="personal-info_area">
-            
                 <form action="/add-personal-parametrs" method="POST">
                     <table>
                         <tr>
@@ -113,6 +95,7 @@
                                     value="{{current_user.organization.okpo if current_user.organization.okpo else ''}}" readonly>
                                 </td>
                             </tr>
+                            
                             <tr>
                                 <td><span title = "Учетный номер плательщика (может быть пусто)">УНП &#42;</span></td>
                                 <td>    
@@ -120,9 +103,10 @@
                                     type="text" 
                                     name = "ynp_common" 
                                     placeholder="Унп предприятия (может быть пусто)" 
-                                    value="{{current_user.organization.ynp if current_user.organization.ynp else ''}}" readonly>
+                                    value="{{current_user.organization.ynp if current_user.organization.ynp else '-'}}" readonly>
                                 </td>
                             </tr>
+                 
                             <tr>
                                 <td><span title = "Республиканский орган государственного управления">Министерство &#42;</span></td>
                                 <td>    
@@ -130,9 +114,10 @@
                                         type="text" 
                                         name = "ministry_common"  
                                         placeholder="Министерство предприятия" 
-                                        value="{{current_user.organization.ministry if current_user.organization.ministry else ''}}" readonly>
+                                        value="{{current_user.organization.ministry if current_user.organization.ministry else '-'}}" readonly>
                                 </td>
                             </tr>
+                            
                         {%else%}
                         {%endif%}
                     </table>
@@ -176,11 +161,11 @@
             <a class="close">&times;</a>
         </div>
         <div class="modal-middle-text">
-            <a>Введите наименование вашей организации.</a>
+            <a>Введите <strong>наименование</strong> или <strong>ОКПО</strong> вашей организации.</a>
         </div>
         <div class="search-cont">
             <label for="search_organization">Поиск</label>
-            <input name="search_organization" class="search_input" type="text" placeholder="Наименование предприятия">
+            <input name="search_organization" class="search_input" type="text" placeholder="Наименование или ОКПО предприятия">
         </div>
         <div class="spravochniki_area">
             <table class="table_report-area">
@@ -194,129 +179,136 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.querySelector('input[name="search_organization"]');
-        const tableBody = document.getElementById("chooserOganizationTableBody");
-        const chooseOrgModal = document.getElementById("chooseOrgModal");
-        const linkChooseOrgModal = document.getElementById("link_chooseOrgModal");
-        const closeChooseOrgModal = chooseOrgModal.querySelector(".close");
-    
-        if (!searchInput || !tableBody || !chooseOrgModal || !linkChooseOrgModal || !closeChooseOrgModal) {
-            console.error("Ошибка: Один или несколько элементов не найдены.");
-            return;
-        }
-    
-        let searchQuery = "";
-    
-        function loadOrganizations(query = "") {
-            console.log(`Запрос: /api/organizations?q=${query}`);
-    
-            fetch(`/api/organizations?q=${query}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Ошибка HTTP: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("Ответ API:", data);
-    
-                    tableBody.innerHTML = ""; 
-    
-                    if (!data.organizations.length) {
-                        tableBody.innerHTML = "<tr><td colspan='2'>Нет данных</td></tr>";
-                        return;
-                    }
-    
-                    data.organizations.forEach(org => {
-                        const row = document.createElement("tr");
-                        row.dataset.id = org.id;
-                        row.innerHTML = `
-                            <td>${org.full_name}</td>
-                            <td>${org.okpo}</td>
-                            <td style="display: none;">${org.ynp}</td>
-                            <td style="display: none;">${org.ministry}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => console.error("Ошибка загрузки организаций:", error));
-        }
-    
-        let debounceTimer;
-        searchInput.addEventListener("input", function () {
-            clearTimeout(debounceTimer);
-            searchQuery = this.value.trim().toUpperCase(); // ищем в верхнем регистре, мол иначе не воркает
-            debounceTimer = setTimeout(() => loadOrganizations(searchQuery), 300);
-        });
-    
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.querySelector('input[name="search_organization"]');
+    const tableBody = document.getElementById("chooserOganizationTableBody");
+    const chooseOrgModal = document.getElementById("chooseOrgModal");
+    const linkChooseOrgModal = document.getElementById("link_chooseOrgModal");
+    const closeChooseOrgModal = chooseOrgModal.querySelector(".close");
 
-        tableBody.addEventListener("click", function (event) {
-            if (event.target.tagName === "TD") {
-                let row = event.target.closest("tr");
-                let orgData = {
-                    full_name: row.cells[0].textContent.trim(),
-                    okpo: row.cells[1].textContent.trim(),
-                    ynp: row.cells[2].textContent.trim(),
-                    ministry: row.cells[3].textContent.trim()
-                };
-    
-                document.querySelector('input[name="full_name_common"]').value = orgData.full_name;
-                document.querySelector('input[name="okpo_common"]').value = orgData.okpo;
-                document.querySelector('input[name="ynp_common"]').value = orgData.ynp;
-                document.querySelector('input[name="ministry_common"]').value = orgData.ministry;
-    
-                chooseOrgModal.classList.remove("active");
-            }
-        });
-    
+    if (!searchInput || !tableBody || !chooseOrgModal || !linkChooseOrgModal || !closeChooseOrgModal) {
+        console.error("Ошибка: Один или несколько элементов не найдены.");
+        return;
+    }
 
-        linkChooseOrgModal.addEventListener("click", function () {
-            chooseOrgModal.classList.add("active");
-        });
-    
+    let searchQuery = "";
 
-        closeChooseOrgModal.addEventListener("click", function () {
+    function loadOrganizations(query = "") {
+        console.log(`Запрос: /api/organizations?q=${query}`);
+
+        fetch(`/api/organizations?q=${query}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Ошибка HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Ответ API:", data);
+
+                tableBody.innerHTML = "";
+
+                if (!data.organizations.length) {
+                    tableBody.innerHTML = "<tr><td colspan='2'>Нет данных</td></tr>";
+                    return;
+                }
+
+                data.organizations.forEach(org => {
+                    const row = document.createElement("tr");
+                    row.dataset.id = org.id;
+                    row.innerHTML = `
+                        <td>${org.full_name}</td>
+                        <td>${org.okpo}</td>
+                        <td style="display: none;">${org.ynp || ''}</td>
+                        <td style="display: none;">${org.ministry || ''}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error("Ошибка загрузки организаций:", error));
+    }
+
+    let debounceTimer;
+    searchInput.addEventListener("input", function () {
+        clearTimeout(debounceTimer);
+        searchQuery = this.value.trim();
+        debounceTimer = setTimeout(() => loadOrganizations(searchQuery), 300);
+    });
+
+    // Загружаем все организации при открытии модального окна
+    linkChooseOrgModal.addEventListener("click", function () {
+        chooseOrgModal.classList.add("active");
+        loadOrganizations(); // Загрузка всех организаций
+    });
+
+    tableBody.addEventListener("click", function (event) {
+        if (event.target.tagName === "TD") {
+            let row = event.target.closest("tr");
+            let orgData = {
+                full_name: row.cells[0].textContent.trim(),
+                okpo: row.cells[1].textContent.trim(),
+                ynp: row.cells[2].textContent.trim(),
+                ministry: row.cells[3].textContent.trim()
+            };
+
+            document.querySelector('input[name="full_name_common"]').value = orgData.full_name;
+            document.querySelector('input[name="okpo_common"]').value = orgData.okpo;
+            document.querySelector('input[name="ynp_common"]').value = orgData.ynp;
+            document.querySelector('input[name="ministry_common"]').value = orgData.ministry;
+
             chooseOrgModal.classList.remove("active");
-        });
-    
-
-        chooseOrgModal.addEventListener("click", function (event) {
-            if (event.target === chooseOrgModal) {
-                chooseOrgModal.classList.remove("active");
-            }
-        });
-    });
-
-    document.getElementById('second_name_input').addEventListener('keypress', function (e) {
-        const char = String.fromCharCode(e.which);
-        if (!/^[A-Za-zА-Яа-яЁё]$/.test(char)) {
-            e.preventDefault();
-        }
-    });
-    
-    document.getElementById('name_input').addEventListener('keypress', function (e) {
-        const char = String.fromCharCode(e.which);
-        if (!/^[A-Za-zА-Яа-яЁё]$/.test(char)) {
-            e.preventDefault(); 
-        }
-    });    
-    
-    document.getElementById('patronymic_input').addEventListener('keypress', function (e) {
-        const char = String.fromCharCode(e.which);
-        if (!/^[A-Za-zА-Яа-яЁё]$/.test(char)) {
-            e.preventDefault();
         }
     });
 
-    document.getElementById('telephone_input').addEventListener('keypress', function (e) {
-        const char = String.fromCharCode(e.which);
-        const currentValue = this.value;
+    closeChooseOrgModal.addEventListener("click", function () {
+        chooseOrgModal.classList.remove("active");
+    });
 
-        if (!/^[0-9]$/.test(char) && !(char === '+' && currentValue.length === 0)) {
-            e.preventDefault();
+    chooseOrgModal.addEventListener("click", function (event) {
+        if (event.target === chooseOrgModal) {
+            chooseOrgModal.classList.remove("active");
         }
     });
+});
+
+document.getElementById('second_name_input').addEventListener('keypress', function (e) {
+    const char = String.fromCharCode(e.which);
+    if (!/^[A-Za-zА-Яа-яЁё\s-]$/.test(char)) {
+        e.preventDefault();
+    }
+});
+
+document.getElementById('name_input').addEventListener('keypress', function (e) {
+    const char = String.fromCharCode(e.which);
+    if (!/^[A-Za-zА-Яа-яЁё\s-]$/.test(char)) {
+        e.preventDefault(); 
+    }
+});    
+
+document.getElementById('patronymic_input').addEventListener('keypress', function (e) {
+    const char = String.fromCharCode(e.which);
+    if (!/^[A-Za-zА-Яа-яЁё\s-]$/.test(char)) {
+        e.preventDefault();
+    }
+});
+
+document.getElementById('telephone_input').addEventListener('keypress', function (e) {
+    const char = String.fromCharCode(e.which);
+    const currentValue = this.value;
+
+    if (!/^[0-9]$/.test(char) && !(char === '+' && currentValue.length === 0)) {
+        e.preventDefault();
+    }
+});
+
+// Добавляем функциональность кнопок очистки
+document.querySelectorAll('.clear-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const input = this.parentElement.querySelector('input');
+        input.value = '';
+        input.focus();
+    });
+});
 </script>
 {% endblock %}
 

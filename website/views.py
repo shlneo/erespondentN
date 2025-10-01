@@ -171,7 +171,8 @@ def profile_common():
     count_reports = Report.query.filter_by(user_id=current_user.id).count()
     return render_template('profile_common.html', 
                         user=current_user, 
-                        count_reports=count_reports
+                        count_reports=count_reports,
+                        active_tab = 'common'
                         )
 
 @views.route('/profile/session', methods=['GET'])
@@ -193,7 +194,8 @@ def profile_session():
     return render_template(
         'profile_session.html',
         current_session=current_session,
-        other_sessions=other_sessions
+        other_sessions=other_sessions,
+                        active_tab = 'session'
     )
 
 @views.route('/api/organizations', methods=['GET'])
@@ -205,7 +207,12 @@ def get_organizations():
 
     query = Organization.query
     if search_query:
-        query = query.filter(Organization.full_name.ilike(f"%{search_query}%"))
+        query = query.filter(
+            db.or_(
+                Organization.full_name.ilike(f"%{search_query}%"),
+                Organization.okpo.ilike(f"%{search_query}%")
+            )
+        )
 
     per_page = 10
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
@@ -225,11 +232,14 @@ def get_organizations():
         "has_next": pagination.has_next
     })
 
+
 @views.route('/profile/password', methods=['GET'])
 @login_required
 @session_required
 def profile_password():
-    return render_template('profile_password.html', user=current_user)
+    return render_template('profile_password.html', 
+                    user=current_user, 
+                    active_tab  = 'pass')
 
 @views.route('/report-area', methods=['GET'])
 @profile_complete
