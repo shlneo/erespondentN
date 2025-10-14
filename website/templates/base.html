@@ -55,6 +55,9 @@
 
     {% if hide_circle_buttons %}
     <div class="circle-buttons-container">
+       <button class="circle-button" onclick="window.location.href='/FAQ'">
+        <img src="{{ url_for('static', filename='img/FAQ.png') }}" alt="{{ _('FAQ') }}" class="circle-button-icon">
+      </button>
       <button class="circle-button" onclick="window.location.href='/login'">
         <img src="{{ url_for('static', filename='img/people.png') }}" alt="{{ _('Логин') }}" class="circle-button-icon">
       </button>
