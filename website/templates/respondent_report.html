@@ -8,6 +8,19 @@
             <div class="content-podmenu">
                 <nav>
                     <ul> 
+                        <form id="cancel-sending-form" action="/cancel-sent-version/{{current_version.id}}" method="POST" style="display: none;">
+                        </form>
+                        {% if current_version.status == 'Отправлен'%}   
+                        <section>
+                            <div class="functions_menu">                         
+                                <li id = "cancel-sending-bnt">           
+                                    <img src="{{ url_for('static', filename='img/cancel.png')}}" alt="">
+                                    <a>Отменить</a>   
+                                </li>  
+                            </div>  
+                            <a class="functions_menu_name">Отправка</a>
+                        </section>
+                        {% endif %}
                         <section>    
                             <div class="functions_menu {% if current_version.status in ['Отправлен', 'Одобрен'] %}disabled{% endif %}">
                                 <li data-action="link_addSection_modal">

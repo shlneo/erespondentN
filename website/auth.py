@@ -1073,6 +1073,13 @@ def sent_version(id):
         flash('Отчет отправлен.', 'successful')
         return redirect(url_for('views.report_area'))
 
+@auth.route('/cancel-sent-version/<id>', methods=['POST'])
+@login_required 
+@session_required
+def cancle_sent_version(id):
+    from .report.report import cancel_sending
+    return cancel_sending(id)
+
 @auth.route('/change-category-report', methods=['POST'])
 @login_required 
 @session_required

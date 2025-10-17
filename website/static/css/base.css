@@ -174,7 +174,7 @@ input[type="checkbox"]:checked::before {
     height: 40px; 
     padding: 8px 20px; 
     font-size: 14px; 
-    border-radius: 7px;
+    border-radius: 5px;
     margin-top: 20px;
     border: none;
     background: var(--blue-back);
@@ -188,7 +188,7 @@ input[type="checkbox"]:checked::before {
 .blue_button:hover {
     background-color: rgba(255, 255, 255, 0.555);
     color: black;
-    border-radius:15px;
+    /* border-radius:15px; */
     box-shadow: 0 2px 15px var(--blue-back-hover); 
     transform: translateY(-1px); 
 }
@@ -2562,6 +2562,9 @@ main {
     background: rgba(96, 255, 228, 0.63);
 }
 
+#cancel-sending-bnt:hover{
+    background: rgba(255, 76, 76, 0.63);
+}
 
 #agreedVersionButton:hover{
     background: rgba(152, 255, 169, 0.63);
@@ -2586,27 +2589,36 @@ main {
 /*---------------report-area*/
 
 .white-panel {
-    padding: 5px;
+    padding: 5px 8px;
     background-color: white;
-    border: 1px solid #3333;
+    border:none;
     border-radius: 5px;
     z-index: 2; 
     display: none; 
     position: absolute;
     flex-direction: column;
+    height: fit-content;
+    justify-content: space-between;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    
 }
 
 .white-panel button {
+    border-radius: 6px;
+    border: 1px solid rgb(216, 216, 216);
     display: flex;   
     font-size: 13px;
     flex-direction: row;
     justify-content: space-between;
     padding: 5px 20px;
     text-align: left;
-    border: none;
     background-color: #ffffff;
     cursor: pointer;
     width: 100%;
+}
+
+.white-panel button:first-child {
+    margin: 5px 0;
 }
 
 .white-panel button:disabled,
@@ -3001,6 +3013,7 @@ th .resizer {
     background-color: #f8f8f8;
     padding: 5px 10px;
     font-size: 15px;
+    border-radius: 10px;
 }
 
 .instruction-link {
@@ -3204,7 +3217,7 @@ th .resizer {
 
 .telegram-message {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .message-bubble {
