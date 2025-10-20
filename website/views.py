@@ -334,9 +334,9 @@ def audit_report(id):
     current_version = Version_report.query.filter_by(id=id).first()
     current_report = Report.query.filter_by(id=current_version.report_id).first()
     tickets = Ticket.query.filter_by(version_report_id = current_version.id).all()
-    sections_fuel = Sections.query.filter_by(id_version=current_version.id, section_number=1).order_by(desc(Sections.id)).all()
-    sections_heat = Sections.query.filter_by(id_version=current_version.id, section_number=2).order_by(desc(Sections.id)).all()
-    sections_electro = Sections.query.filter_by(id_version=current_version.id, section_number=3).order_by(desc(Sections.id)).all()
+    sections_fuel = Sections.query.filter_by(id_version=current_version.id, section_number=1).order_by(asc(Sections.code_product)).all()
+    sections_heat = Sections.query.filter_by(id_version=current_version.id, section_number=2).order_by(asc(Sections.code_product)).all()
+    sections_electro = Sections.query.filter_by(id_version=current_version.id, section_number=3).order_by(asc(Sections.code_product)).all()
 
     return render_template('audit_report.html', 
         id_report = id,

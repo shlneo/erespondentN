@@ -281,9 +281,12 @@ document.getElementById('control-report-btn').addEventListener('click', function
     document.getElementById('control-report-form').submit();
 });
 
-document.getElementById('cancel-sending-bnt').addEventListener('click', function() {
-    document.getElementById('cancel-sending-form').submit();
-});
+if(cancel_send = document.getElementById('cancel-sending-bnt')){
+    document.getElementById('cancel-sending-bnt').addEventListener('click', function() {
+        document.getElementById('cancel-sending-form').submit();
+    });
+
+}
 
 document.getElementById('export-table-btn').addEventListener('click', function() {
     document.getElementById('export-table-form').submit();
