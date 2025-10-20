@@ -351,6 +351,7 @@ def audit_report(id):
         tickets=tickets
     )
 
+
 @views.route('/FAQ', methods=['GET'])
 def FAQ():
     return render_template('FAQ.html', 
