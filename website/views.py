@@ -293,7 +293,7 @@ def report_section(report_type, id):
         ~DirProduct.CodeProduct.in_(['9001', '9010', '9100'])
     ).order_by(asc(DirProduct.CodeProduct)).all()
 
-    sections = Sections.query.filter_by(id_version=current_version.id, section_number=section_number).order_by(desc(Sections.id)).all()
+    sections = Sections.query.filter_by(id_version=current_version.id, section_number=section_number).order_by(asc(Sections.code_product)).all()
     return render_template('respondent_report.html', 
         id_report = id,
         section_number=section_number,
