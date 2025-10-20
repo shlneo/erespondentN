@@ -1149,8 +1149,8 @@ def rollbackreport(id):
                 else:
                     audit_time = datetime.combine(current_version.audit_time, datetime.min.time())
 
-                if audit_time + timedelta(days=1) <= current_utc_time():
-                    flash('Прошло больше 1-го дня, статус отчета изменить нельзя.', 'error')
+                if audit_time + timedelta(days=30) <= current_utc_time():
+                    flash('Прошло больше 30-го дня, статус отчета изменить нельзя.', 'error')
                 else: 
                     current_version.status = "Отправлен"
                     current_version.hasNot = False
