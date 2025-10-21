@@ -43,15 +43,12 @@
         </tbody>
     </table>
 </div>
-    <a href="{{ url_for('admin.epic_faeil') }}" class="btn btn-primary">НЕ НАЖИМАТЬ</a>
 
-    <a href="{{ url_for('admin.backup_database') }}" class="btn btn-primary">Скачать резервную копию</a>
 
-    <form action="{{ url_for('auth.create_test_users_rout') }}" method="post">
-        <button type="submit">Создать тестовых пользователей</button>
-    </form>
-
-    <form action="{{ url_for('auth.delete_test_users_rout') }}" method="post">
-        <button type="submit">Удалить тестовых пользователей</button>
-    </form>
+<form action="{{ url_for('auth.create_test_users_rout') }}" method="post">
+    <button type="submit">Создать тестовых пользователей</button>
+</form>
+<form action="{{ url_for('auth.delete_test_users_rout') }}" method="post">
+    <button type="submit">Удалить тестовых пользователей</button>
+</form>
 {% endblock %}

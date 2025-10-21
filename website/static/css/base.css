@@ -2450,13 +2450,12 @@ main {
     border-radius: 5px;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     margin: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
     font-size: 13px;
     padding: 5px;
     height: 130px;
-    
 }
 
 .functions_menu{
@@ -2472,6 +2471,7 @@ main {
     cursor: not-allowed;
     filter: grayscale(0.8);
 }
+
 
 #filtr_section {
     display: block;
@@ -2507,6 +2507,15 @@ main {
 .inf_reports_bystatus{
     display: flex;
     flex-direction: column;
+    gap: 22px;
+}
+
+.count-reports{
+    padding: 2px 7px;
+    background-color: var(--blue-back);
+    color: white;
+    border: none;
+    border-radius: 6px;
 }
 
 
@@ -2524,7 +2533,7 @@ main {
 .functions_menu_name{
     font-weight: 600;
     font-family: 13px;
-    margin: 0 0 5px 0;
+
 }
 
 .content-podmenu nav ul li{
@@ -2583,6 +2592,12 @@ main {
 .content-podmenu nav ul li a{
     font-size: 13px;
     padding-top: 7px;
+}
+
+
+#status-reportList{
+
+
 }
 
 /*---------------menu_report_area end*/

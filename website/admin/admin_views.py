@@ -55,77 +55,77 @@ class MyMainView(AdminIndexView):
                         sections_data=sections_data,
                         ticket_data=ticket_data
                            )
-    @admin_only
-    @expose('/backup')
-    def backup_database(self):
-        try:
-            database_path = current_app.config['SQLALCHEMY_DATABASE_URI'].replace('sqlite:///', '')
+    # @admin_only
+    # @expose('/backup')
+    # def backup_database(self):
+    #     try:
+    #         database_path = current_app.config['SQLALCHEMY_DATABASE_URI'].replace('sqlite:///', '')
 
-            if not os.path.exists(database_path):
-                flash('Файл базы данных не найден.', 'error')
-                return redirect(request.referrer or url_for('admin.index'))
+    #         if not os.path.exists(database_path):
+    #             flash('Файл базы данных не найден.', 'error')
+    #             return redirect(request.referrer or url_for('admin.index'))
 
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.sqlite') as temp_file:
-                shutil.copy2(database_path, temp_file.name)
-                temp_file_path = temp_file.name
+    #         with tempfile.NamedTemporaryFile(delete=False, suffix='.sqlite') as temp_file:
+    #             shutil.copy2(database_path, temp_file.name)
+    #             temp_file_path = temp_file.name
 
-            flash('Резервная копия базы данных успешно создана.', 'success')
-            return send_file(temp_file_path, as_attachment=True, download_name=f"backup_{current_utc_time().strftime('%Y%m%d_%H%M%S')}.sqlite")
+    #         flash('Резервная копия базы данных успешно создана.', 'success')
+    #         return send_file(temp_file_path, as_attachment=True, download_name=f"backup_{current_utc_time().strftime('%Y%m%d_%H%M%S')}.sqlite")
 
-        except Exception as e:
-            flash(f'Ошибка при создании резервной копии базы данных: {str(e)}', 'error')
-            return redirect(request.referrer or url_for('admin.index'))
+    #     except Exception as e:
+    #         flash(f'Ошибка при создании резервной копии базы данных: {str(e)}', 'error')
+    #         return redirect(request.referrer or url_for('admin.index'))
         
-    @expose('/epic_faeil/', methods=['GET', 'POST'])
-    def epic_faeil(self):
-        """Endpoint для замены конкретных code_product 9100 и 9001"""
-        try:
-            changes_made = False
+    # @expose('/epic_faeil/', methods=['GET', 'POST'])
+    # def epic_faeil(self):
+    #     """Endpoint для замены конкретных code_product 9100 и 9001"""
+    #     try:
+    #         changes_made = False
             
 
-            target_pairs = Sections.query.filter(
-                Sections.id_version.isnot(None),
-                Sections.section_number.in_([1, 2, 3]),
-                Sections.code_product.in_(['9100', '9001'])
-            ).all()
+    #         target_pairs = Sections.query.filter(
+    #             Sections.id_version.isnot(None),
+    #             Sections.section_number.in_([1, 2, 3]),
+    #             Sections.code_product.in_(['9100', '9001'])
+    #         ).all()
             
 
-            from collections import defaultdict
-            groups = defaultdict(list)
+    #         from collections import defaultdict
+    #         groups = defaultdict(list)
             
-            for section in target_pairs:
-                key = (section.id_version, section.section_number)
-                groups[key].append(section)
+    #         for section in target_pairs:
+    #             key = (section.id_version, section.section_number)
+    #             groups[key].append(section)
             
 
-            for key, sections in groups.items():
-                id_version, section_number = key
+    #         for key, sections in groups.items():
+    #             id_version, section_number = key
                 
-                if len(sections) == 2:
-                    product_9100 = next((s for s in sections if s.code_product == '9100'), None)
-                    product_9001 = next((s for s in sections if s.code_product == '9001'), None)
+    #             if len(sections) == 2:
+    #                 product_9100 = next((s for s in sections if s.code_product == '9100'), None)
+    #                 product_9001 = next((s for s in sections if s.code_product == '9001'), None)
                     
-                    if product_9100 and product_9001:
-                        old_id_9100 = product_9100.id_product
-                        old_id_9001 = product_9001.id_product
+    #                 if product_9100 and product_9001:
+    #                     old_id_9100 = product_9100.id_product
+    #                     old_id_9001 = product_9001.id_product
                         
-                        product_9100.id_product = old_id_9001
-                        product_9001.id_product = old_id_9100
+    #                     product_9100.id_product = old_id_9001
+    #                     product_9001.id_product = old_id_9100
                         
-                        changes_made = True
-                        print(f"Заменены: version={id_version}, section={section_number}")
+    #                     changes_made = True
+    #                     print(f"Заменены: version={id_version}, section={section_number}")
             
-            if changes_made:
-                db.session.commit()
-                flash('Успешно заменены id_product для пар 9100/9001 в sections 1-3', 'success')
-            else:
-                flash('Не найдено пар 9100/9001 для замены', 'info')
+    #         if changes_made:
+    #             db.session.commit()
+    #             flash('Успешно заменены id_product для пар 9100/9001 в sections 1-3', 'success')
+    #         else:
+    #             flash('Не найдено пар 9100/9001 для замены', 'info')
                 
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Ошибка: {str(e)}', 'error')
+    #     except Exception as e:
+    #         db.session.rollback()
+    #         flash(f'Ошибка: {str(e)}', 'error')
         
-        return redirect('/admin/')()
+    #     return redirect('/admin/')()
 
 
 

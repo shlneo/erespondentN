@@ -313,14 +313,27 @@ def report_section(report_type, id):
 def audit_area(status):
     year_filter = request.args.get('year')
     quarter_filter = request.args.get('quarter')
+    
     reports = get_reports_by_status(status, year_filter, quarter_filter)
+
+    sent_count = len(get_reports_by_status('not_viewed', year_filter, quarter_filter))
+    remarks_count = len(get_reports_by_status('remarks', year_filter, quarter_filter))
+    approved_count = len(get_reports_by_status('to_download', year_filter, quarter_filter))
+    delete_count = len(get_reports_by_status('to_delete', year_filter, quarter_filter))
+    total_count = len(get_reports_by_status('all_reports', year_filter, quarter_filter))
+
     return render_template('audit_area.html',
                            current_user=current_user,
                            reports=reports,
                            year_filter=year_filter,
                            quarter_filter=quarter_filter,
-                           previous_quarter = get_previous_quarter(),
-                           previous_year=get_report_year()
+                           previous_quarter=get_previous_quarter(),
+                           previous_year=get_report_year(),
+                           sent_count=sent_count,
+                           remarks_count=remarks_count,
+                           approved_count=approved_count,
+                           delete_count=delete_count,
+                           total_count=total_count,
                            )
 
 @views.route('/audit-area/report/<int:id>', methods=['GET'])

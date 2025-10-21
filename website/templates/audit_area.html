@@ -33,31 +33,47 @@
                                             <li data-action="not_viewed" title="Непросмотренные {{not_viewedReports_count}}"> 
                                                 <img class="count-img" src="{{ url_for('static', filename='img/sl_1.png')}}">          
                                                 <a class="inf_reports_bystatus">   
-                                                    <span>Непросм.</span>
+                                                    <span>Непросм.</span>  
+                                                    <div class = "count-reports">    
+                                                        <span>{{ sent_count }}</span>
+                                                    </div> 
                                                 </a>
                                             </li>
                                             <li data-action="remarks" title="Есть замечания {{remarksReports_count}}">   
                                                 <img class="count-img" src="{{ url_for('static', filename='img/sl_2.png')}}">             
                                                 <a class="inf_reports_bystatus">
-                                                    <span>Замеч.</span>
+                                                    <span>Замеч.</span>  
+                                                    <div class = "count-reports">    
+                                                        <span>{{ remarks_count }}</span>
+                                                    </div> 
                                                 </a> 
                                             </li>
                                             <li data-action="to_download" title="Одобренные {{to_downloadReports_count}}">   
                                                 <img class="count-img" src="{{ url_for('static', filename='img/sl_3.png')}}">              
                                                 <a class="inf_reports_bystatus"> 
-                                                    <span>Одобр.</span>
+                                                    <span>Одобр.</span>  
+                                                    <div class = "count-reports">    
+                                                        <span>{{ approved_count }}</span>
+                                                    </div> 
                                                 </a>
                                             </li>  
                                             <li data-action="to_delete" title="Подлежат удалению {{to_deleteReports_count}}"> 
                                                 <img class="count-img" src="{{ url_for('static', filename='img/sl_4.png')}}">                
                                                 <a class="inf_reports_bystatus">
-                                                    <span>Удал.</span>
+                                                    <span>Удал.</span>  
+                                                    <div class = "count-reports">    
+                                                        <span>{{ delete_count }}</span>
+                                                    </div> 
+                                              
                                                 </a>
                                             </li>  
                                             <li data-action="all_reports" title="Все отчеты {{all_count}}" >           
                                                 <img class="count-img" src="{{ url_for('static', filename='img/sl_all.png')}}">                
                                                 <a class="inf_reports_bystatus">
-                                                    <span>Все</span>
+                                                    <span>Все</span>  
+                                                    <div class = "count-reports">    
+                                                        <span>{{ total_count }}</span>
+                                                    </div> 
                                                 </a>
                                             </li>  
                                             <form id="change-category-form" style="display: none;" method="post" action="/change-category-report">
@@ -68,7 +84,7 @@
                                     </nav>
                                 </div>  
                                 <a class="functions_menu_name">
-                                    Статус отчета
+                                    
                                 </a>
                             </section>
                             <section>
