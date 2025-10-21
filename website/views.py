@@ -390,7 +390,7 @@ def news_post(id):
 
 @views.route('/news', methods=['GET'])
 def news():
-    all_news = News.query.filter_by().all()
+    all_news = News.query.order_by(News.created_time.desc()).all()
     return render_template('news.html', 
         current_user=current_user,
         all_news=all_news
