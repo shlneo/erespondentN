@@ -1305,7 +1305,9 @@ def generate_excel_report(version_id):
         }
 
         font = Font(name='Times New Roman', size=12)
-        alignment = Alignment(wrap_text=True, vertical='center', horizontal='center')
+        alignment_header = Alignment(wrap_text=True, vertical='center', horizontal='center')
+        alignment_data_left = Alignment(wrap_text=True, vertical='center', horizontal='left')
+        alignment_data_center = Alignment(wrap_text=True, vertical='center', horizontal='center')
         border = Border(
             left=Side(border_style="thin"),
             right=Side(border_style="thin"),
@@ -1317,7 +1319,7 @@ def generate_excel_report(version_id):
             top_left_cell = cell_range.split(':')[0]
             ws[top_left_cell] = text
             ws[top_left_cell].font = font
-            ws[top_left_cell].alignment = alignment
+            ws[top_left_cell].alignment = alignment_header
             ws[top_left_cell].border = border
 
         for cell_range in merged_cells.keys():
@@ -1353,7 +1355,10 @@ def generate_excel_report(version_id):
 
         row_index = 7 
         for section in sections:
-            ws[f'B{row_index}'] = section.product.NameProduct
+            note_text = f' - ({section.note})' if section.note else ''
+            product_name = f"{section.product.NameProduct} {note_text}"
+            
+            ws[f'B{row_index}'] = product_name
             ws[f'C{row_index}'] = section.code_product
             ws[f'D{row_index}'] = section.Oked
             ws[f'E{row_index}'] = section.product.unit.NameUnit
@@ -1363,9 +1368,18 @@ def generate_excel_report(version_id):
             ws[f'I{row_index}'] = section.Consumed_Total_Quota
             ws[f'J{row_index}'] = section.Consumed_Total_Fact
 
+            # Настраиваем перенос текста и выравнивание для всех ячеек в строке
             for col in column_widths.keys():
                 cell = ws[f'{col}{row_index}']
                 cell.border = border
+                cell.font = font
+                
+                # Для колонки B (наименование продукции) - выравнивание по левому краю
+                if col == 'B':
+                    cell.alignment = alignment_data_left
+                # Для остальных колонок - выравнивание по центру
+                else:
+                    cell.alignment = alignment_data_center
 
             row_index += 1
 
@@ -1373,12 +1387,13 @@ def generate_excel_report(version_id):
     add_sheet(wb.create_sheet(), sections1, "Раздел 1", 'кг у.т.', 'т у.т.', 1, "ТОПЛИВО")         
     add_sheet(wb.create_sheet(), sections2, "Раздел 2", 'Мкал', 'Гкал', 2, "ТЕПЛОВАЯ ЭНЕРГИЯ")             
     add_sheet(wb.create_sheet(), sections3, "Раздел 3", 'кВтч', 'тыс.кВтч', 3, "ЭЛЕКТРИЧЕСКАЯ ЭНЕРГИЯ")  
-    
+
     output = BytesIO()
     wb.save(output)
     output.seek(0)
 
     return send_file(output, as_attachment=True, download_name=f'{current_report.okpo}_{current_report.year}_{current_report.quarter}.xlsx', mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
 
 @auth.route('/export-table', methods=['POST'])
 @login_required 
