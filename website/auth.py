@@ -1806,20 +1806,29 @@ def sent_for_admin():
     return redirect(url_for('views.beginPage'))
 
 def get_organizations_with_reports_excel_xlsx(year: int, quarter: int, statuses: list) -> bytes:
-    records = db.session.query(
-        Organization.okpo,
-        Organization.full_name,
-        Version_report.sent_time
-    ).join(Organization.reports) \
-     .join(Report.versions) \
-     .filter(
-         Report.year == year,
-         Report.quarter == quarter,
-         Version_report.status.in_(statuses)
-     ).distinct().all()
+    status_filter = 'all_reports' if not statuses else statuses[0] if len(statuses) == 1 else 'all_reports'
     
-    if not records:
+    from .views import get_reports_by_status
+    reports = get_reports_by_status(status_filter, year, quarter)
+    
+    if not reports:
         return None
+
+    organizations_data = set()
+    for report in reports:
+        valid_versions = [v for v in report.versions if not statuses or v.status in statuses]
+        if valid_versions:
+            latest_version = max(valid_versions, key=lambda x: x.sent_time or datetime.min)
+            organizations_data.add((
+                report.organization.okpo,
+                report.organization.full_name,
+                latest_version.sent_time
+            ))
+
+    if not organizations_data:
+        return None
+
+    records = sorted(organizations_data, key=lambda x: x[0] or "")
 
     wb = Workbook()
     ws = wb.active
@@ -1887,6 +1896,7 @@ def get_organizations_with_reports_excel_xlsx(year: int, quarter: int, statuses:
     output.seek(0)
     return output.read()
 
+
 @auth.route('/load_org_stat', methods=['POST'])
 @login_required 
 @session_required
@@ -1903,7 +1913,6 @@ def load_org_stat():
         return redirect(request.referrer)
 
     allowed_statuses = ["Отправлен", "Одобрен", "Есть замечания", "Готов к удалению"]
-
     file_data = get_organizations_with_reports_excel_xlsx(
         int(year_filter), int(quarter_filter), allowed_statuses
     )
