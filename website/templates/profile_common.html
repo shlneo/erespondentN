@@ -24,11 +24,11 @@
                 <form action="/add-personal-parametrs" method="POST">
                     <table>
                         <tr>
-                            <td><span title = "Уровень доступа к функциям">Тип пользователя &#42;</span></div></td>
+                            <td><span title = "Уровень доступа к функциям">Тип пользователя</span></div></td>
                             <td><input type="text" value="{{current_user.type}}" readonly></td>
                         </tr>
                         <tr>
-                            <td>Фамилия</td>
+                            <td>Фамилия &#42;</td>
                             <td>                    
                                 <div class="clear-input_container">
                                     <input type="text" name="second_name_common" placeholder="Введите фамилию" 
@@ -41,7 +41,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Имя</td>
+                            <td>Имя &#42;</td>
                             <td>                    
                                 <div class="clear-input_container">
                                     <input type="text" name="name_common" placeholder="Введите имя" 
@@ -54,7 +54,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><span title = "Не обязательно для заполнения">Отчество &#42;</span></td>
+                            <td><span title = "Не обязательно для заполнения">Отчество</span></td>
                             <td>                    
                                 <div class="clear-input_container">
                                     <input type="text" name="patronymic_common" placeholder="Введите отчество (не обязательно)" 
@@ -86,7 +86,7 @@
                         </tr>
                         {%if current_user.type != 'Аудитор'%}
                             <tr>
-                                <td><span title = "Общестатистический код предприятий и организаций">ОКПО &#42;</span></td>
+                                <td><span title = "Общестатистический код предприятий и организаций">ОКПО</span></td>
                                 <td>    
                                     <input 
                                     type="text" 
@@ -95,29 +95,26 @@
                                     value="{{current_user.organization.okpo if current_user.organization.okpo else ''}}" readonly>
                                 </td>
                             </tr>
-                            
                             <tr>
-                                <td><span title = "Учетный номер плательщика (может быть пусто)">УНП &#42;</span></td>
+                                <td><span title = "Учетный номер плательщика (может быть пусто)">УНП</span></td>
                                 <td>    
                                     <input 
                                     type="text" 
                                     name = "ynp_common" 
                                     placeholder="Унп предприятия (может быть пусто)" 
-                                    value="{{current_user.organization.ynp if current_user.organization.ynp else '-'}}" readonly>
+                                    value="{{current_user.organization.ynp if current_user.organization.ynp else 'Нет данных'}}" readonly>
                                 </td>
                             </tr>
-                 
                             <tr>
-                                <td><span title = "Республиканский орган государственного управления">Министерство &#42;</span></td>
+                                <td><span title = "Республиканский орган государственного управления">Министерство</span></td>
                                 <td>    
                                     <input 
                                         type="text" 
                                         name = "ministry_common"  
                                         placeholder="Министерство предприятия" 
-                                        value="{{current_user.organization.ministry if current_user.organization.ministry else '-'}}" readonly>
+                                        value="{{current_user.organization.ministry if current_user.organization.ministry else 'Вышестоящая организация'}}" readonly>
                                 </td>
-                            </tr>
-                            
+                            </tr>    
                         {%else%}
                         {%endif%}
                     </table>
@@ -129,7 +126,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Номер телефона</td>
+                            <td>Номер телефона &#42;</td>
                             <td>
                                 <div class="clear-input_container">
                                     <input 
@@ -146,6 +143,7 @@
                             </td>
                         </tr>
                     </table>
+                    <div class = "title-ab-func" style = "max-width: 100%;">Наименование &#42; — обязательные поля для заполнения/выбора.</div>
                     <button class = "blue_button" type="submit">
                         Сохранить изменения
                     </button>
@@ -161,7 +159,7 @@
             <a class="close">&times;</a>
         </div>
         <div class="modal-middle-text">
-            <a>Введите <strong>наименование</strong> или <strong>ОКПО</strong> вашей организации.</a>
+            <span>Введите наименование или ОКПО вашей организации. <strong>В случае отсутствия обратитесь в</strong> <a href="/contacts" class="instruction-link"> техподдержку</a>.</span>
         </div>
         <div class="search-cont">
             <label for="search_organization">Поиск</label>
