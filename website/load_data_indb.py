@@ -29,7 +29,7 @@ def add_data_in_db(db):
         MinskRegion_org_data_path = os.path.join(website_path, 'static/files/organizations', 'Минск_область.dbf')
         Migilev_org_data_path = os.path.join(website_path, 'static/files/organizations', 'Могилев.dbf')
 
-        columns_org = ['OKPO', 'NAME1', 'NAME2', 'NAME3', 'NAME4', 'NAME5', 'NAME6', 'MIN', 'UNP']
+        columns_org = ['OKPO', 'NAME', 'MIN', 'UNP']
 
         Brest_org_data = read_dbf(Brest_org_data_path, columns_org)
         Vitebsk_org_data = read_dbf(Vitebsk_org_data_path, columns_org)
@@ -54,21 +54,25 @@ def add_data_in_db(db):
         MinskRegion_min_data = read_dbf(MinskRegion_min_data_path, columns_min)
 
         min_all_data = pd.DataFrame(MinskRegion_min_data, columns=columns_min)
+
         merged_data = city_all_data.merge(min_all_data, on='MIN', how='left')
+        
+        merged_data['MIN'] = merged_data['NAME_y']
 
-        merged_data['MIN'] = merged_data['NAME']
-        merged_data = merged_data.drop(columns=['NAME'])
+        merged_data = merged_data.drop(columns=['NAME_y'])
 
+        merged_data = merged_data.rename(columns={'NAME_x': 'NAME'})
 
         for _, row in merged_data.iterrows():
             organization = Organization(
                 okpo=row['OKPO'],
-                full_name=' '.join(filter(None, [row['NAME1'], row['NAME2'], row['NAME3'], row['NAME4'], row['NAME5'], row['NAME6']])),
+                full_name=row['NAME'],
                 ministry=row['MIN'],
                 ynp=row['UNP'] 
             )
             db.session.add(organization)
-            db.session.commit()
+        
+        db.session.commit()
 
         dop_org_data = [
             ('Брестское областное управление', 1000),
@@ -112,7 +116,7 @@ def add_data_in_db(db):
                     organization_id=org_dict.get(user_data[5]) if user_data[5] else None
                 )
                 db.session.add(user)
-                db.session.commit()
+            db.session.commit()
 
         if DirUnit.query.count() == 0:   
             units_data = [
@@ -559,5 +563,5 @@ def add_data_in_db(db):
                             text=i[1], 
                             img_name=i[2]) 
                 db.session.add(news)   
-                db.session.commit()
+            db.session.commit()
             print('The filling is finished!')

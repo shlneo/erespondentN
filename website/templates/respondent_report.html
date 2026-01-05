@@ -76,7 +76,7 @@
                             </div>  
                             <a class="functions_menu_name">Версия отчета</a>
                         </section>
-                        <section >
+                        <section>
                             <div class = "functions_menu">                         
                                 <li onclick="sortTable()"  title = 'Сортировка по [Б]'>           
                                     <img src="{{ url_for('static', filename='img/icon_sort.png')}}" alt="">
@@ -268,55 +268,49 @@
             </tbody>
         </table>  
     </div>
-    <div class = "report_infoUnder"> 
-        <table>
-            <tr>
-                <td>Наименование предприятия</td>
-                <td>
-                    <input 
-                   
-                        type="text"
-                        value = "{{current_report.organization.full_name}}"
-                        title = "{{current_report.organization.full_name}}"
-                        readonly
-                    >
-                </td>
-            </tr>
-            <tr>
-                <td>ОКПО</td>
-                <td>
-                    <input 
-                        type="text" 
-                        value = "{{current_report.okpo}}"
-                        title = "{{current_report.okpo}}"
-                        readonly
-                    >
-                </td>
-            </tr>
-            <tr>
-                <td>Год</td>
-                <td>
-                    <input 
-                        type="text" 
-                        value = "{{current_report.year}}"
-                        title = "{{current_report.year}}"
-                        readonly
-                    >
-                </td>
-            </tr>
-            <tr>
-                <td>Квартал</td>
-                <td>
-                    <input 
-                        type="text" 
-                        value = "{{current_report.quarter}}"
-                        title = "{{current_report.quarter}}"
-                        readonly
-                    >
-                </td>
-            </tr>
-        </table>
-    </div>
+    <section class="report-header">
+        <div class="report-details">
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">Предприятие</div>
+                    <div class="detail-value">{{current_report.organization.full_name}}</div>
+                </div>
+            </div>
+            
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">ОКПО</div>
+                    <div class="detail-value">{{current_report.okpo}}</div>
+                </div>
+            </div>
+            
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">Год</div>
+                    <div class="detail-value">{{current_report.year}}</div>
+                </div>
+            </div>
+            
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">Квартал</div>
+                    <div class="detail-value">{{current_report.quarter}}</div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 
 <div id="addSection_modal" class="modal">
@@ -331,7 +325,7 @@
         <form method="POST" action="/add-section-param">
             <div class="choose-product_area">
                 <div class = "serchProduct_cont">
-                    <a>Фильтр</a>
+                    <a>Поиск</a>
                     <input type="text" name = "search_product" >
                 </div>
                 <table class="table_report-area">
@@ -469,9 +463,11 @@
                 </tr>
             </table>
             <div style = "display: flex; justify-content: right; width: 100%;">     
-                <button type = "submit" class = "blue_button report-submit">Добавить</button>    
+                <button type="submit" class="blue_button report-submit">
+                    <img src="/static/img/Add.svg" alt="" class="button-icon">
+                    <span>Добавить</span>
+                </button>
             </div>    
-    
         </form>   
     </div>
 </div>
@@ -603,9 +599,13 @@
                 </tr>
             </table>
             <div style = "display: flex; justify-content: right; width: 100%;">     
-                <button type="submit" class="blue_button report-submit">Изменить</button>    
+                <button type="submit" class="blue_button report-submit">
+                    <img src="/static/img/Edit.svg" alt="" class="button-icon">
+                    <span>Изменить</span>
+                </button>    
             </div>    
     
+                            
         </form> 
     </div>
 </div>

@@ -45,8 +45,8 @@
                             <td>                    
                                 <div class="clear-input_container">
                                     <input type="text" name="name_common" placeholder="Введите имя" 
-       value="{{current_user.fio.split()[1] if current_user.fio else ''}}" 
-       required id="name_input" maxlength="50">
+                                value="{{current_user.fio.split()[1] if current_user.fio else ''}}" 
+                                required id="name_input" maxlength="50">
                                     <span class="clear-btn">
                                          &times;
                                     </span>
@@ -58,8 +58,8 @@
                             <td>                    
                                 <div class="clear-input_container">
                                     <input type="text" name="patronymic_common" placeholder="Введите отчество (не обязательно)" 
-       value="{{current_user.fio.split()[2] if current_user.fio else ''}}" 
-       id="patronymic_input" maxlength="50">
+                                value="{{current_user.fio.split()[2] if current_user.fio else ''}}" 
+                                id="patronymic_input" maxlength="50">
                                     <span class="clear-btn">
                                         &times;
                                     </span>
@@ -79,7 +79,7 @@
                                     placeholder="Наименование предприятия"  name = "full_name_common" value="{{ current_user.organization.full_name if current_user.organization else '' }}" readonly>
                                     {%if count_reports == 0 and current_user.type != 'Аудитор'%}
                                         <a class="show_organiz" id = "link_chooseOrgModal"> 
-                                            <img class="left_menu_img" src="{{ url_for('static', filename='img/icon_blue_touch.png')}}" alt="">
+                                            <img class="left_menu_img" src="{{ url_for('static', filename='img/Search.svg')}}" alt="">
                                         </a>
                                     {%else%} {%endif%}
                             </td>
@@ -120,7 +120,7 @@
                     </table>
                     <table>
                         <tr>
-                            <td>E-mail</td>
+                            <td>E-mail &#42;</td>
                             <td>                        
                                 <input type="text" value="{{current_user.email}}" readonly>
                             </td>
@@ -145,7 +145,8 @@
                     </table>
                     <div class = "title-ab-func" style = "max-width: 100%;">Наименование &#42; — обязательные поля для заполнения/выбора.</div>
                     <button class = "blue_button" type="submit">
-                        Сохранить изменения
+                        <img src="/static/img/Add.svg" alt="" class="button-icon">
+                        <span>Применить изменения</span>
                     </button>
                 </form>
         </div>

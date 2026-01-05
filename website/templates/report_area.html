@@ -333,7 +333,11 @@
                 <tr>
                     <td></td>
                     <td style = "display: flex; justify-content: end; padding-top: 30px;">
-                        <button type="submit" class="blue_button report-submit" >Создать</button>
+                        
+                        <button type="submit" class="blue_button report-submit" >
+                            <img src="/static/img/Add.svg" alt="" class="button-icon">
+                            <span>Создать</span>
+                        </button>
                     </td>
                 </tr>
             </table>
@@ -413,7 +417,12 @@
                 <tr>
                     <td></td>
                     <td style = "display: flex; justify-content: end; padding-top: 30px;">
-                        <button type="submit" class="blue_button report-submit">Скопировать</button>
+                        <button type="submit" class="blue_button report-submit">
+                            
+                            <img src="/static/img/Copy.svg" alt="" class="button-icon">
+                            <span>Скопировать</span>
+                        
+                        </button>
                     </td>
                 </tr>
             </table>
@@ -491,7 +500,10 @@
                 <tr>
                     <td></td>
                     <td style = "display: flex; justify-content: end; padding-top: 30px;">
-                        <button type="submit" class="blue_button report-submit">Отредактировать</button >
+                        <button type="submit" class="blue_button report-submit" >
+                            <img src="/static/img/Edit.svg" alt="" style = "" class="button-icon">
+                            <span>Отредактировать</span>
+                        </button>
                     </td>
                 </tr>
             </table>
@@ -514,7 +526,10 @@
                 <input type="file" id="certificate_to_check" name="certificate" accept=".cer,.pem,.der" hidden>
             </div>
             <div style = "display: flex; justify-content: center; width: 100%;">     
-                <button type="submit" id = "submit_sent_button" class="blue_button report-submit">Отправить</button>
+                <button type="submit" id = "submit_sent_button" class="blue_button report-submit"> 
+                    <img src="/static/img/Send.svg" alt="" class="button-icon">
+                    <span>Отправить</span>
+                </button>
             </div>    
         </form>           
     </div>
@@ -522,13 +537,16 @@
 
 <div id="contextMenu_report" class="white-panel">
     <button id = "link_change_report">
+        <img src="/static/img/Edit.svg" alt="" class="button-icon-bl">
         <span>Редактировать</span>
     </button>
     <button id = "link_coppy_report">
+        <img src="/static/img/Copy.svg" alt="" class="button-icon-bl">
         <span>Скопировать</span>
     </button>
     <form id="deleteReport" method="POST" action="/delete-report/">
         <button type="submit" id="del_reportButton">
+            <img src="/static/img/Delete-black.svg" alt="" class="button-icon-bl">
             <span>Удалить</span>
         </button>
     </form>
@@ -536,9 +554,11 @@
 
 <div id="contextMenu_version" class="white-panel">
     <button data-action="checkVersionButton">
+        <img src="/static/img/Edit.svg" alt="" class="button-icon-bl">
         <span>Изменить</span>
     </button>
     <button disabled = 'True'>
+        <img src="/static/img/Delete-black.svg" alt="" class="button-icon-bl">
         <span>Удалить</span>
     </button> 
 </div>
