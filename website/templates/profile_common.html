@@ -21,6 +21,11 @@
             {{ super() }}
         {% endblock %}
         <div class="personal-info_area">
+            
+        <div class="answer-highlight-second" >
+            <div class="highlight-icon">💡</div>
+            <p>После <strong>создания</strong> первого отчета редактирование персональных и организационных данных становится <strong>недоступным</strong>.</p>
+        </div>
                 <form action="/add-personal-parametrs" method="POST">
                     <table>
                         <tr>
@@ -161,7 +166,8 @@
         </div>
         <div class="answer-highlight-second">
             <div class="highlight-icon">💡</div>
-            <p>Введите <strong>наименование</strong> или <strong>ОКПО</strong> вашей организации. В случае <strong>отсутствия</strong> обратитесь в <a href="/contacts" class="instruction-link"> техподдержку</a>.</p>
+            <p>Введите <strong>наименование</strong> или <strong>ОКПО</strong> вашей организации. В случае <strong>отсутствия</strong> заполните
+                <a href="/#toadmin" class="instruction-link">форму</a>, в течении 5-10 минут администратор просмотрит ваше сообщение.</p>
         </div>
 
         <div class="search-cont">

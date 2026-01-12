@@ -164,6 +164,52 @@ def account():
                            current_user=current_user, 
                            messages=messages)
 
+@views.route('/delete_message/<int:message_id>', methods=['DELETE'])
+@login_required
+def delete_message(message_id):
+    """Удаление сообщения текущего пользователя"""
+    try:
+        message = Message.query.filter_by(
+            id=message_id, 
+            recipient_id=current_user.id
+        ).first()
+        
+        if not message:
+            return jsonify({
+                'success': False, 
+                'error': 'Сообщение не найдено или у вас нет прав на его удаление'
+            }), 404
+        
+        db.session.delete(message)
+        db.session.commit()
+        
+        remaining_messages = Message.query.filter_by(
+            recipient_id=current_user.id
+        ).order_by(Message.id.desc()).all()
+        
+        return jsonify({
+            'success': True, 
+            'message': 'Сообщение удалено',
+            'remaining_count': len(remaining_messages)
+        })
+            
+    except Exception as e:
+        db.session.rollback()
+        print(f"Ошибка при удалении сообщения: {str(e)}")
+        return jsonify({'success': False, 'error': 'Внутренняя ошибка сервера'}), 500
+
+
+@views.route('/get_messages_count')
+@login_required
+def get_messages_count():
+    """Получить количество сообщений пользователя"""
+    count = Message.query.filter_by(recipient_id=current_user.id).count()
+    return jsonify({'count': count})
+
+
+
+
+
 @views.route('/profile/common', methods=['GET'])
 @login_required
 @session_required

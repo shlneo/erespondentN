@@ -94,6 +94,16 @@
         <div class="askquestion_form">
             <div class="news_name">Задайте свой вопрос</div>
             <form action="/sent_for_admin" method="POST">
+                
+                <div class="answer-highlight-second">
+                    <div class="highlight-icon">💡</div>
+                    <p>Для добавления <strong>организации</strong> указывайте:</p>
+                    <ol>
+                        <li>Полное наименование организации;</li>
+                        <li>ОКПО (Основной государственный регистрационный номер).</li>
+                    </ol>
+                   
+                </div>
                 <input type="text" name="fio" value = "{{current_user.fio}}" readonly>
                 <textarea type="text" name="text" placeholder="Опишите проблему" maxlength="399" value = "" required></textarea>
                 <input type="text" name="email" value = "{{current_user.email}}" readonly>

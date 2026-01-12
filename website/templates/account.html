@@ -64,19 +64,34 @@
                 <img src="{{ url_for('static', filename='img/icon_messages.png')}}"  alt="">
                 <span>Уведомления</span>
             </div>
-            <div class = "message_cont">
+            <div class="message_cont" id="messagesContainer">
                 {% if messages %}
                     {% for row in messages %}
-                    <div class = "mes">
-                        <div class = "time_mes">{{ row.create_time.strftime('%Y-%m-%d %H:%M') }} {%if row.sender_id == None%} {%else%} - {{row.sender.email}} {%endif%}</div>
-                        <div class = "text_mes">{{row.text}}</div>
+                    <div class="mes" id="message-{{ row.id }}">
+                        <div class="message_header">
+                            <div class="time_mes">
+                                {{ row.create_time.strftime('%d.%m.%Y %H:%M') }}
+                                {% if row.sender_id != None %} 
+                                - <span class="sender">{{ row.sender.email }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="message_actions">
+                                <button class="delete_btn" 
+                                        onclick="deleteMessage({{ row.id }})"
+                                        title="Удалить сообщение"
+                                        data-message-id="{{ row.id }}">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text_mes">{{ row.text }}</div>
                     </div>
-                    {%endfor%}
-                {%else%} 
-                <div class = "mes">
-                    <a class = "text_mes">Нет уведомлений</a>
+                    {% endfor %}
+                {% else %}
+                <div class="mes empty">
+                    <div class="text_mes">Нет уведомлений</div>
                 </div>
-                {%endif%} 
+                {% endif %}
             </div>
         </div>
     </div>
@@ -124,5 +139,189 @@
         </form>
     </div>
 </div>
+<script>
+function deleteMessage(messageId) {
+    const messageElement = document.getElementById(`message-${messageId}`);
+    const deleteBtn = messageElement.querySelector('.delete_btn');
+    
+    const originalText = deleteBtn.innerHTML;
+    
+    deleteBtn.disabled = true;
+    deleteBtn.innerHTML = 'Отмена (5)';
+    deleteBtn.style.opacity = '0.7';
+    deleteBtn.style.cursor = 'default';
+    
+    let secondsLeft = 5;
+    const countdown = setInterval(() => {
+        secondsLeft--;
+        deleteBtn.innerHTML = `Отмена (${secondsLeft})`;
+        
+        if (secondsLeft <= 0) {
+            clearInterval(countdown);
+            executeDeletion(messageId, messageElement, deleteBtn, originalText);
+        }
+    }, 1000);
+    
+    const cancelDeletion = () => {
+        clearInterval(countdown);
+        resetDeleteButton(deleteBtn, originalText);
+        showNotification('Удаление отменено', 'info');
+        deleteBtn.removeEventListener('click', cancelDeletion);
+    };
+    
+    deleteBtn.addEventListener('click', cancelDeletion);
+    
+    setTimeout(() => {
+        clearInterval(countdown);
+        if (!deleteBtn.disabled) {
+            executeDeletion(messageId, messageElement, deleteBtn, originalText);
+        }
+    }, 5000);
+}
 
+function executeDeletion(messageId, messageElement, deleteBtn, originalText) {
+    deleteBtn.removeEventListener('click', deleteBtn.__cancelHandler);
+    
+    deleteBtn.innerHTML = '⌛';
+    
+    fetch(`/delete_message/${messageId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            messageElement.style.transition = 'all 0.3s ease';
+            messageElement.style.height = messageElement.offsetHeight + 'px';
+            
+            setTimeout(() => {
+                messageElement.style.height = '0';
+                messageElement.style.padding = '0';
+                messageElement.style.margin = '0';
+                messageElement.style.opacity = '0';
+                messageElement.style.border = 'none';
+                messageElement.style.overflow = 'hidden';
+                
+                setTimeout(() => {
+                    messageElement.remove();
+                    
+                    checkEmptyState();
+                    updateMessageCount(data.remaining_count);
+                }, 300);
+            }, 50);
+        } else {
+            showNotification(data.error || 'Ошибка при удалении', 'error');
+            resetDeleteButton(deleteBtn, originalText);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Ошибка соединения с сервером', 'error');
+        resetDeleteButton(deleteBtn, originalText);
+    });
+}
+
+function checkEmptyState() {
+    const container = document.getElementById('messagesContainer');
+    const messages = container.querySelectorAll('.mes:not(.empty)');
+    
+    if (messages.length === 0) {
+        if (!container.querySelector('.mes.empty')) {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'mes empty';
+            emptyDiv.innerHTML = `
+                <div class="text_mes">Нет уведомлений</div>
+            `;
+            container.appendChild(emptyDiv);
+        }
+    } else {
+        const emptyState = container.querySelector('.mes.empty');
+        if (emptyState) {
+            emptyState.remove();
+        }
+    }
+}
+
+function updateMessageCount(count) {
+    const countElement = document.getElementById('messageCount');
+    if (countElement) {
+        countElement.textContent = count;
+    }
+}
+
+function resetDeleteButton(button, originalText) {
+    button.disabled = false;
+    button.innerHTML = originalText;
+    button.style.opacity = '0.7';
+    button.style.cursor = 'pointer';
+}
+
+function showNotification(text, type) {
+    const notification = document.createElement('div');
+    notification.textContent = text;
+    
+    let backgroundColor;
+    switch(type) {
+        case 'success':
+            backgroundColor = '#48bb78';
+            break;
+        case 'error':
+            backgroundColor = '#f56565';
+            break;
+        case 'info':
+            backgroundColor = '#4299e1';
+            break;
+        default:
+            backgroundColor = '#4299e1';
+    }
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        background: ${backgroundColor};
+        color: white;
+        border-radius: 6px;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { 
+            transform: translateX(100%); 
+            opacity: 0; 
+        }
+        to { 
+            transform: translateX(0); 
+            opacity: 1; 
+        }
+    }
+    @keyframes slideOut {
+        from { 
+            transform: translateX(0); 
+            opacity: 1; 
+        }
+        to { 
+            transform: translateX(100%); 
+            opacity: 0; 
+        }
+    }
+`;
+document.head.appendChild(style);
+</script>
 {% endblock %}
