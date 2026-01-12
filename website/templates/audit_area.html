@@ -103,21 +103,6 @@
                                 </a>
                             </section>
                             <section>
-                                <div class="filter_area">
-                                    <div class="filter_type">                                
-                                        
-                                        <input type="text" id="okpo-filter" placeholder="ОКПО" value="">
-                                    </div>
-                                    <div class="filter_type">     
-                                        
-                                        <input type="text" id="organization-filter" placeholder="Предприятие" value=""> 
-                                    </div>       
-                                </div>
-                                <a class="functions_menu_name"> 
-                                    Фильтр
-                                </a>
-                            </section>
-                            <section>
                                 <form id = "douwnload_DBF_form" action="/exportDBF" method="POST" style = "display: none;">
                                     <input type = "hidden" name = "year_filter" value = "{% if year_filter == '' and quarter_filter == '' %}{%else%}{{year_filter}}{%endif%}">         
                                     <input type = "hidden" name = "quarter_filter" value = "{% if year_filter == '' and quarter_filter == '' %}{%else%}{{quarter_filter}}{%endif%}">
@@ -142,6 +127,29 @@
             </div>
         </div>
     </div>
+    <div class="filters-area">
+        <div class="search-input-wrapper">
+            <div class="input-with-icon">
+                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" id="organization-filter"
+                    placeholder="{{ _('Введите наименование') }}" 
+                    class="app-input search-input" id="search-name">
+            </div>
+        </div>
+        <div class="search-input-wrapper">
+            <div class="input-with-icon">
+                <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" id="okpo-filter"
+                    placeholder="{{ _('Введите ОКПО') }}" 
+                    class="app-input search-input" id="search-okpo">
+            </div>
+        </div>
+    </div>
+
     {%if current_user.type != 'Администратор'%}
     <div class = "rotation-fromareas">
         <div class = "rotation-fromareas_info"  style = "margin: 10px 30px;"> 
@@ -248,8 +256,9 @@
             <h3 class = "change-position">Проверка отчетов</h3>
             <a class="close">&times;</a>
         </div>
-        <div class="modal-middle-text">
-            <a>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>. При желании просмотреть отчеты за все время - выберите <strong>"Все периоды"</strong>.</a>
+        <div class="answer-highlight-second" style = "max-width: 510px;">
+            <div class="highlight-icon">💡</div>
+            <p>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>. Для просмотра отчетов за все время - выберите <strong>"Все периоды"</strong>.</p>
         </div>
         <table class="modal_table">      
             <tr>
@@ -301,26 +310,24 @@
             <h3 class = "change-position">Скачивание отчетов</h3>
             <a class="close">&times;</a>
         </div>
-  
-        <div class="modal-middle-text">
-            <div>
-                Выберите <strong>формат</strong> для экспорта. Отчёты будут сохранены в <strong>архив</strong> с выбранным расширением.  
-                Подробнее — в <a href="/FAQ/14" class="instruction-link">инструкции</a>.  
-            </div>
+        <div class="answer-highlight-second" style = "max-width: 510px;">
+            <div class="highlight-icon">💡</div>
+            <p>Выберите <strong>формат</strong> для экспорта. Отчёты будут сохранены в <strong>архив</strong> с выбранным расширением.  
+                Подробнее — в <a href="/FAQ/14" class="instruction-link">инструкции.</p>
         </div>
-        <div class="model_but_area" >
+        
+        <div class="model_but_area">
             <button 
                 type="button"
                 class="dbf_button"
                 id = "douwnload_DBF_link">
-                .dbf
+                <span>.dbf</span>
             </button>
             <button 
                 type="button"
                 class="xml_button "
                 id = "douwnload_XML_link">
-                
-                .xml
+                <span>.xml</span>
             </button>
 
         </div>

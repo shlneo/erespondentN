@@ -99,7 +99,7 @@
                 <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
             </span>
             <span>
-                 <a style = "font-weight: 600;">СТАТУС - </a>
+                 <a style = "font-weight: 600;">Статус - </a>
                 <a class = "rotation-fromareas-status">{{current_version.status}}</a>
             </span>
         </div>
@@ -319,8 +319,9 @@
             <h3 class = "change-position">Добавить продукцию</h3>
             <a class="close">&times;</a>
         </div>
-        <div class="modal-middle-text" style = "max-width: 100%;">
-            <div>Выберите необходимую продукцию и заполните активные парамметры. Если у вас возникнут вопросы, пожалуйста, ознакомьтесь с <a href="/FAQ/8" class="instruction-link">инструкцией</a> по работе.</div>
+        <div class="answer-highlight-second">
+            <div class="highlight-icon">💡</div>
+            <p><strong>Выберите</strong> необходимую продукцию и заполните <strong>активные</strong> парамметры. Если у вас возникнут вопросы, пожалуйста, ознакомьтесь с <a href="/FAQ/8" class="instruction-link">инструкцией</a> по работе.</p>
         </div>
         <form method="POST" action="/add-section-param">
             <div class="choose-product_area">
@@ -478,8 +479,9 @@
             <h3 class = "change-position">Редактирование продукции</h3>
             <a class="close">&times;</a>
         </div>
-        <div class="modal-middle-text" style = "max-width: 100%;">
-            <div>Отредактируйте активные параметры. Если у вас возникнут вопросы, пожалуйста, ознакомьтесь с <a href="/FAQ/8" class="instruction-link">инструкцией</a> по работе.</div>
+        <div class="answer-highlight-second">
+            <div class="highlight-icon">💡</div>
+            <p><strong>Отредактируйте активные</strong> параметры. Если у вас возникнут вопросы, пожалуйста, ознакомьтесь с <a href="/FAQ/8" class="instruction-link">инструкцией</a> по работе.</p>
         </div>
         <form method="POST" action="/change-section">
             <table class="modal_table">
@@ -716,11 +718,13 @@
 
 <div id="contextMenu_report" class="white-panel">
     <button id="link_changefuel_modal" class="{% if current_version.status in ['Отправлен', 'Одобрен'] %}disabled{% endif %}">
+        <img src="/static/img/Edit.svg" alt="" class="button-icon-bl">
         <span>Редактировать</span>
     </button>
 
     <form id="remove_section_form" method="POST" action="/remove_section/">
         <button type="submit" id="remove_section" class="{% if current_version.status in ['Отправлен', 'Одобрен'] %}disabled{% endif %}">
+            <img src="/static/img/Delete-black.svg" alt="" class="button-icon-bl">
             <span>Удалить</span>
         </button>
     </form>

@@ -271,16 +271,15 @@
     </div>
 </div>
 
-
-
 <div id="add_report_modal" class="modal">
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Создание отчета</h3>
             <a class="close" id = "close_add_report_modal">&times;</a>
         </div>
-        <div class="modal-middle-text">
-            <a>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>.</a>
+        <div class="answer-highlight-second">
+            <div class="highlight-icon">💡</div>
+            <p>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>.</p>
         </div>
         <form method="POST" action="/create-new-report">
             <table class="modal_table">      
@@ -344,14 +343,16 @@
         </form> 
     </div>
 </div>
+
 <div id="coppy_report_modal" class="modal">
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Копирование отчета</h3>
             <a class="close">&times;</a>
         </div>
-        <div class="modal-middle-text">
-            <a>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>, отличающийся от копируемого отчета.</a>
+        <div class="answer-highlight-second">
+            <div class="highlight-icon">💡</div>
+            <p>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>, отличающийся от копируемого отчета.</p>
         </div>
         <form method="POST" action="/сopy-report">
             <table class="modal_table">      
@@ -429,14 +430,17 @@
         </form> 
     </div>
 </div>
+
 <div id="change_report_modal" class="modal">
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Редактирование отчета</h3>
             <a class="close" id = "close_change_report_modal">&times;</a>
         </div>
-        <div class="modal-middle-text">
-            <a>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>.</a>
+       
+        <div class="answer-highlight-second">
+            <div class="highlight-icon">💡</div>
+            <p>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>.</p>
         </div>
         <form method="POST" action="/update-report">
             <table class="modal_table">      
@@ -517,13 +521,21 @@
             <h3 class="change-position">Отправка отчета</h3>
             <a class="close">&times;</a>
         </div>
-        <div class="modal-middle-text">
-            <div>Перетащите <strong>файл сертификата ЭЦП</strong> для отправки отчета. Если у вас возникнут вопросы, пожалуйста, ознакомьтесь с <a href="/FAQ/11" class="instruction-link">инструкцией</a> по работе.</div>
+
+        <div class="answer-highlight-second" style = "max-width: 550px;">
+            <div class="highlight-icon">💡</div>
+            <p>Перетащите <strong>файл сертификата ЭЦП</strong> для отправки отчета. Если у вас возникнут вопросы, пожалуйста, ознакомьтесь с <a href="/FAQ/11" class="instruction-link">инструкцией</a> по работе.</p>
         </div>
         <form id="sentForm" style = "text-align: center;" action="/sent-version/iddddd" method="POST" enctype="multipart/form-data">
-            <div id="drop-area" class="drop-area">
-                <p>Перетащите файл сюда или <label for="certificate">нажмите</label></p>
-                <input type="file" id="certificate_to_check" name="certificate" accept=".cer,.pem,.der" hidden>
+            <div id="drop-area" class="drop-area" role="button" tabindex="0" aria-labelledby="file-upload-label">
+                <p id="file-upload-label">
+                    {{ _('Перетащите файл сертификата сюда или') }} 
+                </p> 
+                <p class="file-input-label">
+                    {{ _('нажмите для выбора') }} 
+                </p>
+                <input type="file" id="certificate_to_check" name="certificate" accept=".cer,.pem,.der" hidden 
+                    aria-describedby="file-format-hint">
             </div>
             <div style = "display: flex; justify-content: center; width: 100%;">     
                 <button type="submit" id = "submit_sent_button" class="blue_button report-submit"> 

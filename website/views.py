@@ -229,7 +229,9 @@ def get_organizations():
             for org in pagination.items
         ],
         "page": pagination.page,
-        "has_next": pagination.has_next
+        "has_next": pagination.has_next,
+        "total_pages": pagination.pages,  
+        "total_items": pagination.total 
     })
 
 

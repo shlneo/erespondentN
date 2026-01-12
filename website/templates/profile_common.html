@@ -79,7 +79,7 @@
                                     placeholder="Наименование предприятия"  name = "full_name_common" value="{{ current_user.organization.full_name if current_user.organization else '' }}" readonly>
                                     {%if count_reports == 0 and current_user.type != 'Аудитор'%}
                                         <a class="show_organiz" id = "link_chooseOrgModal"> 
-                                            <img class="left_menu_img" src="{{ url_for('static', filename='img/Search.svg')}}" alt="">
+                                            <img class="" src="{{ url_for('static', filename='img/Search.svg')}}" alt="">
                                         </a>
                                     {%else%} {%endif%}
                             </td>
@@ -159,31 +159,65 @@
             <h3 class="change-position">Поиск организации</h3>
             <a class="close">&times;</a>
         </div>
-        <div class="modal-middle-text">
-            <span>Введите наименование или ОКПО вашей организации. <strong>В случае отсутствия обратитесь в</strong> <a href="/contacts" class="instruction-link"> техподдержку</a>.</span>
+        <div class="answer-highlight-second">
+            <div class="highlight-icon">💡</div>
+            <p>Введите <strong>наименование</strong> или <strong>ОКПО</strong> вашей организации. В случае <strong>отсутствия</strong> обратитесь в <a href="/contacts" class="instruction-link"> техподдержку</a>.</p>
         </div>
+
         <div class="search-cont">
             <label for="search_organization">Поиск</label>
-            <input name="search_organization" class="search_input" type="text" placeholder="Наименование или ОКПО предприятия">
+            <input name="search_organization" class="search_input" type="text" placeholder="Введите наименование или ОКПО">
         </div>
         <div class="spravochniki_area">
-            <table class="table_report-area">
-                <tbody id="chooserOganizationTableBody">
-                  
-                </tbody>
-            </table>
+            <div class="organizations-table-container">
+                <table class="organizations-table">
+                    <thead>
+                        <tr>
+                            <th>Наименование организации</th>
+                            <th>ОКПО</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chooserOganizationTableBody">
+                      
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pagination-area" id="paginationArea" style="display: none;">
+            <div class="pagination-container">
+                <button id="prevPageBtn" class="pagination-btn prev-btn" aria-label="Предыдущая страница">
+                    <svg class="pagination-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                
+                <div class="pagination-pages">
+                    <span id="currentPage" class="page-current">1</span>
+                    <span class="page-separator">/</span>
+                    <span id="totalPages" class="page-total">1</span>
+                </div>
+                
+                <button id="nextPageBtn" class="pagination-btn next-btn" aria-label="Следующая страница">
+                    <svg class="pagination-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
+<script>document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.querySelector('input[name="search_organization"]');
     const tableBody = document.getElementById("chooserOganizationTableBody");
     const chooseOrgModal = document.getElementById("chooseOrgModal");
     const linkChooseOrgModal = document.getElementById("link_chooseOrgModal");
     const closeChooseOrgModal = chooseOrgModal.querySelector(".close");
+    const paginationArea = document.getElementById("paginationArea");
+    const prevPageBtn = document.getElementById("prevPageBtn");
+    const nextPageBtn = document.getElementById("nextPageBtn");
+    const currentPageEl = document.getElementById('currentPage');
+    const totalPagesEl = document.getElementById('totalPages');
 
     if (!searchInput || !tableBody || !chooseOrgModal || !linkChooseOrgModal || !closeChooseOrgModal) {
         console.error("Ошибка: Один или несколько элементов не найдены.");
@@ -191,11 +225,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     let searchQuery = "";
+    let currentPage = 1;
+    let hasNextPage = false;
+    let isLoading = false;
 
-    function loadOrganizations(query = "") {
-        console.log(`Запрос: /api/organizations?q=${query}`);
-
-        fetch(`/api/organizations?q=${query}`)
+    function loadOrganizations(page = 1, query = "") {
+        if (isLoading) return;
+        
+        isLoading = true;
+        currentPage = page;
+        
+        fetch(`/api/organizations?q=${query}&page=${page}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Ошибка HTTP: ${response.status}`);
@@ -203,57 +243,103 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(data => {
-                console.log("Ответ API:", data);
-
                 tableBody.innerHTML = "";
+                hasNextPage = data.has_next;
+                
+                currentPageEl.textContent = currentPage;
+                totalPagesEl.textContent = data.total_pages || currentPage;
 
                 if (!data.organizations.length) {
-                    tableBody.innerHTML = "<tr><td colspan='2'>Нет данных</td></tr>";
-                    return;
+                    tableBody.innerHTML = '<tr><td colspan="2">Нет данных</td></tr>';
+                    if (paginationArea) paginationArea.style.display = "none";
+                } else {
+                    data.organizations.forEach(org => {
+                        const row = document.createElement("tr");
+                        row.dataset.id = org.id;
+                        row.innerHTML = `
+                            <td>${org.full_name}</td>
+                            <td>${org.okpo}</td>
+                            <td style="display: none;">${org.ynp || ''}</td>
+                            <td style="display: none;">${org.ministry || ''}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                    
+                    if (paginationArea) {
+                        if (currentPage > 1 || hasNextPage) {
+                            paginationArea.style.display = "block";
+                        } else {
+                            paginationArea.style.display = "none";
+                        }
+                    }
                 }
-
-                data.organizations.forEach(org => {
-                    const row = document.createElement("tr");
-                    row.dataset.id = org.id;
-                    row.innerHTML = `
-                        <td>${org.full_name}</td>
-                        <td>${org.okpo}</td>
-                        <td style="display: none;">${org.ynp || ''}</td>
-                        <td style="display: none;">${org.ministry || ''}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
+                
+                if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
+                if (nextPageBtn) nextPageBtn.disabled = !hasNextPage;
+                
+                isLoading = false;
             })
-            .catch(error => console.error("Ошибка загрузки организаций:", error));
+            .catch(error => {
+                console.error("Ошибка загрузки организаций:", error);
+                tableBody.innerHTML = '<tr><td colspan="2">Ошибка загрузки данных</td></tr>';
+                if (paginationArea) paginationArea.style.display = "none";
+                isLoading = false;
+            });
     }
 
     let debounceTimer;
     searchInput.addEventListener("input", function () {
         clearTimeout(debounceTimer);
         searchQuery = this.value.trim();
-        debounceTimer = setTimeout(() => loadOrganizations(searchQuery), 300);
+        currentPage = 1;
+        debounceTimer = setTimeout(() => loadOrganizations(1, searchQuery), 300);
     });
 
-    // Загружаем все организации при открытии модального окна
+    if (prevPageBtn) {
+        prevPageBtn.addEventListener("click", function () {
+            if (currentPage > 1 && !isLoading) {
+                loadOrganizations(currentPage - 1, searchQuery);
+            }
+        });
+    }
+
+    if (nextPageBtn) {
+        nextPageBtn.addEventListener("click", function () {
+            if (hasNextPage && !isLoading) {
+                loadOrganizations(currentPage + 1, searchQuery);
+            }
+        });
+    }
+
     linkChooseOrgModal.addEventListener("click", function () {
         chooseOrgModal.classList.add("active");
-        loadOrganizations(); // Загрузка всех организаций
+        currentPage = 1;
+        searchInput.value = "";
+        searchQuery = "";
+        loadOrganizations(1);
     });
 
     tableBody.addEventListener("click", function (event) {
         if (event.target.tagName === "TD") {
             let row = event.target.closest("tr");
+            if (!row) return;
+            
             let orgData = {
-                full_name: row.cells[0].textContent.trim(),
-                okpo: row.cells[1].textContent.trim(),
-                ynp: row.cells[2].textContent.trim(),
-                ministry: row.cells[3].textContent.trim()
+                full_name: row.cells[0]?.textContent.trim() || '',
+                okpo: row.cells[1]?.textContent.trim() || '',
+                ynp: row.cells[2]?.textContent.trim() || '',
+                ministry: row.cells[3]?.textContent.trim() || ''
             };
 
-            document.querySelector('input[name="full_name_common"]').value = orgData.full_name;
-            document.querySelector('input[name="okpo_common"]').value = orgData.okpo;
-            document.querySelector('input[name="ynp_common"]').value = orgData.ynp;
-            document.querySelector('input[name="ministry_common"]').value = orgData.ministry;
+            const fullNameInput = document.querySelector('input[name="full_name_common"]');
+            const okpoInput = document.querySelector('input[name="okpo_common"]');
+            const ynpInput = document.querySelector('input[name="ynp_common"]');
+            const ministryInput = document.querySelector('input[name="ministry_common"]');
+            
+            if (fullNameInput) fullNameInput.value = orgData.full_name;
+            if (okpoInput) okpoInput.value = orgData.okpo;
+            if (ynpInput) ynpInput.value = orgData.ynp;
+            if (ministryInput) ministryInput.value = orgData.ministry;
 
             chooseOrgModal.classList.remove("active");
         }
@@ -268,7 +354,10 @@ document.addEventListener("DOMContentLoaded", function () {
             chooseOrgModal.classList.remove("active");
         }
     });
+
+    loadOrganizations(1);
 });
+
 
 document.getElementById('second_name_input').addEventListener('keypress', function (e) {
     const char = String.fromCharCode(e.which);
@@ -300,7 +389,6 @@ document.getElementById('telephone_input').addEventListener('keypress', function
     }
 });
 
-// Добавляем функциональность кнопок очистки
 document.querySelectorAll('.clear-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const input = this.parentElement.querySelector('input');

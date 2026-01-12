@@ -568,6 +568,8 @@
         <div class="modal-middle-text">
             <div>Информация об респонденте.</div>
         </div>
+
+            
         <div class="spravochniki_area">
             <table class = "modal_table">
                 <tr>
@@ -604,14 +606,17 @@
         </div>
     </div>
 </div>
+
 <div id="addCommentModal" class="modal">
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Сообщение респонденту</h3>
             <a class="close" id = "CloseaddComment">&times;</a>
         </div>
-        <div class="modal-middle-text">
-            <div><strong>Если</strong> присутствует <strong>ошибка</strong> в отчете, <strong>укажите</strong> её, в противном <br>случае просто помейте статус на <strong>"Одобренный"</strong>.</div>
+
+        <div class="answer-highlight-second" style = "max-width: 510px;">
+            <div class="highlight-icon">💡</div>
+            <p><strong>Если</strong> присутствует <strong>ошибка</strong> в отчете, <strong>укажите</strong> её, в противном <br>случае просто смените статус на <strong>Одобренный</strong>.</p>
         </div>
         <div class="spravochniki_area">
             <form method="POST" action="/send-comment">
@@ -674,9 +679,12 @@
             <h3 class = "change-position">Сообщения</h3>
             <a class="close" id = "CloseshowComments">&times;</a>
         </div>
-        <div class="modal-middle-text">
-            <div>Сообщения <strong>респонденту</strong> об результатах проверки <strong>текущего</strong> отчета.</div>
+
+        <div class="answer-highlight-second" style = "max-width: 545px;">
+            <div class="highlight-icon">💡</div>
+            <p>Сообщения <strong>респонденту</strong> об результатах проверки <strong>текущего</strong> отчета.</p>
         </div>
+
         <div class="spravochniki_area">
             <div class="telegram-chat">
                 {% if tickets %}
