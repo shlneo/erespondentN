@@ -378,7 +378,7 @@ def add_personal_parametrs():
         telephone = request.form.get('telephone_common', '').strip()
         full_name = request.form.get('full_name_common', '').strip()
 
-        if not all([name, second_name, telephone, full_name]):
+        if not all([name, second_name, telephone]):
             flash('Заполните все обязательные поля.', 'error')
             return redirect(url_for('views.profile_common'))
 
@@ -386,17 +386,22 @@ def add_personal_parametrs():
         current_user.fio = fio
         db.session.commit()
 
-        organiz_full_name = Organization.query.filter_by(full_name=full_name).first()
-        if not organiz_full_name:
-            flash('Организация не найдена.', 'error')
-            return redirect(url_for('views.profile_common'))
-        db.session.commit()
 
         existing_telephone = User.query.filter(User.id != current_user.id, User.telephone == telephone).first()
         if existing_telephone:
             flash('Пользователь с таким номером телефона уже существует.', 'error')
             return redirect(url_for('views.profile_common'))
         current_user.telephone = telephone
+        db.session.commit()
+        
+        if not all([full_name]):
+            flash('Выберите предприятие.', 'error')
+            return redirect(url_for('views.profile_common'))
+        
+        organiz_full_name = Organization.query.filter_by(full_name=full_name).first()
+        if not organiz_full_name:
+            flash('Организация не найдена.', 'error')
+            return redirect(url_for('views.profile_common'))
         db.session.commit()
 
         existing_userOrg = User.query.filter_by(organization_id=organiz_full_name.id).first()
