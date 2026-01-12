@@ -4205,6 +4205,55 @@ th .resizer {
     padding-left: 20px;
 }
 
+/*faq page*/
+.left_menu_faq{
+    position: -webkit-sticky;
+    padding: 12px 0 8px;
+    font-size: 14px;
+    line-height: 17px;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.144); */
+    border-radius: 0;
+    border-top-right-radius: 5px;
+}
+
+.sticky_status_faq{
+    position: sticky;
+    top: 70px;    
+    width: 280px;
+}
+
+.left_menu_faq li {
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 7px 30px 7px 50px;
+    margin-bottom: 10px;
+    
+    height: 25px;
+    transition: background-color 0.3s ease, color 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+    position: relative;
+    align-items: center;
+}
+
+.left_menu_faq li a{
+    font-weight: 500;  
+}
+
+.left_menu_faq_img{
+    display: none;
+}
+
+.left_menu_faq .content a{
+    padding-left: 20px;
+}
+
+/*faq page end*/
+
+
 .personal-info_area .content {
     max-height: 0;
     overflow: hidden;
@@ -4224,13 +4273,15 @@ th .resizer {
 }
 
 
-.left_menu .content li {
+.left_menu .content li,
+.left_menu_faq .content li{
     font-size: 13px;
     font-weight: 400;  
     padding: 7px 30px 7px 50px;
 }
 
-.left_menu .content li:hover {
+.left_menu .content li:hover,
+.left_menu_faq .content li:hover {
     background-color: rgb(223, 223, 223);
     padding: 16px 30px 16px 60px;
 }
@@ -4238,20 +4289,21 @@ th .resizer {
 .left_menu li svg{
     margin-left: 25px;
     transition: transform 0.3s ease; 
-
 }
 
 .rotate-180 {
     transform: rotate(-90deg);
 }
 
-.left_menu li a{    
+.left_menu li a,
+.left_menu_faq li a{    
     word-wrap: break-word; 
     white-space: normal;
     color: black;
 }
 
-.left_menu li:hover {
+.left_menu li:hover,
+.left_menu_faq li:hover{
     background-color: rgb(223, 223, 223);
     padding: 7px 30px 7px 60px;
 }
@@ -5144,7 +5196,6 @@ th .resizer {
 
 
     .left_menu {
-
         position: fixed;
         bottom: 20px;
         left: 50%;
@@ -5163,6 +5214,10 @@ th .resizer {
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease, opacity 0.3s ease;
         z-index: 1000;
+    }   
+
+    .left_menu_faq {
+        width: 100%;
     }
     
     .sticky_status {
@@ -5177,6 +5232,10 @@ th .resizer {
         margin: 0;
     }
     
+    .sticky_status_faq {
+        width: 100%;
+    }
+
     .sticky_status li {
         flex-direction: column;
         padding: 8px 0;
@@ -5215,16 +5274,15 @@ th .resizer {
         width: 24px !important;
         height: 24px !important;
         margin: 0 auto 4px;
-        fill: #666; /* Цвет иконок */
+        fill: #666;
         transition: fill 0.3s ease;
     }
     
     .sticky_status li.active_li svg,
     .sticky_status li:hover svg {
-        fill: var(--blue-back); /* Цвет активных иконок */
+        fill: var(--blue-back); 
     }
     
-    /* Красный цвет для иконки выхода */
     .sticky_status li:last-child svg {
         fill: #ff3b30;
     }
@@ -5237,6 +5295,9 @@ th .resizer {
     .left_menu li.active_li::before {
         all: unset !important;
     }
+
+
+
     /* .profile_page{
        
     }

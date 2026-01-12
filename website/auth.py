@@ -1318,7 +1318,7 @@ def generate_excel_report(version_id):
         return cell
     
     def page_setttings(ws, print_area):
-        ws.print_area = print_area      
+        # ws.print_area = print_area      
         ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
         ws.page_setup.paperSize = ws.PAPERSIZE_A4
         ws.page_margins.left = 0.7
@@ -1484,8 +1484,8 @@ def generate_excel_report(version_id):
             ws["K9"].font = regular_font_11
             ws["K9"].alignment = left
         
-        title_first_sign()
-        title_second_sign()
+        # title_first_sign()
+        # title_second_sign()
         
         ws.merge_cells("A14:O15")
         ws["A14"].value = f"ВЕДОМСТВЕННАЯ ОТЧЕТНОСТЬ О НОРМАХ РАСХОДА И (ИЛИ) ПРЕДЕЛЬНЫХ УРОВНЯХ ПОТРЕБЛЕНИЯ ТОПЛИВНО-ЭНЕРГЕТИЧЕСКИХ РЕСУРСОВ ЗА {report.quarter} КВАРТАЛ {report.year} Г."
