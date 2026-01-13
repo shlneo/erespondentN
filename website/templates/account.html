@@ -74,7 +74,7 @@
                                 {% if row.sender_id != None %} 
                                 - <span class="sender">
                                     {% if row.sender.type == "Администратор" %}
-                                        Администратор
+                                        Система
                                     {% else %}
                                         {{ row.sender.email }}
                                     {% endif %}
@@ -146,9 +146,14 @@
                     <td>Год</td>
                     <td>
                         <div class="input-container">
-                            <button class = "inc_button" type="button" onclick="coppy_decrement_year()">-</button>
-                            <input  class = "inc_dis_input" type="text" id="coppy_quantity_year" value="{{previous_year}}" name="modal_report_year" readonly>
-                            <button class = "dis_button" type="button" onclick="coppy_increment_year()">+</button>
+                            <button class="inc_button" type="button" onclick="changeValueByButton(this)">-</button>
+                            <input class="inc_dis_input" type="text" 
+                                id="coppy_quantity_year" 
+                                value="{{previous_year}}" 
+                                name="modal_report_year" 
+                                data-type="year"
+                                readonly>
+                            <button class="dis_button" type="button" onclick="changeValueByButton(this)">+</button>
                         </div>
                     </td>
                 </tr>
@@ -156,9 +161,14 @@
                     <td>Квартал</td>
                     <td>
                         <div class="input-container">
-                            <button class = "inc_button" type="button" onclick="coppy_decrement_quarter()">-</button>
-                            <input  class = "inc_dis_input" type="text" id="coppy_quantity_quarter" value="{{previous_quarter}}" name="modal_report_quarter" readonly>
-                            <button class = "dis_button" type="button" onclick="coppy_increment_quarter()">+</button>
+                            <button class="inc_button" type="button" onclick="changeValueByButton(this)">-</button>
+                            <input class="inc_dis_input" type="text" 
+                                id="coppy_quantity_quarter" 
+                                value="{{previous_quarter}}" 
+                                name="modal_report_quarter" 
+                                data-type="quarter"
+                                readonly>
+                            <button class="dis_button" type="button" onclick="changeValueByButton(this)">+</button>
                         </div>
                     </td>
                 </tr>

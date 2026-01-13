@@ -265,9 +265,14 @@
                 <td>Год</td>
                 <td>
                     <div class="input-container">
-                        <button class = "inc_button" type="button" onclick="decrement_year()">-</button>
-                        <input  class = "inc_dis_input" type="text" id="quantity_year" value="{{previous_year}}" name="modal_report_year" readonly>
-                        <button class = "dis_button" type="button" onclick="increment_year()">+</button>
+                        <button class="inc_button" type="button" onclick="changeValueByButton(this)">-</button>
+                        <input class="inc_dis_input" type="text" 
+                            id="quantity_year" 
+                            value="{{previous_year}}" 
+                            name="modal_report_year" 
+                            data-type="year"
+                            readonly>
+                        <button class="dis_button" type="button" onclick="changeValueByButton(this)">+</button>
                     </div>
                 </td>
             </tr>
@@ -275,9 +280,14 @@
                 <td>Квартал</td>
                 <td>
                     <div class="input-container">
-                        <button class = "inc_button" type="button" onclick="decrement_quarter()">-</button>
-                        <input  class = "inc_dis_input" type="text" id="quantity_quarter" value="{{previous_quarter}}" name="modal_report_quarter" readonly>
-                        <button class = "dis_button" type="button" onclick="increment_quarter()">+</button>
+                        <button class="inc_button" type="button" onclick="changeValueByButton(this)">-</button>
+                        <input class="inc_dis_input" type="text" 
+                            id="quantity_quarter" 
+                            value="{{previous_quarter}}" 
+                            name="modal_report_quarter" 
+                            data-type="quarter"
+                            readonly>
+                        <button class="dis_button" type="button" onclick="changeValueByButton(this)">+</button>
                     </div>
                 </td>
             </tr>

@@ -3194,7 +3194,7 @@ main {
   position: absolute;
   flex-direction: column;
   padding: 5px;
-
+  gap: 5px;
   background: rgba(255, 255, 255, 0.459);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -3222,7 +3222,7 @@ main {
 }
 
 .white-panel button:first-child {
-    margin: 3px 0;
+    /* margin: 3px 0; */
 }
 
 .white-panel button:disabled,

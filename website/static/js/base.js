@@ -129,95 +129,123 @@ function filterSentedReports() {
     window.location.href = url;
 }
 
-function increment_year() {
-    var input = document.getElementById("quantity_year");
-    input.value = parseInt(input.value) + 1;
-}
+// function increment_year() {
+//     var input = document.getElementById("quantity_year");
+//     input.value = parseInt(input.value) + 1;
+// }
 
-function decrement_year() {
-    var input = document.getElementById("quantity_year");
-    if (parseInt(input.value) > 0) {
-        input.value = parseInt(input.value) - 1;
+// function decrement_year() {
+//     var input = document.getElementById("quantity_year");
+//     if (parseInt(input.value) > 0) {
+//         input.value = parseInt(input.value) - 1;
+//     }
+// }
+
+// function increment_quarter() {
+//     var input = document.getElementById("quantity_quarter");
+//     var value = parseInt(input.value);
+
+//     if (value < 4) {
+//         input.value = value + 1;
+//     }
+// }
+
+// function decrement_quarter() {
+//     var input = document.getElementById("quantity_quarter");
+//     var value = parseInt(input.value);
+
+//     if (value > 1) {
+//         input.value = value - 1;
+//     }
+// }
+
+// function coppy_increment_year() {
+//     var input = document.getElementById("coppy_quantity_year");
+//     input.value = parseInt(input.value) + 1;
+// }
+
+// function coppy_decrement_year() {
+//     var input = document.getElementById("coppy_quantity_year");
+//     if (parseInt(input.value) > 0) {
+//         input.value = parseInt(input.value) - 1;
+//     }
+// }
+
+// function coppy_increment_quarter() {
+//     var input = document.getElementById("coppy_quantity_quarter");
+//     var value = parseInt(input.value);
+
+//     if (value < 4) {
+//         input.value = value + 1;
+//     }
+// }
+
+// function coppy_decrement_quarter() {
+//     var input = document.getElementById("coppy_quantity_quarter");
+//     var value = parseInt(input.value);
+
+//     if (value > 1) {
+//         input.value = value - 1;
+//     }
+// }
+
+// function edit_increment_year() {
+//     var input = document.querySelector('input[name="modal_change_report_year"]');
+//     input.value = parseInt(input.value) + 1;
+// }
+
+// function edit_decrement_year() {
+//     var input = document.querySelector('input[name="modal_change_report_year"]');
+//     if (parseInt(input.value) > 0) {
+//         input.value = parseInt(input.value) - 1;
+//     }
+// }
+
+// function edit_increment_quarter() {
+//     var input = document.querySelector('input[name="modal_change_report_quarter"]');
+//     var value = parseInt(input.value);
+
+//     if (value < 4) {
+//         input.value = value + 1;
+//     }
+// }
+
+// function edit_decrement_quarter() {
+//     var input = document.querySelector('input[name="modal_change_report_quarter"]');
+//     var value = parseInt(input.value);
+
+//     if (value > 1) {
+//         input.value = value - 1;
+//     }
+// }
+
+function changeValueByButton(button) {
+    // Находим связанный input (предыдущий или следующий элемент)
+    const container = button.closest('.input-container');
+    const input = container.querySelector('input[data-type]');
+    const type = input.getAttribute('data-type');
+    const isIncrement = button.classList.contains('dis_button');
+    const delta = isIncrement ? 1 : -1;
+    
+    // Конфигурация по типам
+    const configs = {
+        'year': { min: 0, max: Infinity },
+        'quarter': { min: 1, max: 4 }
+    };
+    
+    const config = configs[type] || { min: -Infinity, max: Infinity };
+    const currentValue = parseInt(input.value) || config.min;
+    const newValue = currentValue + delta;
+    
+    // Проверяем границы
+    if (newValue >= config.min && newValue <= config.max) {
+        input.value = newValue;
+        // Триггерим события если нужно
+        input.dispatchEvent(new Event('change', { bubbles: true }));
     }
 }
 
-function increment_quarter() {
-    var input = document.getElementById("quantity_quarter");
-    var value = parseInt(input.value);
 
-    if (value < 4) {
-        input.value = value + 1;
-    }
-}
-
-function decrement_quarter() {
-    var input = document.getElementById("quantity_quarter");
-    var value = parseInt(input.value);
-
-    if (value > 1) {
-        input.value = value - 1;
-    }
-}
-
-function coppy_increment_year() {
-    var input = document.getElementById("coppy_quantity_year");
-    input.value = parseInt(input.value) + 1;
-}
-
-function coppy_decrement_year() {
-    var input = document.getElementById("coppy_quantity_year");
-    if (parseInt(input.value) > 0) {
-        input.value = parseInt(input.value) - 1;
-    }
-}
-
-function coppy_increment_quarter() {
-    var input = document.getElementById("coppy_quantity_quarter");
-    var value = parseInt(input.value);
-
-    if (value < 4) {
-        input.value = value + 1;
-    }
-}
-
-function coppy_decrement_quarter() {
-    var input = document.getElementById("coppy_quantity_quarter");
-    var value = parseInt(input.value);
-
-    if (value > 1) {
-        input.value = value - 1;
-    }
-}
-
-function edit_increment_year() {
-    var input = document.querySelector('input[name="modal_change_report_year"]');
-    input.value = parseInt(input.value) + 1;
-}
-
-function edit_decrement_year() {
-    var input = document.querySelector('input[name="modal_change_report_year"]');
-    if (parseInt(input.value) > 0) {
-        input.value = parseInt(input.value) - 1;
-    }
-}
-
-function edit_increment_quarter() {
-    var input = document.querySelector('input[name="modal_change_report_quarter"]');
-    var value = parseInt(input.value);
-
-    if (value < 4) {
-        input.value = value + 1;
-    }
-}
-
-function edit_decrement_quarter() {
-    var input = document.querySelector('input[name="modal_change_report_quarter"]');
-    var value = parseInt(input.value);
-
-    if (value > 1) {
-        input.value = value - 1;
-    }
-}
 
 /* message-animation */
 (function() {
@@ -751,6 +779,7 @@ document.addEventListener('DOMContentLoaded', function () {
     handleModal(document.getElementById('add_report_modal'), document.getElementById('link_add_report'), document.getElementById('close_add_report_modal'));
     handleModal(document.getElementById('change_report_modal'), document.getElementById('link_change_report'), document.getElementById('close_change_report_modal'));
     handleModal(document.getElementById('coppy_report_modal'), document.getElementById('link_coppy_report'), coppy_report_modal.querySelector('.close'));
+    handleModal(document.getElementById('coppy_second_report_modal'), document.getElementById('link_second_coppy_report'), coppy_second_report_modal.querySelector('.close'));
     handleModal(document.getElementById('SentModal'), document.getElementById('sentVersionButton'), SentModal.querySelector('.close'));
 
     link_change_report.addEventListener('click', function(event) {
@@ -780,8 +809,20 @@ document.addEventListener('DOMContentLoaded', function () {
         if (reportRow) {
             var reportId = reportRow.querySelector('#report_id').value;
             document.getElementById('copped_id').value = reportId;
+            document.getElementById('copped_second_id').value = reportId;
         }
         coppy_report_modal.classList.add('active');
+        contextMenuReport.style.display = 'none';
+    });
+
+    link_second_coppy_report.addEventListener('click', function(event) {
+        event.preventDefault();
+        var reportRow = document.querySelector('.report_row.active-report');
+        if (reportRow) {
+            var reportId = reportRow.querySelector('#report_id').value;
+            document.getElementById('copped_id').value = reportId;
+        }
+        coppy_second_report_modal.classList.add('active');
         contextMenuReport.style.display = 'none';
     });
 

@@ -688,6 +688,74 @@ def сopy_report():
             flash('Отчет с таким годом и квараталом уже существует.','error')
         return redirect(url_for('views.report_area'))
 
+@auth.route('/сopy-without-numbers-report', methods=['POST'])
+@login_required 
+@session_required
+def сopy_without_numbers_report():
+    if request.method == 'POST':
+        coppy_report_id = request.form.get('coppy_report_id')
+        new_organization_name = request.form.get('coppy_organization_name')
+        new_organization_okpo = request.form.get('coppy_organization_okpo')
+        new_report_year = request.form.get('coppy_report_year')
+        new_report_quarter = request.form.get('coppy_report_quarter')
+
+        current_report_version = Version_report.query.filter_by(
+            report_id = coppy_report_id).first()
+        
+        current_sections = Sections.query.filter_by(
+            id_version=current_report_version.id).all()
+
+        current_org = Organization.query.filter_by(
+            full_name = new_organization_name, 
+            okpo = new_organization_okpo).first()
+
+        proverka_report = Report.query.filter_by(
+            org_id=current_org.id, 
+            year = new_report_year, 
+            quarter=new_report_quarter, 
+            okpo = current_org.okpo).first()
+        
+        if not proverka_report:
+            new_report = Report(
+                okpo=current_org.okpo,
+                org_id= current_org.id,
+                year=new_report_year,
+                quarter=new_report_quarter,
+                user_id = current_user.id
+            )
+            db.session.add(new_report)
+            db.session.commit()
+            new_version = Version_report(
+                status = "Заполнение",
+                fio = current_user.fio,
+                telephone = current_user.telephone,
+                email = current_user.email,
+                report=new_report
+            )
+            db.session.add(new_version)
+            db.session.commit()
+            for section in current_sections:
+                new_section = Sections(
+                    id_version=new_version.id,
+                    id_product=section.id_product,
+                    code_product=section.code_product,
+                    section_number=section.section_number,
+                    Oked=section.Oked,
+                    produced=Decimal(0.00),
+                    Consumed_Quota=Decimal(0.00),
+                    Consumed_Fact=Decimal(0.00),
+                    Consumed_Total_Quota=Decimal(0.00),
+                    Consumed_Total_Fact=Decimal(0.00),
+                    total_differents=Decimal(0.00),
+                    note=section.note
+                )
+                db.session.add(new_section)
+            db.session.commit()
+            flash('Отчет успешно скопирован.', 'success')
+        else:
+            flash('Отчет с таким годом и квараталом уже существует.','error')
+        return redirect(url_for('views.report_area'))
+
 @auth.route('/delete-report/<report_id>', methods=['POST'])
 @login_required 
 @session_required

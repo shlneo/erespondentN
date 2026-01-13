@@ -313,9 +313,16 @@
                     <td>Год</td>
                     <td>
                         <div class="input-container">
-                            <button class = "inc_button" type="button" onclick="decrement_year()">-</button>
-                            <input  class = "inc_dis_input" type="text" id="quantity_year" value="{{previous_year}}" name="modal_report_year" readonly>
-                            <button class = "dis_button" type="button" style = "margin: 0;" onclick="increment_year()">+</button>
+                            <button class="inc_button" type="button" 
+                                    onclick="changeValueByButton(this)">-</button>
+                            <input class="inc_dis_input" type="text" 
+                                id="quantity_year" 
+                                value="{{previous_year}}" 
+                                name="modal_report_year" 
+                                data-type="year"
+                                readonly>
+                            <button class="dis_button" type="button" style="margin: 0;" 
+                                    onclick="changeValueByButton(this)">+</button>
                         </div>
                     </td>
                 </tr>
@@ -323,9 +330,16 @@
                     <td>Квартал</td>
                     <td>
                         <div class="input-container">
-                            <button class = "inc_button" type="button" onclick="decrement_quarter()">-</button>
-                            <input  class = "inc_dis_input" type="text" id="quantity_quarter" value="{{previous_quarter}}" name="modal_report_quarter" readonly>
-                            <button class = "dis_button" type="button" style = "margin: 0;" onclick="increment_quarter()">+</button>
+                            <button class="inc_button" type="button" 
+                                    onclick="changeValueByButton(this)">-</button>
+                            <input class="inc_dis_input" type="text" 
+                                id="quantity_quarter" 
+                                value="{{previous_quarter}}" 
+                                name="modal_report_quarter" 
+                                data-type="quarter"
+                                readonly>
+                            <button class="dis_button" type="button" style="margin: 0;" 
+                                    onclick="changeValueByButton(this)">+</button>
                         </div>
                     </td>
                 </tr>
@@ -347,12 +361,12 @@
 <div id="coppy_report_modal" class="modal">
     <div class="modal-content">
         <div class = "modal-header">
-            <h3 class = "change-position">Копирование отчета</h3>
+            <h3 class = "change-position">Полное копирование отчета</h3>
             <a class="close">&times;</a>
         </div>
-        <div class="answer-highlight-second">
+        <div class="answer-highlight-second" style = "max-width: 550px;">
             <div class="highlight-icon">💡</div>
-            <p>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>, отличающийся от копируемого отчета.</p>
+            <p>Укажите <strong>год</strong> и <strong>квартал</strong>, которые будут отличаться от исходного отчета. При <strong>полном</strong> копировании создается точная копия отчета с измененными временными параметрами.</p>
         </div>
         <form method="POST" action="/сopy-report">
             <table class="modal_table">      
@@ -386,9 +400,16 @@
                     <td>Год</td>
                     <td>
                         <div class="input-container">
-                            <button class = "inc_button" type="button" onclick="coppy_decrement_year()">-</button>
-                            <input  class = "inc_dis_input" type="text" id="coppy_quantity_year" value="{{previous_year}}" name="coppy_report_year" readonly>
-                            <button class = "dis_button" type="button" style = "margin: 0;" onclick="coppy_increment_year()">+</button>
+                            <button class="inc_button" type="button" 
+                                    onclick="changeValueByButton(this)">-</button>
+                            <input class="inc_dis_input" type="text" 
+                                id="coppy_quantity_year" 
+                                value="{{previous_year}}" 
+                                name="coppy_report_year" 
+                                data-type="year"
+                                readonly>
+                            <button class="dis_button" type="button" style="margin: 0;" 
+                                    onclick="changeValueByButton(this)">+</button>
                         </div>
                     </td>
                 </tr>
@@ -396,9 +417,16 @@
                     <td>Квартал</td>
                     <td>
                         <div class="input-container">
-                            <button class = "inc_button" type="button"  onclick="coppy_decrement_quarter()">-</button>
-                            <input  class = "inc_dis_input" type="text" id="coppy_quantity_quarter" value="{{previous_quarter}}" name="coppy_report_quarter" readonly>
-                            <button class = "dis_button" type="button" style = "margin: 0;" onclick="coppy_increment_quarter()">+</button>
+                            <button class="inc_button" type="button" 
+                                    onclick="changeValueByButton(this)">-</button>
+                            <input class="inc_dis_input" type="text" 
+                                id="coppy_quantity_quarter" 
+                                value="{{previous_quarter}}" 
+                                name="coppy_report_quarter" 
+                                data-type="quarter"
+                                readonly>
+                            <button class="dis_button" type="button" style="margin: 0;" 
+                                    onclick="changeValueByButton(this)">+</button>
                         </div>
                     </td>
                 </tr>
@@ -410,6 +438,107 @@
                             name = "coppy_report_id" 
                             value = ""  
                             id = "copped_id"
+                            autocomplete="off" 
+                            readonly
+                        >
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style = "display: flex; justify-content: end; padding-top: 30px;">
+                        <button type="submit" class="blue_button report-submit">
+                            
+                            <img src="/static/img/Copy.svg" alt="" class="button-icon">
+                            <span>Скопировать</span>
+                        
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </form> 
+    </div>
+</div>
+
+<div id="coppy_second_report_modal" class="modal">
+    <div class="modal-content">
+        <div class = "modal-header">
+            <h3 class = "change-position">Неполное копирование отчета</h3>
+            <a class="close">&times;</a>
+        </div>
+        <div class="answer-highlight-second" style = "max-width: 550px;">
+            <div class="highlight-icon">💡</div>
+            <p>Укажите <strong>год</strong> и <strong>квартал</strong>, которые будут отличаться от исходного отчета. При <strong> Неполном</strong> копировании копируются все виды продукции <strong>без данных</strong>.</p>
+        </div>
+        <form method="POST" action="/сopy-without-numbers-report">
+            <table class="modal_table">      
+                <tr>
+                    <td>Наименование предприятия</td>
+                    <td>
+                        <input 
+                            type="text" 
+                            name="coppy_organization_name" 
+                            value="{{current_user.organization.full_name}}" 
+                            style = "width: 250px; text-align: left; color: rgb(132,132,132);" 
+                            autocomplete="off" 
+                            readonly
+                        >
+                    </td>
+                </tr>
+                <tr>
+                    <td>ОКПО</td>
+                    <td>
+                        <input 
+                            type="text"
+                            name="coppy_organization_okpo" 
+                            value="{{current_user.organization.okpo}}"  
+                            style = "color: rgb(132,132,132);" 
+                            autocomplete="off" 
+                            readonly
+                        >
+                    </td>
+                </tr>
+                <tr>
+                    <td>Год</td>
+                    <td>
+                        <div class="input-container">
+                            <button class="inc_button" type="button" 
+                                    onclick="changeValueByButton(this)">-</button>
+                            <input class="inc_dis_input" type="text" 
+                                id="coppy_quantity_year" 
+                                value="{{previous_year}}" 
+                                name="coppy_report_year" 
+                                data-type="year"
+                                readonly>
+                            <button class="dis_button" type="button" style="margin: 0;" 
+                                    onclick="changeValueByButton(this)">+</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Квартал</td>
+                    <td>
+                        <div class="input-container">
+                            <button class="inc_button" type="button" 
+                                    onclick="changeValueByButton(this)">-</button>
+                            <input class="inc_dis_input" type="text" 
+                                id="coppy_quantity_quarter" 
+                                value="{{previous_quarter}}" 
+                                name="coppy_report_quarter" 
+                                data-type="quarter"
+                                readonly>
+                            <button class="dis_button" type="button" style="margin: 0;" 
+                                    onclick="changeValueByButton(this)">+</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr style = "display:none;">
+                    <td>id</td>
+                    <td>
+                        <input 
+                            type = "text"
+                            name = "coppy_report_id" 
+                            value = ""  
+                            id = "copped_second_id"
                             autocomplete="off" 
                             readonly
                         >
@@ -474,9 +603,14 @@
                     <td>Год</td>
                     <td>
                         <div class="input-container">
-                            <button class = "inc_button" type="button" onclick="edit_decrement_year()">-</button>
-                            <input  class = "inc_dis_input" type="text" id="modal_report_year" name="modal_change_report_year" readonly>
-                            <button class = "dis_button" type="button" style = "margin: 0;" onclick="edit_increment_year()">+</button>
+                            <button class="inc_button" type="button" onclick="changeValueByButton(this)">-</button>
+                            <input class="inc_dis_input" type="text" 
+                                id="modal_report_year" 
+                                name="modal_change_report_year" 
+                                data-type="year"
+                                data-default-value="2023" 
+                                readonly>
+                            <button class="dis_button" type="button" style="margin: 0;" onclick="changeValueByButton(this)">+</button>
                         </div>
                     </td>
                 </tr>
@@ -484,12 +618,16 @@
                     <td>Квартал</td>
                     <td>
                         <div class="input-container">
-                            <button class = "inc_button" type="button" onclick="edit_decrement_quarter()">-</button>
-                            <input  class = "inc_dis_input" type="text" id="modal_report_quarter" name="modal_change_report_quarter" readonly>
-                            <button class = "dis_button" type="button" style = "margin: 0;" onclick="edit_increment_quarter()">+</button>
+                            <button class="inc_button" type="button" onclick="changeValueByButton(this)">-</button>
+                            <input class="inc_dis_input" type="text" 
+                                id="modal_report_quarter" 
+                                name="modal_change_report_quarter" 
+                                data-type="quarter"
+                                data-default-value="1"
+                                readonly>
+                            <button class="dis_button" type="button" style="margin: 0;" onclick="changeValueByButton(this)">+</button>
                         </div>
                     </td>
-                    
                 </tr>
                 <tr style = "display: none;">
                     <td>id</td>
@@ -555,6 +693,10 @@
     <button id = "link_coppy_report">
         <img src="/static/img/Copy.svg" alt="" class="button-icon-bl">
         <span>Скопировать</span>
+    </button>
+    <button id = "link_second_coppy_report">
+        <img src="/static/img/Copy.svg" alt="" class="button-icon-bl">
+        <span>Неполное копирование</span>
     </button>
     <form id="deleteReport" method="POST" action="/delete-report/">
         <button type="submit" id="del_reportButton">

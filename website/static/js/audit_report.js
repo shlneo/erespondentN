@@ -79,40 +79,189 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    var section_row = document.querySelectorAll('.section_row');
-    var previousfuelRow = null;
-    var selectedfuelId = null;
-
-    section_row.forEach(function(row, index) {
-        row.addEventListener('click', function(event) {
-            if (event.button === 0 && this.dataset.id) {
-                selectRow(this, index);
+    function initTableKeyboardNavigation() {
+        let currentActiveIndex = -1;
+        let previousActiveRow = null;
+        
+        function getVisibleTableRows() {
+            const tables = ['fuel_section_table', 'heat_section_table', 'electro_section_table'];
+            
+            for (const tableId of tables) {
+                const table = document.getElementById(tableId);
+                if (table && table.style.display !== 'none') {
+                    return table.querySelectorAll('.section_row');
+                }
+            }
+            return [];
+        }
+        
+        document.addEventListener('click', function(event) {
+            const row = event.target.closest('.section_row');
+            if (row && event.button === 0) {
+                const rows = getVisibleTableRows();
+                
+                if (Array.from(rows).includes(row)) {
+                    const index = Array.from(rows).indexOf(row);
+                    selectRow(row, index);
+                }
             }
         });
-    });
-
-    function selectRow(row, index) {
-        selectedfuelId = row.dataset.id;
-        if (row.classList.contains('active-report')) {
-            row.classList.remove('active-report');
-            row.querySelectorAll('input').forEach(function(input) {
-                input.classList.remove('active-input');
-            });
-            previousfuelRow = null;
-
-        } else {
-            if (previousfuelRow !== null) {
-                previousfuelRow.classList.remove('active-report');
-                previousfuelRow.querySelectorAll('input').forEach(function(input) {
+        
+        function selectRow(row, index) {
+            const rows = getVisibleTableRows();
+            
+            row.focus();
+            
+            if (row.classList.contains('active-report')) {
+                row.classList.remove('active-report');
+                row.querySelectorAll('input').forEach(input => {
                     input.classList.remove('active-input');
                 });
+                previousActiveRow = null;
+                currentActiveIndex = -1;
+            } else {
+                if (previousActiveRow !== null) {
+                    previousActiveRow.classList.remove('active-report');
+                    previousActiveRow.querySelectorAll('input').forEach(input => {
+                        input.classList.remove('active-input');
+                    });
+                }
+                
+                row.classList.add('active-report');
+                row.querySelectorAll('input').forEach(input => {
+                    input.classList.add('active-input');
+                });
+                previousActiveRow = row;
+                currentActiveIndex = index;
             }
-            row.classList.add('active-report');
-            row.querySelectorAll('input').forEach(function(input) {
-                input.classList.add('active-input');
-            });
-            previousfuelRow = row;
         }
+        
+        document.addEventListener('keydown', function(event) {
+            const rows = getVisibleTableRows();
+            if (rows.length === 0) return;
+            
+            switch(event.key) {
+                case 'ArrowDown':
+                    event.preventDefault();
+                    if (currentActiveIndex === -1) {
+                        selectRow(rows[0], 0);
+                    } else {
+                        const newIndex = (currentActiveIndex + 1) % rows.length;
+                        selectRow(rows[newIndex], newIndex);
+                    }
+                    break;
+                    
+                case 'ArrowUp':
+                    event.preventDefault();
+                    if (currentActiveIndex === -1) {
+                        selectRow(rows[rows.length - 1], rows.length - 1);
+                    } else {
+                        const newIndex = (currentActiveIndex - 1 + rows.length) % rows.length;
+                        selectRow(rows[newIndex], newIndex);
+                    }
+                    break;
+                    
+                case 'Home':
+                    event.preventDefault();
+                    if (rows.length > 0 && (currentActiveIndex !== 0 || previousActiveRow === null)) {
+                        selectRow(rows[0], 0);
+                    }
+                    break;
+                    
+                case 'End':
+                    event.preventDefault();
+                    if (rows.length > 0) {
+                        const lastIndex = rows.length - 1;
+                        if (currentActiveIndex !== lastIndex || previousActiveRow === null) {
+                            selectRow(rows[lastIndex], lastIndex);
+                        }
+                    }
+                    break;
+                    
+                case 'Escape':
+                    if (previousActiveRow) {
+                        previousActiveRow.classList.remove('active-report');
+                        previousActiveRow.querySelectorAll('input').forEach(input => {
+                            input.classList.remove('active-input');
+                        });
+                        previousActiveRow = null;
+                        currentActiveIndex = -1;
+                    }
+                    break;
+                    
+                case ' ':
+                    if (event.target.classList.contains('section_row')) {
+                        event.preventDefault();
+                        const row = event.target;
+                        const rows = getVisibleTableRows();
+                        const index = Array.from(rows).indexOf(row);
+                        if (index !== -1) {
+                            selectRow(row, index);
+                        }
+                    }
+                    break;
+            }
+        });
+        
+        function setupRows() {
+            document.querySelectorAll('.section_row').forEach(row => {
+                row.setAttribute('tabindex', '-1');
+            });
+        }
+        
+        setupRows();
+        
+        return {
+            selectRowByIndex: function(index) {
+                const rows = getVisibleTableRows();
+                if (index >= 0 && index < rows.length) {
+                    selectRow(rows[index], index);
+                }
+            },
+            
+            getActiveRow: function() {
+                return {
+                    element: previousActiveRow,
+                    index: currentActiveIndex
+                };
+            },
+            
+            clearSelection: function() {
+                if (previousActiveRow) {
+                    previousActiveRow.classList.remove('active-report');
+                    previousActiveRow.querySelectorAll('input').forEach(input => {
+                        input.classList.remove('active-input');
+                    });
+                    previousActiveRow = null;
+                    currentActiveIndex = -1;
+                }
+            }
+        };
+    }
+
+    // Инициализация
+    const tableNav = initTableKeyboardNavigation();
+
+    // Функции переключения таблиц
+    function switchToFuelTable() {
+        document.getElementById('fuel_section_table').style.display = '';
+        document.getElementById('heat_section_table').style.display = 'none';
+        document.getElementById('electro_section_table').style.display = 'none';
+        tableNav.clearSelection();
+    }
+
+    function switchToHeatTable() {
+        document.getElementById('fuel_section_table').style.display = 'none';
+        document.getElementById('heat_section_table').style.display = '';
+        document.getElementById('electro_section_table').style.display = 'none';
+        tableNav.clearSelection();
+    }
+
+    function switchToElectroTable() {
+        document.getElementById('fuel_section_table').style.display = 'none';
+        document.getElementById('heat_section_table').style.display = 'none';
+        document.getElementById('electro_section_table').style.display = '';
+        tableNav.clearSelection();
     }
 });
 
