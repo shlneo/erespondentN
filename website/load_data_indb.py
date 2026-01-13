@@ -102,8 +102,9 @@ def add_data_in_db(db):
                 ('Аудитор', os.getenv('auditoremailMogilev'), None, None, generate_password_hash(os.getenv('userpass')), 'Могилевское областное управление'),
                 ('Аудитор', os.getenv('auditoremailMinsk'), None, None, generate_password_hash(os.getenv('userpass')), 'Управление г. Минск'),
                 ('Аудитор', os.getenv('auditoremailNadzor'), None, None, generate_password_hash(os.getenv('userpass')), 'Департамент по энергоэффективности'),
-                ('Администратор', os.getenv('adminemail1'), os.getenv('adminfio1'), os.getenv('adminphone1'), generate_password_hash(os.getenv('userpass')), None),
+                ('Администратор', os.getenv('adminemail3'), 'shlneo mentality', os.getenv('adminphone1'), generate_password_hash(os.getenv('userpass')), None),
                 ('Администратор', os.getenv('adminemail2'), os.getenv('adminfio2'), os.getenv('adminphone2'), generate_password_hash(os.getenv('userpass')), None),
+                ('Респондент', os.getenv('adminemail1'), None, None, generate_password_hash(os.getenv('userpass')), None),
             ]
 
             for user_data in users_data:

@@ -1143,3 +1143,265 @@ function handleModal(modalElement, openLink, closeLink) {
 
 handleModal(document.getElementById('load_stats_modal'), document.getElementById('link_stats'), load_stats_modal.querySelector('.close'));
 
+
+function deleteMessage(messageId) {
+    const messageElement = document.getElementById(`message-${messageId}`);
+    const deleteBtn = messageElement.querySelector('.delete_btn');
+    const messageActions = messageElement.querySelector('.message_actions');
+    
+    const originalText = deleteBtn.innerHTML;
+    
+    deleteBtn.disabled = true;
+    deleteBtn.innerHTML = '⌛ Удаление...';
+    deleteBtn.style.opacity = '0.5';
+    deleteBtn.style.cursor = 'default';
+    
+    let secondsLeft = 5;
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'cancel_btn';
+    cancelBtn.innerHTML = `Отмена (${secondsLeft})`;
+    cancelBtn.style.marginLeft = '8px';
+    cancelBtn.style.padding = '2px 8px';
+    cancelBtn.style.background = '#f56565';
+    cancelBtn.style.color = 'white';
+    cancelBtn.style.border = 'none';
+    cancelBtn.style.borderRadius = '4px';
+    cancelBtn.style.cursor = 'pointer';
+    cancelBtn.style.fontSize = '12px';
+    
+    messageActions.appendChild(cancelBtn);
+    
+    const countdown = setInterval(() => {
+        secondsLeft--;
+        cancelBtn.innerHTML = `Отмена (${secondsLeft})`;
+        
+        if (secondsLeft <= 0) {
+            clearInterval(countdown);
+            performDeletion(messageId, messageElement, deleteBtn, originalText, cancelBtn);
+        }
+    }, 1000);
+    
+    const cancelDeletion = () => {
+        clearInterval(countdown);
+        resetDeleteButton(deleteBtn, originalText);
+        cancelBtn.remove();
+
+    };
+    
+    cancelBtn.addEventListener('click', cancelDeletion);
+    
+    cancelBtn.__cancelHandler = cancelDeletion;
+    
+    setTimeout(() => {
+        clearInterval(countdown);
+        if (deleteBtn.disabled && cancelBtn.parentNode) {
+            cancelBtn.removeEventListener('click', cancelBtn.__cancelHandler);
+            performDeletion(messageId, messageElement, deleteBtn, originalText, cancelBtn);
+        }
+    }, 5000);
+}
+
+function performDeletion(messageId, messageElement, deleteBtn, originalText, cancelBtn) {
+    if (cancelBtn && cancelBtn.parentNode) {
+        cancelBtn.remove();
+    }
+    
+    fetch(`/delete_message/${messageId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            messageElement.style.transition = 'all 0.3s ease';
+            messageElement.style.height = messageElement.offsetHeight + 'px';
+            
+            setTimeout(() => {
+                messageElement.style.height = '0';
+                messageElement.style.padding = '0';
+                messageElement.style.margin = '0';
+                messageElement.style.opacity = '0';
+                messageElement.style.border = 'none';
+                messageElement.style.overflow = 'hidden';
+                
+                setTimeout(() => {
+                    messageElement.remove();
+                    checkEmptyState();
+                    updateMessageCount(data.remaining_count);
+                }, 300);
+            }, 50);
+        } else {
+            showNotification(data.error || 'Ошибка при удалении', 'error');
+            resetDeleteButton(deleteBtn, originalText);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Ошибка соединения с сервером', 'error');
+        resetDeleteButton(deleteBtn, originalText);
+    });
+}
+
+function checkEmptyState() {
+    const container = document.getElementById('messagesContainer');
+    const messages = container.querySelectorAll('.mes:not(.empty)');
+    
+    if (messages.length === 0) {
+        if (!container.querySelector('.mes.empty')) {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'mes empty';
+            emptyDiv.innerHTML = `<div class="text_mes">Нет уведомлений</div>`;
+            container.appendChild(emptyDiv);
+        }
+    } else {
+        const emptyState = container.querySelector('.mes.empty');
+        if (emptyState) {
+            emptyState.remove();
+        }
+    }
+}
+
+function updateMessageCount(count) {
+    const countElement = document.getElementById('messageCount');
+    if (countElement) {
+        countElement.textContent = count;
+    }
+}
+
+function resetDeleteButton(button, originalText) {
+    button.disabled = false;
+    button.innerHTML = originalText;
+    button.style.opacity = '0.7';
+    button.style.cursor = 'pointer';
+    button.style.opacity = '';
+}
+
+function showNotification(text, type) {
+    const notification = document.createElement('div');
+    notification.textContent = text;
+    
+    let backgroundColor;
+    switch(type) {
+        case 'success':
+            backgroundColor = '#48bb78';
+            break;
+        case 'error':
+            backgroundColor = '#f56565';
+            break;
+        case 'info':
+            backgroundColor = '#4299e1';
+            break;
+        default:
+            backgroundColor = '#4299e1';
+    }
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        background: ${backgroundColor};
+        color: white;
+        border-radius: 6px;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+
+function showReplyForm(messageId, recipientEmail) {
+    document.querySelectorAll('.reply_form').forEach(form => {
+        form.style.display = 'none';
+    });
+    
+    const replyForm = document.getElementById(`replyForm-${messageId}`);
+    const textarea = document.getElementById(`replyText-${messageId}`);
+    const recipientName = document.getElementById(`recipientName-${messageId}`);
+    
+    if (recipientName) {
+        recipientName.textContent = recipientEmail;
+    }
+    
+    replyForm.style.display = 'block';
+    textarea.value = '';
+    textarea.placeholder = `Ответ для ${recipientEmail}`;
+    textarea.focus();
+    
+    replyForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Отмена ответа
+function cancelReply(messageId) {
+    const replyForm = document.getElementById(`replyForm-${messageId}`);
+    const textarea = document.getElementById(`replyText-${messageId}`);
+    
+    textarea.value = '';
+    replyForm.style.display = 'none';
+}
+
+// Отправка ответа
+function submitReply(messageId) {
+    const textarea = document.getElementById(`replyText-${messageId}`);
+    const replyText = textarea.value.trim();
+    const submitBtn = document.querySelector(`#replyForm-${messageId} .reply_submit_btn`);
+    
+    if (!replyText) {
+        flashNotification('Введите текст ответа', 'error');
+        return;
+    }
+    
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправка...';
+    
+    fetch(`/reply_to_message/${messageId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            text: replyText
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            flashNotification(data.message || 'Ответ отправлен успешно', 'success');
+            
+            textarea.value = '';
+            const replyForm = document.getElementById(`replyForm-${messageId}`);
+            replyForm.style.display = 'none';
+            
+            if (data.refresh) {
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            }
+        } else {
+            flashNotification(data.error || 'Ошибка при отправке ответа', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        flashNotification('Ошибка соединения с сервером', 'error');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Отправить';
+    });
+}
+
+function flashNotification(message, type = 'info') {
+    console.log(`${type}: ${message}`);
+}

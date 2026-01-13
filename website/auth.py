@@ -178,6 +178,27 @@ def send_email(message_body, recipient_email, email_type, location=None, device=
                 box-shadow: 0 2px 8px rgba(67, 97, 238, 0.08);
             ">{message_body}</div>
         """
+    elif email_type == "to_recipient":
+        content = f"""   
+            <p style="margin: 0 0 18px 0; font-size: 16px; line-height: 1.6; color: #2c3e50; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Здравствуйте!</p>
+            <p style="margin: 0 0 25px 0; font-size: 16px; line-height: 1.6; color: #2c3e50; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Вам поступило сообщение от администратора.</p>
+            <p style="margin: 0 0 12px 0; font-size: 16px; line-height: 1.6; color: #2c3e50; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Сообщение:</p>
+            <div style="
+                background: linear-gradient(120deg, rgba(67, 97, 238, 0.08) 0%, rgba(76, 201, 240, 0.08) 100%);
+                border-left: 4px solid #4361ee;
+                border-radius: 0 8px 8px 0;
+                padding: 20px 25px;
+                margin: 15px 0 25px 0;
+                font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+                font-size: 14.5px;
+                line-height: 1.7;
+                color: #2d3748;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                box-shadow: 0 2px 8px rgba(67, 97, 238, 0.08);
+            ">{message_body}</div>
+        """
     else:
         content = f"""
         <p>Здравствуйте!</p>

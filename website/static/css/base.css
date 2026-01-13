@@ -907,26 +907,7 @@ main {
     text-align: center;
     align-items: center;
     padding: 30px;    
-    border-radius: 5px;
-}
-
-.text-area{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 6px;
-    padding: 8px 0;
-}
-
-.title-ab-func{
-    font-size: 12.5px;
-    color: rgb(56, 56, 56);
-    max-width: fit-content;
-    max-width: 300px;
-    text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
 }
 
 .link_cont{
@@ -1010,7 +991,7 @@ main {
     align-items: center;
     margin: 14px 0;
    
-   vertical-align: middle;
+    vertical-align: middle;
 }
 
 .log_reg_form .remember_cont span a{
@@ -1278,7 +1259,7 @@ main {
     display: flex;
     flex-direction: column;
     /* background-color:rgb(247, 247, 247); */
-    background-color: white;
+    /* background-color: white; */
     justify-content: center;
     margin-right: 90px;
 
@@ -1622,6 +1603,90 @@ main {
     height: 100%;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+}
+/* Стили для кнопки ответа и формы */
+.reply_btn {
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-right: 8px;
+    transition: background-color 0.3s;
+}
+
+.reply_btn:hover {
+    background: #3182ce;
+}
+
+.reply_form {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f7fafc;
+    border-radius: 6px;
+}
+
+
+.reply_textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 60px;
+    margin-bottom: 8px;
+    font-family: inherit;
+}
+
+.reply_textarea:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.reply_actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.reply_submit_btn {
+    background: #48bb78;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.reply_submit_btn:hover {
+    background: #38a169;
+}
+
+.reply_submit_btn:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+}
+
+.reply_cancel_btn {
+    background: #e2e8f0;
+    color: #4a5568;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.reply_cancel_btn:hover {
+    background: #cbd5e0;
 }
 
 .account_messageArea{
@@ -2135,11 +2200,6 @@ main {
     padding: 7px;
 
 }
-
-
-
-
-
 
 .personal-info_area svg{
     margin-right: 15px;
@@ -4572,7 +4632,7 @@ th .resizer {
 
     /*profile common*/
     .profile_page .personal-info_area td input{
-        width: 310px; 
+        width: 600px; 
     }
 
     .choose-organization_area {
@@ -4710,37 +4770,32 @@ th .resizer {
 
 }
 
-
-
 /* Для мобильных устройств */
 @media (max-width: 768px) {
     .custom-alert {
         box-sizing: border-box;
-        /* Центрируем по горизонтали */
         left: 50%;
         right: auto;
         transform: translateX(-50%) translateY(100px);
         height: fit-content;
-        /* Адаптивная ширина с отступами */
-        width: calc(100% - 40px); /* 20px отступ слева + 20px справа */
+        width: calc(100% - 50px);
         max-width: 400px;
         
-        /* Анимация для мобилки */
         transition: opacity 0.5s ease, transform 0.5s ease;
         
-        /* Положение снизу */
         top: 80px;
-        
-        /* Для лучшей читаемости */
         -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
-        background-color: rgba(255, 255, 255, 0.95) !important; /* Перебиваем цвет фона */
+        background-color: rgba(255, 255, 255, 0.95) !important; 
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
+
+    .p_message_cont{
+        font-size: 13px;
+    }
     
-    /* Показанное состояние для мобильных */
     .custom-alert.show {
-        right: auto; /* Отключаем десктопное свойство */
+        right: auto;
         transform: translateX(-50%) translateY(0);
         opacity: 1;
     }
@@ -4759,7 +4814,7 @@ th .resizer {
     .header-center {
         position: absolute;
         background-color: white;
-        bottom: -10px; /* Сместить тень ниже */
+        bottom: -10px;
         box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
         border-radius: 0;
         right: 0;
@@ -4854,13 +4909,16 @@ th .resizer {
 
     /*log_reg*/
     .log_reg_form{
-        background-color: rgba(255, 255, 255, 0);
-        box-shadow: none;
+        box-sizing: border-box;
+        width: 100%;
+        /* background-color: rgba(255, 255, 255, 0);
+        box-shadow: none; */
         padding: 30px; 
+        margin: 10px;
     }
 
     .link_cont{ 
-        margin: 20px 0 60px 0 ;
+        margin: 20px 0 60px 0;
     }
     /*log_reg end*/
 
@@ -5352,8 +5410,24 @@ th .resizer {
 
 }
   
-  
+.text-area{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 6px;
+    padding: 8px 0;
+}
 
+.title-ab-func{
+    font-size: 12.5px;
+    color: rgb(56, 56, 56);
+    max-width: fit-content;
+    max-width: 300px;
+    text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
+}
 
 @media(max-width: 767px){
     .footer-col{
