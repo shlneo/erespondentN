@@ -3203,16 +3203,17 @@ main {
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  z-index: 2; 
+ 
 }
 
 .white-panel button {
     border-radius: 6px;
     border: 1px solid rgb(216, 216, 216);
     display: flex;   
+    gap: 7px;
     font-size: 13px;
     flex-direction: row;
-    gap: 8px;
+    z-index: 1 !important;
     justify-content: space-between;
     padding: 5px 15px;
     text-align: left;

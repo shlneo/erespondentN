@@ -741,12 +741,12 @@ def сopy_without_numbers_report():
                     code_product=section.code_product,
                     section_number=section.section_number,
                     Oked=section.Oked,
-                    produced=Decimal(0.00),
-                    Consumed_Quota=Decimal(0.00),
-                    Consumed_Fact=Decimal(0.00),
-                    Consumed_Total_Quota=Decimal(0.00),
-                    Consumed_Total_Fact=Decimal(0.00),
-                    total_differents=Decimal(0.00),
+                    produced=Decimal('0.00'),
+                    Consumed_Quota=Decimal('0.00'),
+                    Consumed_Fact=Decimal('0.00'),
+                    Consumed_Total_Quota=Decimal('0.00'),
+                    Consumed_Total_Fact=Decimal('0.00'),
+                    total_differents=Decimal('0.00'),
                     note=section.note
                 )
                 db.session.add(new_section)

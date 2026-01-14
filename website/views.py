@@ -139,21 +139,23 @@ def beginPage():
 def sign():
     return render_template('sign.html', 
                            user=current_user,
-            hide_header=True,
-            hide_circle_buttons=True,
+            # hide_header=True,
+            # hide_circle_buttons=True,
                            )
 
 @views.route('/login', methods=['GET'])
 def login():
     return render_template('login.html', user=current_user,
-            hide_header=True,
-            hide_circle_buttons=True,)
+            # hide_header=True,
+            # hide_circle_buttons=True,
+            )
 
 @views.route('/kod', methods=['GET'])
 def kod():
     return render_template('kod.html', user=current_user,
-            hide_header=True,
-            hide_circle_buttons=True,)
+            # hide_header=True,
+            # hide_circle_buttons=True,
+            )
 
 @views.route('/account', methods=['GET'])
 @login_required

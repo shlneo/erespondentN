@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 contextMenu_report.style.top = event.pageY + 'px';
                 contextMenu_report.style.left = event.pageX + 'px';
-                contextMenu_report.style.display = 'block';
+                contextMenu_report.style.display = 'flex';
             }
         });
     });

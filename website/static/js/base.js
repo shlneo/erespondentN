@@ -808,7 +808,6 @@ document.addEventListener('DOMContentLoaded', function () {
         var reportRow = document.querySelector('.report_row.active-report');
         if (reportRow) {
             var reportId = reportRow.querySelector('#report_id').value;
-            document.getElementById('copped_id').value = reportId;
             document.getElementById('copped_second_id').value = reportId;
         }
         coppy_report_modal.classList.add('active');
@@ -820,7 +819,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var reportRow = document.querySelector('.report_row.active-report');
         if (reportRow) {
             var reportId = reportRow.querySelector('#report_id').value;
-            document.getElementById('copped_id').value = reportId;
+            document.getElementById('copped_second_id').value = reportId;
         }
         coppy_second_report_modal.classList.add('active');
         contextMenuReport.style.display = 'none';
