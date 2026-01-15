@@ -32,7 +32,7 @@
               <li onclick="window.location.href='/'">Главная</li>
               <li onclick="window.location.href='/news'">Новости</li>
               <li onclick="window.location.href='/contacts'" >Контакты</li>
-              <li onclick="window.location.href='/FAQ'" >FAQ</li>
+              <li onclick="window.location.href='/FAQ'" >Помощь</li>
           </ul>
         </nav>
       </div>
@@ -53,7 +53,7 @@
     </header>
     {% endif %}
 
-    {% if hide_circle_buttons %}
+    {% if circle_buttons %}
     <div class="circle-buttons-container">
        <button class="circle-button" onclick="window.location.href='/FAQ'">
         <img src="{{ url_for('static', filename='img/faq.png') }}" alt="{{ _('FAQ') }}" class="circle-button-icon">

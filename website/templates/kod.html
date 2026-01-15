@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Код индентификация - ErespondentN{% endblock %}
+{% block title %}Код идентификации - ErespondentN{% endblock %}
 {% block content %}
 <div class="blurred-background"></div>
 <div class="page_log_reg">
@@ -13,7 +13,7 @@
                 </div>
                 <div class="answer-highlight-second" style = "max-width: 450px;">
                     <div class="highlight-icon">💡</div>
-                    <p>Код подтверждения будет отправлен на указанную электронную почту. Время доставки может составлять от нескольких секунд до нескольких минут. </p>
+                    <p>Код подтверждения будет отправлен на указанную электронную почту. Время доставки может составлять от нескольких секунд до нескольких минут. Если он так и не пришел прочитайте пожалуйста <a href="/FAQ#faq16" target="_blank" style = "font-weight: 700;">как решить проблему</a>.</p>
                 </div>
                 <div class="authorization_data">
                     <div class="activation_code_container">
@@ -38,75 +38,44 @@
             </form>
         
             <div class = "forgot_cont">
-                <button class = 'relod_button' id = "relod_button_kod" type="submit">Отправить ещё раз?</button>
+                <button class = 'relod_button' id = "relod_button_kod" type="button">
+                    <!-- Текст будет заменен JavaScript -->
+                    Отправить ещё раз
+                </button>
             </div>
             
         </div>
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const inputs = document.querySelectorAll('.activation_code_input');
-        inputs.forEach((input, index) => {
-            input.addEventListener('input', () => {
-                if (input.value && index < inputs.length - 1) {
-                    inputs[index + 1].focus();
-                }
-                else if (!input.value && index > 0) {
-                    inputs[index - 1].focus();
-                }
-            });
+<style>
+    #relod_button_kod:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: #f0f0f0;
+        color: #666;
+    }
     
-            input.addEventListener('keydown', (e) => {
-                if (e.key === "Backspace" && index > 0 && !input.value) {
-                    inputs[index - 1].focus();
-                }
-            });
-        });
+    #relod_button_kod {
+        transition: all 0.3s ease;
+        background: none;
+        border: none;
+        color: #007bff;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 5px 10px;
+        font-family: inherit;
+    }
     
-        inputs[0].addEventListener('paste', (e) => {
-            e.preventDefault();
-            const pasteData = e.clipboardData.getData('text');
-        
-            pasteData.split('').forEach((char, i) => {
-                if (i < inputs.length) {
-                    inputs[i].value = char;
-                }
-            });
+    #relod_button_kod:hover:not(:disabled) {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+    
+    #relod_button_kod:focus {
+        outline: none;
+    }
+</style>
 
-            inputs[Math.min(pasteData.length - 1, inputs.length - 1)].focus();
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const resendButton = document.getElementById('relod_button_kod');
-    
-        resendButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            fetch('/resend-code', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert(data.message); 
-                    resendButton.disabled = true; 
-                    
-                    setTimeout(() => {
-                        resendButton.disabled = false;
-                    }, 30000); 
-                } else {
-                    alert(data.message); 
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка при отправке кода:', error);
-                alert('Не удалось отправить код. Попробуйте еще раз позже.');
-            });
-        });
-    });
-</script>
+<script src="{{ url_for('static', filename='js/kod.js') }}"></script>
 {% endblock %}

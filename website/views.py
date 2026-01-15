@@ -138,23 +138,17 @@ def beginPage():
 @views.route('/sign', methods=['GET'])
 def sign():
     return render_template('sign.html', 
-                           user=current_user,
-            # hide_header=True,
-            # hide_circle_buttons=True,
+                           user=current_user
                            )
 
 @views.route('/login', methods=['GET'])
 def login():
-    return render_template('login.html', user=current_user,
-            # hide_header=True,
-            # hide_circle_buttons=True,
+    return render_template('login.html', user=current_user
             )
 
 @views.route('/kod', methods=['GET'])
 def kod():
-    return render_template('kod.html', user=current_user,
-            # hide_header=True,
-            # hide_circle_buttons=True,
+    return render_template('kod.html', user=current_user
             )
 
 @views.route('/account', methods=['GET'])
@@ -278,7 +272,6 @@ def reply_to_message(message_id):
             'success': False, 
             'error': 'Произошла ошибка при отправке ответа'
         }), 500
-
 
 @views.route('/profile/common', methods=['GET'])
 @login_required
@@ -488,15 +481,6 @@ def FAQ():
     return render_template('FAQ.html', 
         current_user=current_user
     )
-
-@views.route('/FAQ/<int:id>', methods=['GET'])
-def FAQ_question(id):
-    if (id < 15):
-        return render_template(f'Questions/{id}.html', 
-            current_user=current_user
-        )
-    else:
-        return render_template('404.html'), 404
 
 @views.route('/news/<int:id>', methods=['GET'])
 def news_post(id):

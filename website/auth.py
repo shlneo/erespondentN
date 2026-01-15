@@ -330,7 +330,7 @@ def sign():
                 }
                 session.permanent = True
                 send_activation_email(email) 
-                flash('Регистрация прошла успешно! Проверьте свою почту для активации аккаунта.', 'success')
+                flash('Проверьте свою почту для активации аккаунта.', 'success')
                 return redirect(url_for('views.kod'))
         else:
             flash('Введите данные для регистрации.', 'error')    
@@ -351,8 +351,17 @@ def kod():
             db.session.commit()
             session.pop('temp_user', None)
             session.pop('activation_code', None)
-            flash('Аккаунт успешно активирован!', 'success')
-            return redirect(url_for('views.login'))
+            
+            remember = True
+            
+            login_user(new_user, remember=remember)
+            session_token = create_user_session(new_user.id)
+            resp = make_response(redirect(url_for('views.account')))
+            resp.set_cookie('session_token', session_token, httponly=True)
+            flash('Аккаунт успешно активирован! Теперь заполните свой профиль', 'success')
+            return resp
+            
+            # return redirect(url_for('views.login'))
         else:
             flash('Некорректный код активации.', 'error')
     return redirect(url_for('views.kod'))
