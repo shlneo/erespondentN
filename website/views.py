@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
 from flask_login import current_user, login_required
-from website.auth import send_email
+from .email import send_email
 from website.session_utils import session_required
 from .models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News, UserSession
 from . import db

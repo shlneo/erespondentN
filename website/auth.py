@@ -55,6 +55,8 @@ from website.session_utils import create_user_session, get_session_token_from_co
 
 from .time_for_app import current_utc_time
 
+from .email import send_email
+
 auth = Blueprint('auth', __name__)
 login_manager = LoginManager()
 
@@ -101,158 +103,8 @@ def get_location_info(user_agent_string):
 
     except Exception as e:
         print(f"Ошибка при получении данных о местоположении: {e}")
-        return "Неизвестно", "Неизвестно", "Неизвестно", "Неизвестно"
-
-def send_email(message_body, recipient_email, email_type, location=None, device=None, browser=None, ip_address=None):
-    sender = os.getenv('EMAILNAME')
-    password = os.getenv('EMAILPASS')
-    
-    base_styles = """
-    <style>
-        body { font-family: "Inter", sans-serif; background-color: #f3f3f3; margin: 0; padding: 0; }
-        .email-container { max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; 
-                        overflow: hidden; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); }
-        .header { background-color: #f3f3f3; text-align: center; padding: 20px; }
-        .header a { font-size: 32px; font-weight: bold; padding: 15px; margin: 5px 0; }
-        .content { padding: 20px; color: #333; }
-        .info { background-color: #f9f9f9; padding: 15px; border-left: 4px solid #028dff; margin: 20px 0; 
-                border-radius: 4px; }
-        .code { text-align: center; font-size: 32px; font-weight: bold; background-color: #f9f9f9; padding: 15px; 
-                border: 1px solid #ddd; border-radius: 5px; margin: 20px 0; }
-        .footer { background-color: #f3f3f3; padding: 10px; text-align: center; font-size: 12px; color: #777; }
-        .footer a { color: #6441a5; text-decoration: none; }
-    </style>
-    """
-
-    if email_type == "activation_kod":
-        content = f"""
-        <p>Здравствуйте!</p>
-        <p>Кто-то пытается войти в ErespondentN используя вашу электронную почту.</p>
-        <div class="info">
-            {f'<p><strong>Расположение:</strong> {location}</p>' if location else ''}
-            {f'<p><strong>Устройство:</strong> {device}</p>' if device else ''}
-            {f'<p><strong>Браузер:</strong> {browser}</p>' if browser else ''}
-            {f'<p><strong>IP-адрес:</strong> {ip_address}</p>' if ip_address else ''}
-        </div>
-        <p>Чтобы активировать вход, введите следующий код:</p>
-        <div class="code">{message_body}</div>
-        <p class="note">Обратите внимание, что срок действия этого кода истекает через 15 минут.</p>
-        """
-    elif email_type == "new_pass":
-        content = f"""
-        <p>Здравствуйте!</p>
-        <p>Кто-то пытается изменить пароль в ErespondentN используя вашу электронную почту.</p>
-        <div class="info">
-            {f'<p><strong>Расположение:</strong> {location}</p>' if location else ''}
-            {f'<p><strong>Устройство:</strong> {device}</p>' if device else ''}
-            {f'<p><strong>Браузер:</strong> {browser}</p>' if browser else ''}
-            {f'<p><strong>IP-адрес:</strong> {ip_address}</p>' if ip_address else ''}
-        </div>
-        <p>Вот ваш новый пароль:</p>
-        <div class="code">{message_body}</div>
-        <p>При желании его можно сменить в профиле пользователя, для этого требуется перейти:</p>
-        <ul>
-            <li>Личный кабинет →</li>
-            <li>Параметры профиля →</li>
-            <li>Безопасность</li>
-        </ul>
-        """
-    elif email_type == "to_admin":
-        content = f"""   
-            <p style="margin: 0 0 18px 0; font-size: 16px; line-height: 1.6; color: #2c3e50; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Здравствуйте!</p>
-            <p style="margin: 0 0 25px 0; font-size: 16px; line-height: 1.6; color: #2c3e50; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Сообщение администратору.</p>
-            <p style="margin: 0 0 12px 0; font-size: 16px; line-height: 1.6; color: #2c3e50; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Сообщение:</p>
-            <div style="
-                background: linear-gradient(120deg, rgba(67, 97, 238, 0.08) 0%, rgba(76, 201, 240, 0.08) 100%);
-                border-left: 4px solid #4361ee;
-                border-radius: 0 8px 8px 0;
-                padding: 20px 25px;
-                margin: 15px 0 25px 0;
-                font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
-                font-size: 14.5px;
-                line-height: 1.7;
-                color: #2d3748;
-                white-space: pre-wrap;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                box-shadow: 0 2px 8px rgba(67, 97, 238, 0.08);
-            ">{message_body}</div>
-        """
-    elif email_type == "to_recipient":
-        content = f"""   
-            <p style="margin: 0 0 18px 0; font-size: 16px; line-height: 1.6; color: #2c3e50; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Здравствуйте!</p>
-            <p style="margin: 0 0 25px 0; font-size: 16px; line-height: 1.6; color: #2c3e50; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Вам поступило сообщение от администратора.</p>
-            <p style="margin: 0 0 12px 0; font-size: 16px; line-height: 1.6; color: #2c3e50; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Сообщение:</p>
-            <div style="
-                background: linear-gradient(120deg, rgba(67, 97, 238, 0.08) 0%, rgba(76, 201, 240, 0.08) 100%);
-                border-left: 4px solid #4361ee;
-                border-radius: 0 8px 8px 0;
-                padding: 20px 25px;
-                margin: 15px 0 25px 0;
-                font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
-                font-size: 14.5px;
-                line-height: 1.7;
-                color: #2d3748;
-                white-space: pre-wrap;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                box-shadow: 0 2px 8px rgba(67, 97, 238, 0.08);
-            ">{message_body}</div>
-        """
-    else:
-        content = f"""
-        <p>Здравствуйте!</p>
-        <p>Сообщение об изменении статуса отчета.</p>
-        <p>Статус отчета изменен на:</p>
-        <div class="code">{message_body}</div>
-        """
-
-    html_template = f"""
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-        {base_styles}
-    </head>
-    <body>
-        <div class="email-container">
-            
-            <div class="content">
-                {content}
-            </div>
-            <div class="footer">
-                <p>Дополнительную информацию можно найти <a href="https://erespondentn.energoeffect.gov.by/FAQ">здесь</a>.</p>
-                <p>Спасибо,<br>Служба поддержки ErespondentN</p>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-    # <div class="header"><a>ErespondentN</a></div>
-    
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
-
-    try: 
-        server.login(sender, password)
+        return "Неизвестно", "Неизвестно", "Неизвестно", "Неизвестно"  
         
-        msg = MIMEMultipart()
-        msg["From"] = sender
-        msg["To"] = recipient_email
-        msg["Subject"] = "Уведомление от ErespondentN"
-        
-        msg.attach(MIMEText(html_template, "html"))
-
-        server.sendmail(sender, recipient_email, msg.as_string())
-        
-        # print("Письмо успешно отправлено")
-        return "Email sent successfully"
-    except Exception as _ex:
-        # print(f"Ошибка при отправке письма: {_ex}")
-        return f"{_ex}\nCheck log ..."
-    finally:
-        server.quit()
-
 def send_activation_email(email):
     activation_kod = gener_password()
     session['activation_code'] = activation_kod
