@@ -4358,18 +4358,33 @@ th .resizer {
 }
 
 .instruction-link {
-    color: #000000; 
+    color: #0056b3; 
     text-decoration: underline;
     cursor: pointer;
     transition: color 0.3s ease;
+    font-weight: 600;
 }
 
 .instruction-link:hover,
 .instruction-link:focus {
-    color: #0056b3; 
+    color: #003b7a; 
     outline: none; 
 }
 
+.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
 
 .media-showcase {
     margin: 40px 0;

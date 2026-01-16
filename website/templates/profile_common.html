@@ -87,6 +87,7 @@
                                             <img class="" src="{{ url_for('static', filename='img/Search.svg')}}" alt="">
                                         </a>
                                     {%else%} {%endif%}
+                                    <input type="hidden" name="id_org">
                             </td>
                         </tr>
                         {%if current_user.type != 'Аудитор'%}
@@ -213,7 +214,8 @@
     </div>
 </div>
 
-<script>document.addEventListener("DOMContentLoaded", function () {
+<script>
+ document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.querySelector('input[name="search_organization"]');
     const tableBody = document.getElementById("chooserOganizationTableBody");
     const chooseOrgModal = document.getElementById("chooseOrgModal");
@@ -330,7 +332,11 @@
             let row = event.target.closest("tr");
             if (!row) return;
             
+            // Получаем ID организации из data-атрибута
+            const orgId = row.dataset.id;
+            
             let orgData = {
+                id: orgId,
                 full_name: row.cells[0]?.textContent.trim() || '',
                 okpo: row.cells[1]?.textContent.trim() || '',
                 ynp: row.cells[2]?.textContent.trim() || '',
@@ -341,11 +347,13 @@
             const okpoInput = document.querySelector('input[name="okpo_common"]');
             const ynpInput = document.querySelector('input[name="ynp_common"]');
             const ministryInput = document.querySelector('input[name="ministry_common"]');
+            const idOrgInput = document.querySelector('input[name="id_org"]');
             
             if (fullNameInput) fullNameInput.value = orgData.full_name;
             if (okpoInput) okpoInput.value = orgData.okpo;
             if (ynpInput) ynpInput.value = orgData.ynp;
             if (ministryInput) ministryInput.value = orgData.ministry;
+            if (idOrgInput) idOrgInput.value = orgData.id;
 
             chooseOrgModal.classList.remove("active");
         }

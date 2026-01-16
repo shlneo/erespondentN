@@ -252,10 +252,10 @@ def reply_to_message(message_id):
         db.session.add(reply_message)
         db.session.commit()
         
-        try:
-            send_email(reply_text, recipient.email, 'to_recipient')
-        except Exception as e:
-            views.logger.error(f"Ошибка отправки email: {str(e)}")
+        # try:
+        #     send_email(reply_text, recipient.email, 'to_recipient')
+        # except Exception as e:
+        #     views.logger.error(f"Ошибка отправки email: {str(e)}")
             
         # flash('Вам пришел ответ на ваше сообщение', 'success')
         

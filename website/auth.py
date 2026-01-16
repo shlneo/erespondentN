@@ -106,9 +106,9 @@ def get_location_info(user_agent_string):
         return "Неизвестно", "Неизвестно", "Неизвестно", "Неизвестно"  
         
 def send_activation_email(email):
-    activation_kod = gener_password()
-    session['activation_code'] = activation_kod
-    send_email(activation_kod, email, 'activation_kod')
+    message = gener_password()
+    session['activation_code'] = message
+    send_email(message, email, 'activation_kod')
 
 def gener_password():
     length=5
@@ -210,7 +210,7 @@ def kod():
             session_token = create_user_session(new_user.id)
             resp = make_response(redirect(url_for('views.account')))
             resp.set_cookie('session_token', session_token, httponly=True)
-            flash('Аккаунт успешно активирован! Теперь заполните свой профиль', 'success')
+            flash('Аккаунт успешно активирован! Теперь перейдите к заполнению профиля!', 'success')
             return resp
             
             # return redirect(url_for('views.login'))
@@ -258,7 +258,8 @@ def add_personal_parametrs():
         second_name = request.form.get('second_name_common', '').strip()
         patronymic = request.form.get('patronymic_common', '').strip()
         telephone = request.form.get('telephone_common', '').strip()
-        full_name = request.form.get('full_name_common', '').strip()
+        
+        id_org = request.form.get('id_org', '').strip()
 
         if not all([name, second_name, telephone]):
             flash('Заполните все обязательные поля.', 'error')
@@ -276,21 +277,22 @@ def add_personal_parametrs():
         current_user.telephone = telephone
         db.session.commit()
         
-        if not all([full_name]):
+        if not all([id_org]):
             flash('Выберите предприятие.', 'error')
             return redirect(url_for('views.profile_common'))
         
-        organiz_full_name = Organization.query.filter_by(full_name=full_name).first()
-        if not organiz_full_name:
+        organization = Organization.query.filter_by(id=id_org).first()
+        if not organization:
             flash('Организация не найдена.', 'error')
             return redirect(url_for('views.profile_common'))
         db.session.commit()
 
-        existing_userOrg = User.query.filter_by(organization_id=organiz_full_name.id).first()
-        if existing_userOrg and existing_userOrg.id != current_user.id:
-            flash('Аккаунт с такой организацией уже существует.', 'error')
-            return redirect(url_for('views.profile_common'))
-        current_user.organization_id = organiz_full_name.id
+        # existing_userOrg = User.query.filter_by(organization_id=organization.id).first()
+        # if existing_userOrg and existing_userOrg.id != current_user.id:
+        #     flash('Аккаунт с такой организацией уже существует.', 'error')
+        #     return redirect(url_for('views.profile_common'))
+        
+        current_user.organization_id = organization.id
 
         db.session.commit()
         flash('Данные успешно обновлены.', 'success')
@@ -346,10 +348,10 @@ def relod_password():
         new_password = gener_password()
         hashed_password = generate_password_hash(new_password)
 
-        user_agent_string = request.headers.get('User-Agent')
-        ip_address, location, os, browser = get_location_info(user_agent_string)
+        # user_agent_string = request.headers.get('User-Agent')
+        # ip_address, location, os, browser = get_location_info(user_agent_string)
         
-        send_email(new_password, email, 'new_pass', location=location, device=os, browser=browser, ip_address=ip_address)
+        send_email(new_password, email, 'new_pass')
         flash('Новый пароль был отправлен вам на email.', 'success')
         user.password = hashed_password
         db.session.commit()
