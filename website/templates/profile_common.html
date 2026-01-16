@@ -87,7 +87,7 @@
                                             <img class="" src="{{ url_for('static', filename='img/Search.svg')}}" alt="">
                                         </a>
                                     {%else%} {%endif%}
-                                    <input type="hidden" name="id_org">
+                                    <input type="hidden" name="id_org" value="{% if current_user.organization %}{{ current_user.organization.id }}{% else %}{% endif %}">
                             </td>
                         </tr>
                         {%if current_user.type != 'Аудитор'%}
