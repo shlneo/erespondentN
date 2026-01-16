@@ -13,18 +13,16 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# ========== КОНФИГУРАЦИЯ ==========
 MAX_WORKERS = 2
 EMAILS_PER_MINUTE = 20
 SMTP_TIMEOUT = 15
 
-# ========== ПРОСТОЙ SMTP МЕНЕДЖЕР ==========
 class SimpleSMTPManager:
     def __init__(self):
         self.sender = os.getenv('EMAILNAME')
         self.password = os.getenv('EMAILPASS')
         self.last_sent_time = 0
-        self.min_interval = 60.0 / EMAILS_PER_MINUTE  # секунд между письмами
+        self.min_interval = 60.0 / EMAILS_PER_MINUTE
         self.lock = Lock()
         
         if not self.sender or not self.password:
@@ -201,10 +199,7 @@ def generate_html_template(message_body, email_type, location=None,
         html_template += f"""
                 <p style="margin: 0 0 16px 0; font-size: 16px; color: #2c3e50;">Здравствуйте!</p>
                 <p style="margin: 0 0 20px 0; font-size: 16px; color: #2c3e50;">Сообщение об изменении статуса отчета.</p>
-                <p style="margin: 20px 0 15px 0; font-size: 16px; color: #2c3e50;">Статус отчета изменен на:</p>
-                <div style="text-align: center; font-size: 32px; font-weight: bold; background-color: #f9f9f9; padding: 20px; border: 1px solid #dddddd; margin-top: 50px; margin-bottom: 20px; letter-spacing: 5px; color: #2c3e50;">
-                    {message_body}
-                </div>
+                <p style="margin: 20px 0 15px 0; font-size: 16px; color: #2c3e50;">Статус отчета изменен на: <span style="font-size: 16px; color: black; font-weight: bold; margin-bottom: 20px;">{message_body}</span></p>
         """
         
     html_template += """
@@ -267,7 +262,7 @@ class SimpleEmailQueue:
             }
             
             self.queue.put_nowait(email_data)
-            self.start()  # Запускаем если еще не запущены
+            self.start()
             
             logger.info(f"Email queued for {recipient_email}")
             return True, "Email queued"
@@ -283,7 +278,6 @@ class SimpleEmailQueue:
                 email_data = self.queue.get(timeout=2)
                 
                 try:
-                    # Генерируем HTML
                     html_content = generate_html_template(
                         email_data['message_body'],
                         email_data['email_type'],
@@ -344,22 +338,18 @@ def send_email(message_body, recipient_email, email_type, location=None,
     """
     logger.info(f"Request to send email to {recipient_email}, type: {email_type}")
     
-    # Проверяем обязательные параметры
     if not recipient_email:
         return "Error: recipient email is required"
     
     if message_body is None:
         message_body = ""
     
-    # Для приоритетных писем пытаемся отправить сразу
     if priority or email_type in ["activation_kod", "new_pass"]:
         try:
-            # Генерируем HTML
             html_content = generate_html_template(
                 str(message_body), email_type, location, device, browser, ip_address
             )
             
-            # Прямая отправка
             smtp_manager = SimpleSMTPManager()
             success, message = smtp_manager.send_email_direct(recipient_email, html_content)
             
@@ -371,7 +361,6 @@ def send_email(message_body, recipient_email, email_type, location=None,
         except Exception as e:
             logger.warning(f"Direct send failed, using queue: {e}")
     
-    # Используем очередь
     queue = get_email_queue()
     success, message = queue.add_email(
         message_body=message_body,
@@ -388,7 +377,8 @@ def send_email(message_body, recipient_email, email_type, location=None,
     else:
         return f"Ошибка: {message}"
 
-# ========== ОЧИСТКА ==========
+
+
 def cleanup_email_system():
     """Очистка при завершении"""
     global _email_queue
