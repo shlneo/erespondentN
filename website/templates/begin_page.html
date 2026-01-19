@@ -42,7 +42,7 @@
         
     </div> 
     <div class="scroll-to-down">
-        {%if current_user.is_authenticated and current_user.fio and current_user.telephone%}
+        {%if current_user.is_authenticated%}
             <button onclick="scrollToForm()">
                 <img src="{{ url_for('static', filename='img/support.png')}}" alt="">
             </button>

@@ -6747,13 +6747,128 @@ th .resizer {
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
 
-    
-
-
-
     .spravochniki_area {
         max-height: calc(100vh - 140px);
     }
+
+
+    /*welcom modal*/
+
+    .simple-welcome {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.simple-content {
+    background: white;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    overflow: hidden;
+}
+
+.simple-header {
+    background: #2062ca;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.simple-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.simple-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+}
+
+.simple-close:hover {
+    opacity: 0.8;
+}
+
+.simple-poster {
+    position: relative;
+    cursor: pointer;
+}
+
+.simple-poster img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(32, 98, 202, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.simple-poster:hover .play-overlay {
+    opacity: 1;
+}
+
+.play-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.play-text {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.simple-footer {
+    padding: 15px 20px;
+    text-align: center;
+    border-top: 1px solid #eee;
+}
+
+.btn-close {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #333;
+}
+
+.btn-close:hover {
+    background: #e0e0e0;
+}
+
+    /**/
 
     /* account*/ 
     .account_buttons{
@@ -6765,6 +6880,8 @@ th .resizer {
     }
     /* account end*/ 
     
+
+
 
     /*profilecommon */
 

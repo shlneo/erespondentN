@@ -368,6 +368,10 @@ def report_area():
     organization = Organization.query.filter_by(id=current_user.organization.id).first()
     open_report_id = session.pop('open_report_id', None) # номер отчета для автоматического раскрытия
 
+    # show_welcome = session.get('first_time_report_area', True)
+    # if show_welcome:
+    #     session['first_time_report_area'] = False
+
     return render_template('report_area.html',
                            previous_quarter = get_previous_quarter(),
                            previous_year=get_report_year(),
@@ -375,7 +379,23 @@ def report_area():
                            user=current_user,
                            organization=organization,
                            version=version,
-                           open_report_id=open_report_id)
+                           open_report_id=open_report_id,
+                        #    show_welcome=show_welcome
+                           )
+
+
+@views.route('/dont-show-welcome', methods=['POST'])
+@login_required
+def dont_show_welcome():
+    """Устанавливает флаг, чтобы больше не показывать приветствие"""
+    try:
+        session['first_time_report_area'] = False
+        session['never_show_welcome'] = True
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 
 @views.route('/report-area/<string:report_type>/<int:id>', methods=['GET'])
 @profile_complete
@@ -497,8 +517,6 @@ def news():
         current_user=current_user,
         all_news=all_news
     )
-
-
 
 @views.route('/contacts', methods=['GET'])
 def contacts():
