@@ -485,7 +485,7 @@ def FAQ():
 @views.route('/news/<int:id>', methods=['GET'])
 def news_post(id):
     post = News.query.filter_by(id = id).first()
-    return render_template(f'Posts/1.html', 
+    return render_template(f'news_id.html', 
         current_user=current_user,
         post=post
     )
@@ -497,6 +497,8 @@ def news():
         current_user=current_user,
         all_news=all_news
     )
+
+
 
 @views.route('/contacts', methods=['GET'])
 def contacts():

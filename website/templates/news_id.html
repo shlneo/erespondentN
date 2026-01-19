@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{post.title}} - ErespondentN{% endblock %}
+{% block content %}
+
+<div class="news_portal">
+           <div class="headline_aurora">
+            <h1>{{post.title}}</h1>
+        </div>
+
+    <article class="article_crystal">
+        <nav class="nav_flow">
+            <a href="/news" class="back_orbital">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 4L6 8L10 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Назад к новостям
+            </a>
+        </nav>
+
+ 
+
+        <div class="content_hologram">
+            {% if post.img_name %}
+            <div class="media_illuminate">
+                <img src="{{ url_for('static', filename='img/news/' + post.img_name) }}" 
+                     alt="{{post.title}}"
+                     loading="lazy">
+                <span></span>
+            </div>
+            {% endif %}
+            
+            <div class="text_spectrum">
+                {{post.text|safe}}
+            </div>
+        </div>
+
+        <div class="article_footer">
+            <div class="meta_tags">
+                {% if post.created_time %}
+                <time class="time_pulse">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M8 4V8L10 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    {{post.created_time.strftime('%d %B %Y')}}
+                </time>
+                {% endif %}
+                
+                {% if post.category %}
+                
+                {% endif %}
+            </div>
+        </div>
+    </article>
+</div>
+
+{% endblock %}

@@ -98,6 +98,9 @@
                     <li data-question="8">
                         <a href="javascript:void(0)">- Особенности заполнения формы отчета</a>
                     </li>
+                    <li data-question="17">
+                        <a href="javascript:void(0)">- Статусы отчетов</a>
+                    </li>
                     <li data-question="11">
                         <a href="javascript:void(0)">- Сертификат ЭЦП</a>
                     </li>
@@ -322,7 +325,7 @@
                     <div class="infos">
                         <div class="answer-highlight-second">
                             <div class="highlight-icon">💡</div>
-                            <p>Данные учетной записи <strong>можно отредактировать</strong> лишь при <strong>остутствии</strong> отчетов на аккаунте (см. рисунок 11).</p>
+                            <p>Данные учетной записи <strong>можно отредактировать</strong> лишь при <strong>отсутствии</strong> отчетов на аккаунте (см. рисунок 11).</p>
                         </div>
 
                         
@@ -920,6 +923,373 @@
                 </div>
             </div>
         
+
+            <div class="info_page info_faq" data-question-id="17" style="display: none;">
+                <div class="faq_question_info">
+                    <div class="info_page_name">
+                        <h1>Статусы отчетов, порядок изменения статусов. Жизненный цикл отчета.</h1>
+                    </div>
+                    <div class="infos">
+                        <div class="status-flow-container">
+                            <div class="status-timeline">
+                                <div class="timeline-header">
+                                    <div class="timeline-subtitle">От создания до финального статуса</div>
+                                </div>
+                                
+                                <div class="timeline-content">
+                                    <div class="timeline-stage preparation-stage">
+                                        <div class="stage-header">
+                                            <div class="stage-icon"></div>
+                                            <h3>ЭТАП 1: ПОДГОТОВКА</h3>
+                                            <div class="stage-subtitle">Внутренний цикл у респондента</div>
+                                        </div>
+                                        
+                                        <div class="status-cards">
+                                            <div class="status-card draft">
+                                                <div class="status-header">
+                                                    <div class="status-icon">✏️</div>
+                                                    <div class="status-title">В редакции</div>
+                                                    <div class="status-badge">Начальный</div>
+                                                </div>
+                                                <div class="status-body">
+                                                    <p><strong>Описание:</strong> Отчет создан, но находится в процессе заполнения или редактирования.</p>
+                                                    <div class="status-features">
+                                                        <div class="feature">
+                                                            <span class="feature-icon">✓</span>
+                                                            <span>Редактирование всех полей</span>
+                                                        </div>
+                                                        <div class="feature">
+                                                            <span class="feature-icon">✓</span>
+                                                            <span>Добавление/удаление строк</span>
+                                                        </div>
+                                                        <div class="feature">
+                                                            <span class="feature-icon">✓</span>
+                                                            <span>Сохранение без ограничений</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="next-action">
+                                                        <span class="arrow"></span>
+                                                        <span class="action-text"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Стрелка перехода -->
+                                            <div class="transition-arrow">
+                                                <div class="arrow-line"></div>
+                                                <div class="arrow-head"></div>
+                                            </div>
+                                            
+                                            <!-- Статус 2 -->
+                                            <div class="status-card control">
+                                                <div class="status-header">
+                                                    <div class="status-icon">🔍</div>
+                                                    <div class="status-title">Контроль</div>
+                                                    <div class="status-badge">Автопроверка</div>
+                                                </div>
+                                                <div class="status-body">
+                                                    <p><strong>Описание:</strong> Система проверяет отчет на ошибки и несоответствия формату.</p>
+                                                    <div class="check-list">
+                                                        <div class="check-item">
+                                                            <span class="check-icon">✅</span>
+                                                            <span>Обязательные поля</span>
+                                                        </div>
+                                                        <div class="check-item">
+                                                            <span class="check-icon">🔢</span>
+                                                            <span>Числовые данные</span>
+                                                        </div>
+                                                        <div class="check-item">
+                                                            <span class="check-icon">📋</span>
+                                                            <span>Форматы и коды</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="status-conditions">
+                                                        <div class="condition success">
+                                                            <span class="condition-icon">✓</span>
+                                                            <span>Ошибок нет → <strong>Согласование</strong></span>
+                                                        </div>
+                                                        <div class="condition error">
+                                                            <span class="condition-icon">⚠️</span>
+                                                            <span>Есть ошибки → <strong>Редакция</strong></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Стрелка перехода -->
+                                            <div class="transition-arrow">
+                                                <div class="arrow-line"></div>
+                                                <div class="arrow-head"></div>
+                                            </div>
+                                            
+                                            <!-- Статус 3 -->
+                                            <div class="status-card approval">
+                                                <div class="status-header">
+                                                    <div class="status-icon">🤝</div>
+                                                    <div class="status-title">Согласование</div>
+                                                    <div class="status-badge">Внутреннее</div>
+                                                </div>
+                                                <div class="status-body">
+                                                    <p><strong>Описание:</strong> Пользователь согласовывает данные с вышестоящим руководством.</p>
+                                                    <div class="status-features">
+                                                        <div class="feature">
+                                                            <span class="feature-icon">👁️</span>
+                                                            <span>Просмотр данных</span>
+                                                        </div>
+                                                        <div class="feature">
+                                                            <span class="feature-icon">📊</span>
+                                                            <span>Сравнение с исходными данными</span>
+                                                        </div>
+                                                        <div class="feature">
+                                                            <span class="feature-icon">✅</span>
+                                                            <span>Редактирование разрешено</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="next-action final">
+                                                        <span class="arrow"></span>
+                                                        <span class="action-text">После подтверждения <strong>доступна Отправка</strong></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="stage-divider">
+                                        <div class="divider-line"></div>
+                                        <div class="divider-text">ОТПРАВКА НА ПРОВЕРКУ</div>
+                                        <div class="divider-line"></div>
+                                    </div>
+                                    <div class="timeline-stage audit-stage">
+                                        <div class="stage-header">
+                                            <div class="stage-icon"></div>
+                                            <h3>ЭТАП 2: ПРОВЕРКА АУДИТОРОМ</h3>
+                                            <div class="stage-subtitle">Внешний цикл проверки</div>
+                                        </div>
+                                        
+                                        <div class="status-cards audit-cards">
+                                            <!-- Статус 4 -->
+                                            <div class="status-card unviewed">
+                                                <div class="status-header">
+                                                    <div class="status-icon">🔵</div>
+                                                    <div class="status-title">Непросмотренный / Отправленный</div>
+                                                    <div class="status-badge">В очереди</div>
+                                                </div>
+                                                <div class="status-body">
+                                                    <p><strong>Описание:</strong> Отчет отправлен и ожидает проверки аудитором.</p>
+                                                    <div class="status-info">
+                                                        <div class="info-item">
+                                                            <span class="info-icon">⏱️</span>
+                                                            <span>Ожидание в очереди</span>
+                                                        </div>
+                                                        <div class="info-item">
+                                                            <span class="info-icon">👁️</span>
+                                                            <span>Аудитор еще не смотрел</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="time-note">
+                                                        <span class="note-icon">📌</span>
+                                                        <span>Статус присваивается автоматически при отправке</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Центральный узел аудитора -->
+                                            <div class="audit-decision-center">
+                                                <div class="center-icon">👨‍⚖️</div>
+                                                <div class="center-title">Решение аудитора</div>
+                                                <div class="center-subtitle">Выбор одного из трёх вариантов</div>
+                                            </div>
+                                            <div class="decision-options">
+                                                <div class="decision-option approved">
+                                                    <div class="option-header">
+                                                        <div class="option-icon">✅</div>
+                                                        <div class="option-title">Одобрить</div>
+                                                    </div>
+                                                    <div class="option-body">
+                                                        <p>Ошибок не найдено, отчет соответствует требованиям</p>
+                                                        <div class="option-result">
+                                                            <span class="result-arrow"></span>
+                                                            <span class="result-status success">🟢 Одобренный</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="decision-option comments">
+                                                    <div class="option-header">
+                                                        <div class="option-icon">⚠️</div>
+                                                        <div class="option-title">Вернуть с замечаниями</div>
+                                                    </div>
+                                                    <div class="option-body">
+                                                        <p>Найдены ошибки, требующие исправления</p>
+                                                        <div class="option-result">
+                                                            <span class="result-arrow"></span>
+                                                            <span class="result-status warning">🟡 Есть замечания</span>
+                                                        </div>
+                                                        <div class="option-note">
+                                                            <small>Требуется отправка сообщения респонденту</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="decision-option rejected">
+                                                    <div class="option-header">
+                                                        <div class="option-icon">❌</div>
+                                                        <div class="option-title">Отклонить</div>
+                                                    </div>
+                                                    <div class="option-body">
+                                                        <p>Критические ошибки, отчет не подлежит исправлению</p>
+                                                        <div class="option-result">
+                                                            <span class="result-arrow"></span>
+                                                            <span class="result-status error">🔴 Подлежит удалению</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="final-statuses">
+                                            <h4>📋 ФИНАЛЬНЫЕ СТАТУСЫ ОТЧЕТА</h4>
+                                            
+                                            <div class="final-status-grid">
+                                                <div class="final-status-item success">
+                                                    <div class="final-icon">🟢</div>
+                                                    <div class="final-content">
+                                                        <h5>Одобренный</h5>
+                                                        <p>Отчет успешно прошел проверку, доступен для загрузки в архив аудитором</p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="final-status-item warning">
+                                                    <div class="final-icon">🟡</div>
+                                                    <div class="final-content">
+                                                        <h5>Есть замечания</h5>
+                                                        <p>Отчет возвращен на доработку с комментариями аудитора</p>
+                                                        <div class="status-cycle">
+                                                            <strong>Цикл: Отчет → Редакция → Повторная отправка</strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="final-status-item error">
+                                                    <div class="final-icon">🔴</div>
+                                                    <div class="final-content">
+                                                        <h5>Подлежит удалению</h5>
+                                                        <p>Отчет содержит неустранимые ошибки, требуется создать новый</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Ключевые особенности -->
+                                <div class="timeline-features">
+                                    <h4>🎯 КЛЮЧЕВЫЕ ОСОБЕННОСТИ</h4>
+                                    <div class="features-grid">
+                                        <div class="feature-item">
+                                            <div class="feature-icon">↩️</div>
+                                            <div class="feature-text">Отмена действия аудитора возможна в течение <strong>30-ти дней</strong></div>
+                                        </div>
+                                        <div class="feature-item">
+                                            <div class="feature-icon">💬</div>
+                                            <div class="feature-text">Сообщения сохраняются при всех изменениях статуса</div>
+                                        </div>
+                                        <div class="feature-item">
+                                            <div class="feature-icon">🔄</div>
+                                            <div class="feature-text">При отмене отчет возвращается в <strong>"Непросмотренный"</strong></div>
+                                        </div>
+                                        <div class="feature-item">
+                                            <div class="feature-icon">📁</div>
+                                            <div class="feature-text">Только <strong>"Одобренные"</strong> отчеты можно скачать в архив</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Легенда -->
+                            <div class="status-legend">
+                                <h4></h4>
+                                <div class="legend-items">
+                                    <div class="legend-item">
+                                        <div class="legend-color draft"></div>
+                                        <strong>В редакции</strong>
+                                        <span>заполняется пользователем</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color control"></div>
+                                        <strong>Контроль</strong>
+                                        <span>проверка системой</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color approval"></div>
+                                        <strong>Согласование</strong>
+                                        <span>внутреннее подтверждение</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color unviewed"></div>
+                                        <strong>Непросмотренный</strong>
+                                        <span>ожидает аудитора</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color success"></div>
+                                        <strong>Одобренный</strong>
+                                        <span>успешная проверка</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color warning"></div>
+                                        <strong>Есть замечания</strong>
+                                        <span>требуется доработка</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color error"></div>
+                                        <strong>Подлежит удалению</strong>
+                                        <span>критические ошибки</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="status-summary">
+                            <div class="summary-header">
+                                <h3>КРАТКОЕ РУКОВОДСТВО</h3>
+                            </div>
+                            <div class="summary-content">
+                                <div class="summary-step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h5>Заполните отчет полностью</h5>
+                                        <p>Работайте в статусе <strong>"В редакции"</strong>, пока все данные не будут внесены</p>
+                                    </div>
+                                </div>
+                                <div class="summary-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <h5>Пройдите контроль системы</h5>
+                                        <p>Убедитесь, что отчет прошел автоматическую проверку без ошибок</p>
+                                    </div>
+                                </div>
+                                <div class="summary-step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <h5>Согласуйте с руководством</h5>
+                                        <p>В статусе <strong>"Согласование"</strong> подтвердите правильность данных</p>
+                                    </div>
+                                </div>
+                                <div class="summary-step">
+                                    <div class="step-number">4</div>
+                                    <div class="step-content">
+                                        <h5>Отправьте на проверку</h5>
+                                        <p>После согласования отчет будет отправлен аудитору со статусом <strong>"Непросмотренный"</strong></p>
+                                    </div>
+                                </div>
+                                <div class="summary-step">
+                                    <div class="step-number">5</div>
+                                    <div class="step-content">
+                                        <h5>Следите за статусом</h5>
+                                        <p>Отслеживайте изменения статуса и оперативно реагируйте на замечания</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
