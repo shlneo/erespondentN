@@ -14,7 +14,10 @@
                         <section>
                             <div class="functions_menu">                         
                                 <li id = "cancel-sending-bnt">           
-                                    <img src="{{ url_for('static', filename='img/cancel.png')}}" alt="">
+                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <line x1="6" y1="6" x2="26" y2="26" stroke="#ff0000" stroke-width="4" stroke-linecap="round"/>
+                                        <line x1="26" y1="6" x2="6" y2="26" stroke="#ff0000" stroke-width="4" stroke-linecap="round"/>
+                                    </svg>
                                     <a>Отменить</a>   
                                 </li>  
                             </div>  
@@ -93,13 +96,13 @@
     <div class = "rotation-fromareas">
         <div class = "rotation-fromareas_info"  style = "margin: 20px 30px;"> 
             <span>
-                <a class = "hover_a" href="/report-area">Вернуться</a>
+                <a class = "back_orbital" href="/report-area">Вернуться к отчетам</a>
             </span>
             <span> 
                 <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
             </span>
             <span>
-                 <a style = "font-weight: 600;">Статус - </a>
+                 <a style = "font-weight: 600;">Статус </a>
                 <a class = "rotation-fromareas-status">{{current_version.status}}</a>
             </span>
         </div>

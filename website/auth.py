@@ -108,7 +108,7 @@ def get_location_info(user_agent_string):
 def send_activation_email(email):
     message = gener_password()
     session['activation_code'] = message
-    send_email(message, email, 'activation_kod')
+    send_email(message, email, 'kod')
 
 def gener_password():
     length=5
@@ -224,7 +224,7 @@ def resend_code():
     if email:
         new_activation_code = gener_password()
         session['activation_code'] = new_activation_code
-        send_email(new_activation_code, email, 'activation_kod')
+        send_email(new_activation_code, email, 'kod')
         return jsonify({'status': 'success', 'message': 'Код активации отправлен повторно!'})
     else:
         return jsonify({'status': 'error', 'message': 'Не удалось отправить код повторно.'}), 400
@@ -323,7 +323,7 @@ def profile_password():
         user.password = generate_password_hash(new_password)
         db.session.commit()
 
-        # send_email(new_password, current_user.email, 'new_pass')
+        send_email('Вы успешно изменили свой пароль для входа в учетную запись ErespondentN', current_user.email, 'just_notif')
 
         UserSession.query.filter_by(user_id=current_user.id).delete()
         db.session.commit()
@@ -1099,14 +1099,14 @@ def change_category_report():
             db.session.commit()
 
             user_message = Message(
-                text = f"Статус вашего отчета №{current_version.id} был изменен.",
+                text = f"Статус вашего отчета был изменен на {status_itog}. Дополнительные сведения можно просмотреть в квитанции.",
                 sender_id = current_user.id,          
                 recipient_id = recipient_user.id
             )
             db.session.add(user_message)
             db.session.commit()
     
-            send_email(status_itog, user.email, 'change_status')
+            send_email(status_itog, user.email, 'status')
 
             flash(f'Статус вашего отчета №{current_version.id} был изменен.', 'success')
             return redirect(request.referrer) 
@@ -2254,7 +2254,7 @@ def sent_for_admin():
                 admin_user = os.getenv('adminemail3')
                 if admin_user:
                     try:
-                        send_email(text, admin_user, 'to_admin')
+                        send_email(text, admin_user, 'just_notif')
                     except Exception as e:
                         auth.logger.error(f"Ошибка отправки email: {str(e)}")
             else:

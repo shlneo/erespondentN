@@ -5,6 +5,7 @@ from flask_login import current_user
 class MessageView(ModelView):
     column_display_pk = True
     
+    column_searchable_list = ['id', 'text', 'sender_id', 'recipient_id']
     
     def is_accessible(self):
         return current_user.is_authenticated and current_user.type == "Администратор"

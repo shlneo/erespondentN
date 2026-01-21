@@ -32,7 +32,7 @@
               <li onclick="window.location.href='/'">Главная</li>
               <li onclick="window.location.href='/news'">Новости</li>
               <li onclick="window.location.href='/contacts'" >Контакты</li>
-              <li onclick="window.location.href='/FAQ'" >Помощь</li>
+              <li onclick="window.location.href='/FAQ'" class = "blinking-item">Помощь</li>
           </ul>
         </nav>
       </div>
@@ -153,14 +153,6 @@
                     <li>
                       <img  src="{{ url_for('static', filename='img/emailW.png')}}" alt="">
                       <a href="mailto:energoeffect@gosstandart.gov.by">energoeffect@gosstandart.gov.by</a>
-                    </li>
-                    <li>
-                      <img  src="{{ url_for('static', filename='img/telephoneW.png')}}" alt="">
-                      <a href="tel:+375173385051" title = "Приемная">+375 17 338-50-51 (прием.)</a>
-                    </li>
-                    <li>
-                      <img  src="{{ url_for('static', filename='img/telephoneW.png')}}" alt="">
-                      <a href="tel:+375172315563" title = "Техподдержка">+375 17 365-04-33 (техпод.)</a> 
                     </li>
                     <li>
                       <img  src="{{ url_for('static', filename='img/point_of_placeW.png')}}" alt="">

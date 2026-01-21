@@ -5,7 +5,7 @@ from flask_login import current_user
 class OrganizationView(ModelView):
     column_display_pk = True
 
-    column_searchable_list = ['full_name', 'okpo']
+    column_searchable_list = ['full_name', 'okpo', 'id']
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.type == "Администратор"

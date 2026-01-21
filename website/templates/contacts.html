@@ -4,11 +4,12 @@
 
 <div class="blurred-background"></div>
 
-<div class="contacts_cont">
+<div class="contacts_page">
     <div class = "rotation-fromareas">
         <div class = "rotation-fromareas_info"> 
             <span>
-                <a class = "hover_a" href="/">ErespondentN</a>
+                <a class = "back_orbital" href="/">
+                    ErespondentN</a>
             </span>
             <span> 
                 <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
@@ -18,42 +19,74 @@
             </span>
         </div>
     </div>
-    <div class="contacts_box">
-        <div class="contacts_info">
-            <div class="contacts_info_name">
-                <a>Контакты</a>
+    <section class="modern-contact">
+        <div class="contact-glass">
+            <h2 class="contact-title">Контакты</h2>
+            <div class="contact-methods">
+                <a href="mailto:energoeffect@gosstandart.gov.by" class="contact-method">
+                    <div class="contact-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-type">Email</div>
+                        <div class="contact-value">energoeffect@gosstandart.gov.by</div>
+                    </div>
+                </a>
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-type">Офис</div>
+                        <div class="contact-value">пл. Свободы 17, Минск</div>
+                    </div>
+                </div>
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-type">Часы работы <strong>техподдержки</strong> </div>
+                        <div class="contact-value">Пн-Пт: 9:00 - 16:00 <br><span style = "font-size: 12px;">Перерыв: 12:00 - 13:00</span></div>
+                    </div>
+                </div>
+                <a href="tel:+375172315563" class="contact-method">
+                    <div class="contact-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="5" y="2" width="14" height="20" rx="2" 
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="18" r="1" fill="currentColor"/>
+                        <path d="M9 5H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-type">Телефон техподдержки</div>
+                        <div class="contact-value" >+375 17 365-04-33</div>
+                    </div>
+                </a>
+                <a href="tel:+375173385051" class="contact-method">
+                    <div class="contact-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="5" y="2" width="14" height="20" rx="2" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="18" r="1" fill="currentColor"/>
+                            <path d="M9 5H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                                            </div>
+                    <div class="contact-info">
+                        <div class="contact-type">Телефон приемной</div>
+                        <div class="contact-value" >+375 17 338-50-51</div>
+                    </div>
+                </a>
             </div>
-            <div class="contacts_content" style = "padding-bottom: 0;">
-                <div class="contacts_content_row">
-                    <img  src="{{ url_for('static', filename='img/point_of_place.png')}}" alt="">
-                    <a>пл. Свободы 17, Минск</a>
-                </div> 
-                <div class="contacts_content_row">
-                    <img  src="{{ url_for('static', filename='img/email-ind.png')}}" alt="">
-                    <a>220030</a>
-                </div>
-                <br>
-                <div class="contacts_content_row">
-                    <img  src="{{ url_for('static', filename='img/email.png')}}" alt="">
-                    <a href="mailto:energoeffect@gosstandart.gov.by">energoeffect@gosstandart.gov.by</a>
-                </div>
-                <div class="contacts_content_row">
-                    <img  src="{{ url_for('static', filename='img/telephone.png')}}" alt="">
-                    <a href="tel:+375173385051">+375 17 338-50-51 (приемная)</a>
-                </div>
-                <div class="contacts_content_row">
-                    <img  src="{{ url_for('static', filename='img/telephone.png')}}" alt="">
-                    <a href="tel:+375172315563">+375 17 365-04-33 (техподдержка)</a> 
-                </div>
-            </div>
-        </div>  
-        <div class="contacts-map">
-            <iframe 
-                src="https://yandex.by/map-widget/v1/?indoorLevel=1&ll=27.553503%2C53.904416&mode=whatshere&whatshere%5Bpoint%5D=27.553504%2C53.904416&whatshere%5Bzoom%5D=17&z=16&controls=none" 
-                frameborder="0" 
-                allowfullscreen>
-            </iframe>
         </div>
-    </div>
+    </section>
 </div>
 {% endblock %}

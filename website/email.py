@@ -162,7 +162,7 @@ def build_html(message_body, email_type):
                 <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; margin-top: 20px; overflow: hidden; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);">
                     <div style="padding: 20px; color: #333333;">
         """
-    if email_type == "activation_kod":
+    if email_type == "kod":
         html_template += f"""
                 <p style="margin: 0 0 16px 0; font-size: 16px; color: #2c3e50;">Здравствуйте!</p>
                 <p style="margin: 0 0 20px 0; font-size: 16px; color: #2c3e50;">Кто-то пытается войти в ErespondentN используя вашу электронную почту.</p>
@@ -188,17 +188,22 @@ def build_html(message_body, email_type):
                     <li style="margin: 8px 0; font-size: 15px;">Безопасность</li>
                 </ul>
         """
-    elif email_type == "to_admin" or email_type == "to_recipient":
+    elif email_type == "just_notif":
         html_template += f"""
                 <p style="margin: 0 0 18px 0; font-size: 16px; line-height: 1.6; color: #2c3e50;">Здравствуйте!</p>
                 <p style="margin: 0 0 25px 0; font-size: 16px; line-height: 1.6; color: #2c3e50;">Сообщение от системы.</p>
                 <p style="margin: 20px 0 15px 0; font-size: 16px; color: #2c3e50;">Сообщение: <span style="font-size: 16px; color: black; font-weight: bold; margin-bottom: 20px;">{message_body}</span></p>
         """
-    else:
+    elif email_type == "status":
         html_template += f"""
                 <p style="margin: 0 0 16px 0; font-size: 16px; color: #2c3e50;">Здравствуйте!</p>
                 <p style="margin: 0 0 20px 0; font-size: 16px; color: #2c3e50;">Сообщение об изменении статуса отчета.</p>
                 <p style="margin: 20px 0 15px 0; font-size: 16px; color: #2c3e50;">Статус отчета изменен на: <span style="font-size: 16px; color: black; font-weight: bold; margin-bottom: 20px;">{message_body}</span></p>
+        """
+        
+    else:
+        html_template += f"""
+                <p style="margin: 0 0 16px 0; font-size: 16px; color: #2c3e50;">Здравствуйте!</p>
         """
     
     html_template += """

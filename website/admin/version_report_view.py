@@ -8,6 +8,7 @@ class Version_reportView(ModelView):
     column_default_sort = ('fio', True)
     column_sortable_list = ('id', 'begin_time', 'change_time', 'status', 'sent_time', 'fio', 'telephone', 'email', 'hasNot', 'report_id')
     
+    column_searchable_list = ['id', 'telephone', 'email']
     AVAILABLE_versions_TYPES = [
         (u'Заполнение', u'Заполнение'),
         (u'Контроль пройден', u'Контроль пройден'),

@@ -75,13 +75,14 @@
     <div class = "rotation-fromareas">
         <div class = "rotation-fromareas_info"  style = "margin: 20px 30px;"> 
             <span>
-                <a class = "hover_a" href="javascript:void(0)" onclick="smartBack()">Вернуться</a>
+                <a class = "back_orbital" href="javascript:void(0)" onclick="smartBack()">
+                    Вернуться к отчетам</a>
             </span>
             <span> 
                 <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
             </span>
             <span>
-                <a>Отчет</a>
+                <a>Статус</a>
                 <a class="rotation-fromareas-status">
                     {% if current_version.status == 'Отправлен' %}
                         Не просмотрен
@@ -92,6 +93,8 @@
             </span>
         </div>
     </div>
+
+
     <div class="report-area">
         <div id="fuel_section_table"> 
             <table class = "table_report-area">

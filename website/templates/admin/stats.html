@@ -5,50 +5,49 @@
     <table class="table">
         <tbody>
             <tr>
-                <td>number of users</td>
+                <td>users</td>
                 <td>{{ user_data }}</td>
             </tr>
             <tr>
-                <td>number of organizations</td>
+                <td>organizations</td>
                 <td>{{ organization_data }}</td>
             </tr>
             <tr>
-                <td>number of reports</td>
+                <td>reports</td>
                 <td>{{ report_data }}</td>
             </tr>
             <tr>
-                <td>number of report versions</td>
+                <td>versions</td>
                 <td>{{ version_report_data }}</td>
             </tr>
             <tr>
-                <td>the number of sections</td>
+                <td>sections</td>
                 <td>{{ sections_data }}</td>
             </tr>
             <tr>
-                <td>number of tickets</td>
+                <td>tickets</td>
                 <td>{{ ticket_data }}</td>
             </tr>
             <tr>
-                <td>number of dirUnit</td>
+                <td>dirUnit</td>
                 <td>{{ dirUnit_data }}</td>
             </tr>
             <tr>
-                <td>number of dirProduct</td>
+                <td>dirProduct</td>
                 <td>{{ dirProduct_data }}</td>
             </tr>
             <tr>
-                <td>number of img files</td>
+                <td>img files</td>
                 <td>{{ num_images }}</td>
             </tr>
         </tbody>
     </table>
 </div>
 
-
-<form action="{{ url_for('auth.create_test_users_rout') }}" method="post">
+<!-- <form action="{{ url_for('auth.create_test_users_rout') }}" method="post">
     <button type="submit">Создать тестовых пользователей</button>
 </form>
 <form action="{{ url_for('auth.delete_test_users_rout') }}" method="post">
     <button type="submit">Удалить тестовых пользователей</button>
-</form>
+</form> -->
 {% endblock %}
