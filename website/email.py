@@ -8,11 +8,10 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
 
-# ================= НАСТРОЙКИ =================
-SMTP_HOST = "smtp.gmail.com"
-SMTP_PORT = 587
+SMTP_HOST = "ms7.g-cloud.by"
+SMTP_PORT = 465  # Или 587
 
-EMAILS_PER_MINUTE = 5
+EMAILS_PER_MINUTE = 10
 DAILY_LIMIT = 200
 
 PRIORITY = {
@@ -26,8 +25,7 @@ PRIORITY = {
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("email-service")
 
-# ================= ПОТОК-АККАУНТ =================
-class GmailWorker(Thread):
+class Worker(Thread):
     def __init__(self, email, password, acc_id, queue):
         super().__init__(daemon=True)
         self.email = email
@@ -50,8 +48,15 @@ class GmailWorker(Thread):
 
     def send_email(self, to_email, subject, html):
         try:
-            server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20)
-            server.starttls()
+            if SMTP_PORT == 465:
+                server = smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=20)
+            else:
+                server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20)
+                if SMTP_PORT == 587:
+                    server.starttls()
+            
+            server.ehlo()
+            
             server.login(self.email, self.password)
 
             msg = MIMEMultipart()
@@ -64,14 +69,15 @@ class GmailWorker(Thread):
             server.sendmail(self.email, to_email, msg.as_string())
             server.quit()
 
-            self.sent_today += 1
-            self.last_sent = time.time()
+            with self.lock:
+                self.sent_today += 1
+                self.last_sent = time.time()
 
-            log.info(f"[ACC {self.acc_id}] sent to {to_email}")
+            log.info(f"[ACC {self.acc_id}] Отправлено на {to_email}")
             return True
 
         except Exception as e:
-            log.error(f"[ACC {self.acc_id}] {e}")
+            log.error(f"[ACC {self.acc_id}] Ошибка: {str(e)}")
             return False
 
     def run(self):
@@ -98,7 +104,6 @@ class GmailWorker(Thread):
 
             self.queue.task_done()
 
-# ================= ОЧЕРЕДЬ =================
 class EmailQueue:
     def __init__(self):
         self.queue = PriorityQueue()
@@ -108,25 +113,26 @@ class EmailQueue:
         workers = []
         i = 1
         while True:
-            email = os.getenv(f"GMAIL_{i}_EMAIL")
-            password = os.getenv(f"GMAIL_{i}_PASS")
+            email = os.getenv(f"ACC_{i}_EMAIL")
+            password = os.getenv(f"ACC_{i}_PASS")
             if not email or not password:
                 break
 
             workers.append(
-                GmailWorker(
+                Worker(
                     email=email,
                     password=password,
                     acc_id=i,
                     queue=self.queue
                 )
             )
-            # log.info(f"Gmail аккаунт #{i} загружен")
+            # log.info(f"Аккаунт #{i} ({email}) загружен")
             i += 1
 
         if not workers:
-            raise RuntimeError("Не найдено ни одного Gmail аккаунта")
+            raise RuntimeError("Не найдено ни одного аккаунта")
 
+        log.info(f"Загружено {len(workers)} аккаунтов")
         return workers
 
     def add(self, to_email, subject, html, email_type="default"):
@@ -138,9 +144,8 @@ class EmailQueue:
             "attempt": 0,
             "type": email_type
         }))
+        log.info(f"Задание добавлено в очередь: {to_email}, тип: {email_type}")
 
-
-# ================= HTML =================
 def build_html(message_body, email_type):
     html_template = f"""
             <!DOCTYPE html>
@@ -215,7 +220,13 @@ def build_html(message_body, email_type):
     
     return html_template
 
-_email_queue = EmailQueue()
+_email_queue = None
+
+def get_email_queue():
+    global _email_queue
+    if _email_queue is None:
+        _email_queue = EmailQueue()
+    return _email_queue
 
 def send_email(message, recipient_email, email_type="default"):
     subject_map = {
@@ -229,9 +240,11 @@ def send_email(message, recipient_email, email_type="default"):
     html = build_html(message, email_type)
     subject = subject_map.get(email_type, "Уведомление")
 
-    _email_queue.add(
+    queue = get_email_queue()
+    queue.add(
         to_email=recipient_email,
         subject=subject,
         html=html,
         email_type=email_type
     )
+    log.info(f"Письмо поставлено в очередь для {recipient_email}")
