@@ -103,9 +103,10 @@
                     {% for row in report %}
                     <tr class="report_row" data-id="{{ row.id }}">
                         <td></td>
-                        <td>
+                        <td style = "padding: 4px;">
                             <button class="show-versions_button">  
                                 <img src="{{ url_for('static', filename='img/Plus.svg')}}" class = "close_black" alt="Просмотреть версии">
+                                <span>Раскрыть</span>
                             </button>
                         </td>
                         <td style = "display: none;">
@@ -151,9 +152,10 @@
                                 <tbody>
                                     {% for rows in row.versions %}
                                     <tr class="version-row" data-id="{{ rows.id }}">
-                                        <td>
+                                        <td style = "padding: 4px;">
                                             <button class="show-tickets_button">  
                                                 <img src="{{ url_for('static', filename='img/Plus.svg')}}" class = "close_black" alt="">
+                                                <span>Раскрыть</span>
                                             </button>
                                             
                                         </td>
@@ -177,7 +179,7 @@
                                                 </td> 
                                             {% elif rows.status == 'Отправлен'%}
                                                 <td style = "background: rgb(96, 215, 255);"> 
-                                                    <input type = "text" style = "color: black;" value = "{{ rows.status }}"  readonly>
+                                                    <input type = "text" style = "color: black;" value = "На рассмотрении"  readonly>
                                                 </td>  
                                             {% elif rows.status == 'Есть замечания'%}
                                                 <td style = "background: rgb(255, 186, 96);"> 
@@ -190,6 +192,10 @@
                                             {% elif rows.status == 'Одобрен'%}
                                                 <td style = "background:  rgb(96, 255, 122);"> 
                                                     <input type = "text" style = "color: black;" value = "Одобрен"  readonly>
+                                                </td>
+                                            {% elif rows.status == 'Заполнение'%}
+                                                <td style = "background:  rgb(218, 218, 218); "> 
+                                                    <input type = "text" style = "color: black; font-weight: 600;" value = "Заполнение"  readonly>
                                                 </td>
                                             {% else %}
                                                 <td> 
@@ -243,7 +249,7 @@
                                                 {% else %}
                                                     <tr class="row_with_tickets">
                                                         <td style = "height: 24px;" colspan="5">
-                                                            <input type = "text"  value = "Квитанций нет - появятся после проверки" readonly>
+                                                            <input type = "text"  value = "Квитанции появятся после проверки отчета" readonly>
                                                         </td>
                                                     </tr>
                                                 {% endif %}

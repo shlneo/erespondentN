@@ -22,11 +22,10 @@
                         <span>Просмотр отчетов</span>
                     </button> 
                 {% elif user.type == 'Администратор' %}
-                    <button onclick="window.location.href='/report-area'" class="blue_button">
-                        <img src="/static/img/Add.svg" alt="" class="button-icon">
-                        <span>Подать отчет</span>
-                    </button> 
-                    <button onclick="window.location.href='/admin'" class = "blue_button_invizback">Админ панель</button>           
+                    <button onclick="window.location.href='/admin'" class="blue_button">
+                        <img src="/static/img/Login-n.svg" alt="" class="button-icon">
+                        <span>Админ панель</span>
+                    </button>        
                 {% endif %}
 
             {% else %}

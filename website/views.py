@@ -76,19 +76,18 @@ def get_reports_by_status(status, year=None, quarter=None):
         filters.append(Report.quarter == quarter)
 
     if user_type == "Администратор" or (user_type == "Аудитор" and str(current_user.organization.okpo)[-4] == "8"):
-        print(f"АДМИНЫ + ДЕПАРТАМЕНТ --- {status}")
         if status == 'all_reports':
             return Report.query.join(Version_report).filter(
                 or_(*[Version_report.status == s for s in statuses]),
                 *filters
-            ).order_by(Report.year.asc(), Report.quarter.asc()).all()
+            ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all() 
         else:
             trans_status = translate_status(status)
             if trans_status:
                 return Report.query.join(Version_report).filter(
                     Version_report.status == trans_status,
                     *filters
-                ).order_by(Report.year.asc(), Report.quarter.asc()).all()
+                ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
             else:
                 return []
     else:
@@ -98,7 +97,7 @@ def get_reports_by_status(status, year=None, quarter=None):
                 or_(*[Version_report.status == s for s in statuses]),
                 *filters,
                 func.substr(Organization.okpo, func.length(Organization.okpo) - 3, 1) == okpo_digit
-            ).order_by(Report.year.asc(), Report.quarter.asc()).all()
+            ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
         else:
             trans_status = translate_status(status)
             if trans_status:
@@ -106,7 +105,7 @@ def get_reports_by_status(status, year=None, quarter=None):
                     Version_report.status == trans_status,
                     *filters,
                     func.substr(Organization.okpo, func.length(Organization.okpo) - 3, 1) == okpo_digit
-                ).order_by(Report.year.asc(), Report.quarter.asc()).all()
+                ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
             else:
                 return []
 

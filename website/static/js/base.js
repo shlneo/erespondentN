@@ -721,11 +721,14 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', function(event) {
             event.stopPropagation();
             var versionsRow = this.closest('.report_row').nextElementSibling.nextElementSibling;
+            var span = this.querySelector('span');
+            
             if (versionsRow.style.display === 'none' || versionsRow.style.display === '') {
                 versionsRow.style.display = 'table-row';
                 setTimeout(function() {
                     versionsRow.classList.add('show');
                 }, 10);
+                if (span) span.textContent = 'Скрыть';
                 contextMenuReport.style.display = 'none';
                 contextMenuVersion.style.display = 'none';
             } else {
@@ -734,6 +737,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     versionsRow.style.display = 'none';
                     versionsRow.removeEventListener('transitionend', handler);
                 });
+                if (span) span.textContent = 'Раскрыть';
                 contextMenuReport.style.display = 'none';
                 contextMenuVersion.style.display = 'none';
             }
@@ -751,11 +755,14 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', function(event) {
             event.stopPropagation();
             var checkRow = this.closest('.version-row').nextElementSibling;
+            var span = this.querySelector('span');
+            
             if (checkRow.style.display === 'none' || checkRow.style.display === '') {
                 checkRow.style.display = 'table-row';
                 setTimeout(function() {
                     checkRow.classList.add('show');
                 }, 10);
+                if (span) span.textContent = 'Скрыть';
                 contextMenuReport.style.display = 'none';
                 contextMenuVersion.style.display = 'none';
             } else {
@@ -764,6 +771,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     checkRow.style.display = 'none';
                     checkRow.removeEventListener('transitionend', handler);
                 });
+                if (span) span.textContent = 'Раскрыть';
                 contextMenuReport.style.display = 'none';
                 contextMenuVersion.style.display = 'none';
             }

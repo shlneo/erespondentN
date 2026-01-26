@@ -103,7 +103,13 @@
             </span>
             <span>
                  <a style = "font-weight: 600;">Статус </a>
-                <a class = "rotation-fromareas-status">{{current_version.status}}</a>
+                <a class = "rotation-fromareas-status">
+                    {% if current_version.status == 'Отправлен'%}
+                        На рассмотрении
+                    {%else%}
+                        {{current_version.status}}
+                    {%endif%}
+                </a>
             </span>
         </div>
     </div>

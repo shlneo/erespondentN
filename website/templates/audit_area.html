@@ -118,7 +118,7 @@
                                     </li>  
                                 </div>        
                                 <a class="functions_menu_name">        
-                                    Загрузка
+                                    Экспорт
                                 </a>
                             </section>
                         </ul>
@@ -166,6 +166,7 @@
                 <thead class="order-table_titels">
                     <tr>
                         <th></th>
+                        <th></th>
                         <th class="resizable" style="white-space: nowrap; min-width: 380px;">Предприятие<div class="resizer"></div></th>
                         <th class="resizable" style="white-space: nowrap; min-width: 140px;">ОКПО<div class="resizer"></div></th>
                         <th class="resizable" style="white-space: nowrap; min-width: 100px;">Год<div class="resizer"></div></th>
@@ -181,6 +182,12 @@
                             {% for version in row.versions %}
                                 <tr class="report_row {% if version.hasNot %} hascomment-row {% endif %}" data-id="{{ row.id }}" draggable="true">
                                     <td></td>
+                                    <td style = "padding: 4px;">
+                                        <button class="show-tickets_button" onclick="window.location.href='/audit-area/report/{{row.id}}'">  
+                                            <span>Просмотр</span>
+                                        </button>
+
+                                    </td>
                                     <td style="display: none;">
                                         <input type="text" id="report_id" value="{{ row.id }}" readonly>
                                     </td>
@@ -240,7 +247,7 @@
 </div>
 <div id="contextMenu_report" class="white-panel">
     <button data-action="checkSectionsButton">
-        <img src="/static/img/Log.svg" alt="" class="button-icon-bl">
+        <img src="/static/img/Search.svg" alt="" class="button-icon-bl">
         <span>Просмотреть</span>
     </button>
     <form id="deleteReport" method="POST" action="/rollbackreport/">
@@ -317,7 +324,7 @@
 <div id="load_reports_modal" class="modal">
     <div class="modal-content">
         <div class = "modal-header">
-            <h3 class = "change-position">Скачивание отчетов</h3>
+            <h3 class = "change-position">Экспорт отчетов</h3>
             <a class="close">&times;</a>
         </div>
         <div class="answer-highlight-second" style = "max-width: 510px;">

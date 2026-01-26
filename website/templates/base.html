@@ -30,6 +30,15 @@
         <nav>
           <ul>
               <li onclick="window.location.href='/'">Главная</li>
+              {% if current_user.is_authenticated and current_user.type == 'Администратор' or current_user.type == 'Респондент'%}
+                <li onclick="window.location.href='/report-area'">Отчеты</li>
+                {%else%}
+              {% endif %}
+
+              {% if current_user.is_authenticated and current_user.type == 'Администратор' or current_user.type == 'Аудитор'%}
+                <li onclick="window.location.href='/audit-area/not_viewed?year={{previous_year}}&quarter={{previous_quarter}}'">Аудит</li>
+                    {%else%}
+              {% endif %}
               <li onclick="window.location.href='/news'">Новости</li>
               <li onclick="window.location.href='/contacts'" >Контакты</li>
               <li onclick="window.location.href='/FAQ'" class = "blinking-item">Помощь</li>

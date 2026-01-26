@@ -3131,7 +3131,7 @@ th .resizer {
 }
 
 .versions_row .vers_cont {
-    padding: 10px 40px; 
+    padding: 10px 70px; 
     background-color: rgb(247, 247, 247);
 }
 
@@ -3149,17 +3149,135 @@ th .resizer {
     border-collapse: collapse;    
 }
 
-.show-versions_button{
+.show-versions_button,
+.show-tickets_button {
     display: flex;
     justify-content: center;
-    border: none;
-    color: white;
-    padding: 2px 6px;
-    background-color: #00000000;
+    gap: 10px;
+    color: rgb(0, 0, 0);
+    padding: 6px 10px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
     cursor: pointer;
-    transition: background-color 0.3s ease;   
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     text-align: center;
     align-items: center;
+    border: 2px solid #4a6fa5;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(74, 111, 165, 0.1);
+    font-weight: 600;
+    z-index: 0;
+
+}
+
+.show-tickets_button span,
+.show-versions_button span {
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.show-versions_button .close_black,
+.show-tickets_button .close_black {
+    position: relative;
+    z-index: 1;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    width: 18px;
+    height: 18px;
+    filter: invert(26%) sepia(89%) saturate(1498%) hue-rotate(203deg) brightness(95%) contrast(89%);
+}
+
+.show-versions_button:hover,
+.show-tickets_button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(74, 111, 165, 0.2);
+    border-color: #2c5282;
+    background: linear-gradient(135deg, #ebf4ff 0%, #d6e4ff 100%);
+}
+
+.show-versions_button:hover span,
+.show-tickets_button:hover span {
+    transform: scale(1.05);
+}
+
+.show-versions_button:active,
+.show-tickets_button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(74, 111, 165, 0.15);
+    transition: all 0.1s ease;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(74, 111, 165, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(74, 111, 165, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(74, 111, 165, 0);
+    }
+}
+
+.show-versions_button.pulse,
+.show-tickets_button.pulse {
+    animation: pulse 2s infinite;
+}
+
+.show-versions_button.active,
+.show-tickets_button.active {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-color: #1a56db;
+    color: #1e40af;
+}
+
+.show-versions_button .close_black.rotated,
+.show-tickets_button .close_black.rotated {
+    transform: rotate(135deg);
+    filter: invert(19%) sepia(98%) saturate(2412%) hue-rotate(212deg) brightness(95%) contrast(93%);
+}
+
+.show-versions_button::before,
+.show-tickets_button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(74, 111, 165, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.show-versions_button:hover::before,
+.show-tickets_button:hover::before {
+    width: 200px;
+    height: 200px;
+}
+
+@keyframes borderFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.show-versions_button.border-animated,
+.show-tickets_button.border-animated {
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(90deg, #4a6fa5, #1a56db, #4a6fa5) border-box;
+    background-size: 200% 100%;
+    animation: borderFlow 3s ease infinite;
 }
 
 .show-tickets_button img.rotated,
@@ -3210,30 +3328,6 @@ th .resizer {
     vertical-align: middle;
 }
 
-.show-tickets_button{
-    display: flex;
-    justify-content: center;
-    border: none;
-    color: white;
-    padding: 2px 6px;
-    background-color: #00000000;
-    cursor: pointer;
-    transition: background-color 0.3s ease;   
-    text-align: center;
-    align-items: center;
-}
-
-.close_black {
-    display: block;
-    width: 17px;
-
-    transition: transform 0.5s;
-    animation: pulse-glow 1.5s infinite;
-}
-
-.close_black:hover{
-    transform: scale(1.1);
-}
 
 @keyframes pulse-glow {
     0% { 
