@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         row.addEventListener('dragstart', function(event) {
             var reportId = this.dataset.id; 
-            var sevenColumnValue = this.children[7].querySelector('input').value;
+            var sevenColumnValue = this.children[8].querySelector('input').value;
 
             if (sevenColumnValue === 'Не просмотрено') {
                 event.dataTransfer.setData('text/plain', reportId);
