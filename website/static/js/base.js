@@ -1453,3 +1453,45 @@ function submitReply(messageId) {
 function flashNotification(message, type = 'info') {
     console.log(`${type}: ${message}`);
 }
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+}
+
+function setCookie(name, value, days) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+}
+
+if (window.location.pathname.includes('/FAQ')) {
+    setCookie('faq_visited', 'true', 365);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneElements = document.querySelectorAll('.phone-hidden');
+    
+    if (getCookie('faq_visited') === 'true') {
+        phoneElements.forEach(phone => {
+            phone.classList.remove('phone-hidden');
+        });
+    }
+    
+    const faqLinks = document.querySelectorAll('.faq-link');
+    faqLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.stopPropagation();
+            window.location.href = '/FAQ';
+        });
+    });
+    
+    phoneElements.forEach(phone => {
+        phone.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '/FAQ';
+        });
+    });
+});

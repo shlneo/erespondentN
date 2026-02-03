@@ -998,6 +998,7 @@ main {
     flex-direction: row;
     align-items: center;
     margin: 14px 0;
+    margin-bottom: 25px;
    
     vertical-align: middle;
 }
@@ -1009,7 +1010,8 @@ main {
 }
 
 .remember_cont input[type='checkbox'] {
-    margin: 0 10px;
+    margin: 0 7px;
+    margin-left: 20px;
     position: relative;
     width: 15px; 
     height: 15px; 
@@ -1126,8 +1128,8 @@ main {
 
 .scroll-to-down {
     position: absolute;
-    bottom: 60px;
-    right: 60px;
+    bottom: 40px;
+    right: 40px;
 }
 
 .scroll-to-down button {
@@ -4249,11 +4251,19 @@ th .resizer {
 
 /*faq questions.css*/
 
+.begin-page{
+    margin: 0 auto;
+    width: 100%;
+    max-width: 2100px;
+}
+
 .info_page{
-    margin-top: 60px; 
+    margin: 0 auto;
+    margin-top: 60px;
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: 2100px;
 }
 
 .info_page_name{
@@ -6186,10 +6196,12 @@ th .resizer {
 }
 
 .contacts_page {
+    margin: 0 auto;
     margin-top: 60px;
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: 2100px;
 }
 
 .modern-contact {
@@ -6228,6 +6240,21 @@ th .resizer {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 24px;
+}
+
+.phone-hidden .contact-value {
+    display: none;
+}
+
+.phone-hidden .contact-value-hint {
+    display: block;
+    font-style: italic;
+    color: #666;
+    font-size: 14px;
+}
+
+.contact-value-hint {
+    display: none;
 }
 
 .contact-method {

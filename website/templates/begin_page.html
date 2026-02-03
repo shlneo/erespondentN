@@ -1,120 +1,123 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="blurred-background"></div>
-<div class="hellow_row">
-    <div class= "hellow_row_left">
-        <div class = "hellow_row_name">
-            Информационная система учета и обработки отчетов предприятий
-        </div>
-        <div class = "hellow_row_dop_name">
-            в соответствии с нормативными документами по нормированию расхода топливно-энергетических ресурсов
-        </div>
-        <div class = "hellow_buttonarea"> 
-            {% if current_user.is_authenticated%}
-                {% if user.type == 'Респондент'%}
-                    <button onclick="window.location.href='/report-area'" class="blue_button">
-                        <img src="/static/img/Add.svg" alt="" class="button-icon">
-                        <span>Подать отчет</span>
-                    </button> 
-                {% elif user.type == 'Аудитор' %}
-                    <button onclick="window.location.href='/audit-area/not_viewed?year={{previous_year}}&quarter={{previous_quarter}}';" class = "blue_button">
-                        <img src="/static/img/Search.svg" alt="" class="button-icon">
-                        <span>Просмотр отчетов</span>
-                    </button> 
-                {% elif user.type == 'Администратор' %}
-                    <button onclick="window.location.href='/admin'" class="blue_button">
-                        <img src="/static/img/Login-n.svg" alt="" class="button-icon">
-                        <span>Админ панель</span>
-                    </button>        
-                {% endif %}
+<div class="begin-page">
+    <div class="hellow_row">
+        <div class= "hellow_row_left">
+            <div class = "hellow_row_name">
+                Информационная система учета и обработки отчетов предприятий "сведения о нормах расхода и (или) предельных уровнях потребления ТЭР"
+            </div>
+            <div class = "hellow_row_dop_name">
+                в соответствии с нормативными документами по нормированию расхода топливно-энергетических ресурсов
+            </div>
+            <div class = "hellow_buttonarea"> 
+                {% if current_user.is_authenticated%}
+                    {% if user.type == 'Респондент'%}
+                        <button onclick="window.location.href='/report-area'" class="blue_button">
+                            <img src="/static/img/Add.svg" alt="" class="button-icon">
+                            <span>Подать отчет</span>
+                        </button> 
+                    {% elif user.type == 'Аудитор' %}
+                        <button onclick="window.location.href='/audit-area/not_viewed?year={{previous_year}}&quarter={{previous_quarter}}';" class = "blue_button">
+                            <img src="/static/img/Search.svg" alt="" class="button-icon">
+                            <span>Просмотр отчетов</span>
+                        </button> 
+                    {% elif user.type == 'Администратор' %}
+                        <button onclick="window.location.href='/admin'" class="blue_button">
+                            <img src="/static/img/Login-n.svg" alt="" class="button-icon">
+                            <span>Админ панель</span>
+                        </button>        
+                    {% endif %}
 
-            {% else %}
-                <button onclick="window.location.href='/login'" class = "blue_button">
-                    <img src="/static/img/Login-n.svg" alt="" class="button-icon">
-                    <span>Войти</span>
+                {% else %}
+                    <button onclick="window.location.href='/login'" class = "blue_button">
+                        <img src="/static/img/Login-n.svg" alt="" class="button-icon">
+                        <span>Войти</span>
+                    </button>
+                    <button onclick="window.location.href='/sign'" class = "blue_button_invizback">Зарегистрироваться</button>
+                {% endif %}
+            </div>
+        </div>    
+        <div class= "hellow_row_right">
+            
+        </div> 
+        <div class="scroll-to-down">
+            {%if current_user.is_authenticated%}
+                <button onclick="scrollToForm()">
+                    <img src="{{ url_for('static', filename='img/support.png')}}" alt="">
                 </button>
-                <button onclick="window.location.href='/sign'" class = "blue_button_invizback">Зарегистрироваться</button>
             {% endif %}
         </div>
-    </div>    
-    <div class= "hellow_row_right">
-        
-    </div> 
-    <div class="scroll-to-down">
-        {%if current_user.is_authenticated%}
-            <button onclick="scrollToForm()">
-                <img src="{{ url_for('static', filename='img/support.png')}}" alt="">
-            </button>
-        {% endif %}
     </div>
-</div>
-<div class="statistics-row">
-    <div class = "statistics-row-left">
-        <img src="{{ url_for('static', filename='img/stats.jpg')}}" alt="">
-    </div>
-    <div class = "statistics-row-right">
-        <div class="item_stat">  
-            <div class = "stat_count">{{organization_data}}</div>
-            <a class = "stat_name">предприятий</a>
+    <div class="statistics-row">
+        <div class = "statistics-row-left">
+            <img src="{{ url_for('static', filename='img/stats.jpg')}}" alt="">
         </div>
+        <div class = "statistics-row-right">
+            <div class="item_stat">  
+                <div class = "stat_count">{{organization_data}}</div>
+                <a class = "stat_name">предприятий</a>
+            </div>
 
-        <div class="item_stat">
-            <div class = "stat_count">{{report_data}}</div>
-            <a class = "stat_name">отчетов</a>
-        </div>
+            <div class="item_stat">
+                <div class = "stat_count">{{report_data}}</div>
+                <a class = "stat_name">отчетов</a>
+            </div>
 
-        <div class="item_stat">
-            <div class = "stat_count">{{user_data}}</div>
-            <a class = "stat_name">респондентов</a>
-        </div>
-    </div>
-</div>
-{%if latest_news%}
-    <div class="news-row" id = "news_row">
-        <div class = "news-row-left">
-            <div class="item_news">  
-                <a class = "news_name" href = "/news" >Новости</a>
-                <a href="/news/{{latest_news.id}}"  style = "color: black;">
-                    <p id = "toadmin"  class = "first_p">{{ latest_news.title[:70] }}{% if latest_news.title|length > 70 %}...{% endif %}</p>
-                </a>
-                <p class = "second_p">{{ latest_news.text[:180] }}{% if latest_news.text|length > 180 %}...{% endif %}</p>
+            <div class="item_stat">
+                <div class = "stat_count">{{user_data}}</div>
+                <a class = "stat_name">респондентов</a>
             </div>
         </div>
-        <div class = "news-row-right">                     
-            <a href="/news/{{latest_news.id}}" >
-                <img src="{{ url_for('static', filename='img/news/' + latest_news.img_name) }}" alt="">
-            </a>  
-        </div>
     </div>
-{%else%}
-{%endif%}
-{%if current_user.is_authenticated%}
-    <div class="askquestion-row">
-        <div class="askquestion_form">
-            <div class="news_name">Форма для общения с администратором</div>
-            <form action="/sent_for_admin" method="POST">
-                
-                <div class="answer-highlight-second">
-                    <div class="highlight-icon">💡</div>
-                    <p>Для добавления <strong>организации</strong> указывайте:</p>
-                    <ol>
-                        <li>Полное наименование организации;</li>
-                        <li>ОКПО (Основной государственный регистрационный номер).</li>
-                    </ol>
-                   
+    {%if latest_news%}
+        <div class="news-row" id = "news_row">
+            <div class = "news-row-left">
+                <div class="item_news">  
+                    <a class = "news_name" href = "/news" >Новости</a>
+                    <a href="/news/{{latest_news.id}}"  style = "color: black;">
+                        <p id = "toadmin"  class = "first_p">{{ latest_news.title[:70] }}{% if latest_news.title|length > 70 %}...{% endif %}</p>
+                    </a>
+                    <p class = "second_p">{{ latest_news.text[:180] }}{% if latest_news.text|length > 180 %}...{% endif %}</p>
                 </div>
-                {#<input type="text" name="fio" value = "{{current_user.fio}}" readonly>#}
-                <textarea type="text" name="text" placeholder="Опишите проблему" maxlength="399" value = "" required></textarea>
-                <input type="text" name="email" value = "{{current_user.email}}" readonly>
-                {#<input type="text" name="phone" value = "{{current_user.telephone}}" readonly>#}
-                <button type = "submit" class="blue_button">
-                    <img src="/static/img/Send.svg" alt="" class="button-icon">
-                    <span>Отправить вопрос</span>
-                </button>
-            </form>
+            </div>
+            <div class = "news-row-right">                     
+                <a href="/news/{{latest_news.id}}" >
+                    <img src="{{ url_for('static', filename='img/news/' + latest_news.img_name) }}" alt="">
+                </a>  
+            </div>
         </div>
-    </div>
-{%else%}
+    {%else%}
+    {%endif%}
+    {%if current_user.is_authenticated%}
+        <div class="askquestion-row">
+            <div class="askquestion_form">
+                <div class="news_name">Форма для общения с администратором</div>
+                <form action="/sent_for_admin" method="POST">
+                    
+                    <div class="answer-highlight-second">
+                        <div class="highlight-icon">💡</div>
+                        <p>Для добавления <strong>организации</strong> указывайте:</p>
+                        <ol>
+                            <li>Полное наименование организации;</li>
+                            <li>ОКПО (Основной государственный регистрационный номер).</li>
+                        </ol>
+                    
+                    </div>
+                    {#<input type="text" name="fio" value = "{{current_user.fio}}" readonly>#}
+                    <textarea type="text" name="text" placeholder="Опишите проблему" maxlength="399" value = "" required></textarea>
+                    <input type="text" name="email" value = "{{current_user.email}}" readonly>
+                    {#<input type="text" name="phone" value = "{{current_user.telephone}}" readonly>#}
+                    <button type = "submit" class="blue_button">
+                        <img src="/static/img/Send.svg" alt="" class="button-icon">
+                        <span>Отправить вопрос</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    {%else%}
+    {%endif%}
+</div>
 
-{%endif%}
+
 {% endblock %}

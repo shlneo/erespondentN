@@ -8,7 +8,7 @@ def cancel_sending(id):
     current_version = Version_report.query.filter_by(id=id).first()
     if current_version.status == 'Отправлен':
         current_version.status = 'Заполнение'
-        current_version.sent_time = None
+        # current_version.sent_time = None
         db.session.commit()
         flash('Отправка отчета была отменена! Новый статус отчета - "Заполнение".', 'succes')
     else:
