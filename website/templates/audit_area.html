@@ -12,7 +12,7 @@
                             <section>
                                 <div class = "functions_menu">     
                                     <li id = "link_period">           
-                                        <img src="{{ url_for('static', filename='img/time.png')}}" alt="">
+                                        <img src="{{ url_for('static', filename='img/time.svg')}}" alt="">
                                         <a>
                                         {% if year_filter == '' and quarter_filter == '' %} 
                                             Всё время
@@ -150,16 +150,6 @@
         </div>
     </div>
 
-    {%if current_user.type != 'Администратор'%}
-    <div class = "rotation-fromareas">
-        <div class = "rotation-fromareas_info"  style = "margin: 10px 30px;"> 
-            <span>
-                <a class = "hover_a">{{current_user.organization.full_name}}</a>
-            </span>
-        </div>
-    </div>
-    {%endif%}
-
     <div class="report-list">
         <div class="report-area" >
             <table class="table_report-area">
@@ -234,6 +224,7 @@
                     </tr>
                     {%else%}
                         <tr>
+                            <td></td>
                             <td></td>
                             <td style = "height: 24px;" colspan="8">
                                 <input type = "text"  value = "Отчеты отсутствуют" readonly>

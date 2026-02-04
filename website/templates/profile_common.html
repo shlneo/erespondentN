@@ -21,140 +21,143 @@
             {{ super() }}
         {% endblock %}
         <div class="personal-info_area">
-            
-        <div class="answer-highlight-second" >
-            <div class="highlight-icon">💡</div>
-            <p>После <strong>создания</strong> первого отчета редактирование персональных и организационных данных становится <strong>недоступным</strong>.</p>
-        </div>
-                <form action="/add-personal-parametrs" method="POST">
-                    <table>
-                        <tr>
-                            <td><span title = "Уровень доступа к функциям">Тип пользователя</span></div></td>
-                            <td><input type="text" value="{{current_user.type}}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>Фамилия &#42;</td>
-                            <td>                    
-                                <div class="clear-input_container">
-                                    <input type="text" name="second_name_common" placeholder="Введите фамилию" 
-                                    value="{{current_user.fio.split()[0] if current_user.fio else ''}}" 
-                                    required id="second_name_input" maxlength="50">
-                                    <span class="clear-btn">
+            {% if user.type == 'Респондент' or user.type == 'Администратор'%}
+                <div class="answer-highlight-second" >
+                    <div class="highlight-icon">💡</div>
+                    <p>После <strong>создания</strong> первого отчета редактирование персональных и организационных данных становится <strong>недоступным</strong>.</p>
+                </div>
+            {% elif user.type == 'Аудитор' %}
+
+            {% endif %}
+            <form action="/add-personal-parametrs" method="POST">
+                <table>
+                    <tr>
+                        <td><span title = "Уровень доступа к функциям">Тип пользователя</span></div></td>
+                        <td><input type="text" value="{{current_user.type}}" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>Фамилия &#42;</td>
+                        <td>                    
+                            <div class="clear-input_container">
+                                <input type="text" name="second_name_common" placeholder="Введите фамилию" 
+                                value="{{current_user.fio.split()[0] if current_user.fio else ''}}" 
+                                required id="second_name_input" maxlength="50">
+                                <span class="clear-btn">
+                                    &times;
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Имя &#42;</td>
+                        <td>                    
+                            <div class="clear-input_container">
+                                <input type="text" name="name_common" placeholder="Введите имя" 
+                            value="{{current_user.fio.split()[1] if current_user.fio else ''}}" 
+                            required id="name_input" maxlength="50">
+                                <span class="clear-btn">
                                         &times;
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span title = "Не обязательно для заполнения">Отчество</span></td>
+                        <td>                    
+                            <div class="clear-input_container">
+                                <input type="text" name="patronymic_common" placeholder="Введите отчество (не обязательно)" 
+                            value="{{current_user.fio.split()[2] if current_user.fio else ''}}" 
+                            id="patronymic_input" maxlength="50">
+                                <span class="clear-btn">
+                                    &times;
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span title = "Организация за которую отчитываются">Предприятие &#42;</span></td>
+                        <td style = "display: flex; flex-direction: row;">
+                            <input 
+                                class = "pred_name" type="text" style = "{%if count_reports == 0 and current_user.type != 'Аудитор'%}
+                                border-top-right-radius: 0;
+                                border-bottom-right-radius: 0; 
+                                background: white; 
+                                width: calc(100% - 70px);
+                                {%else%} {%endif%}" 
+                                placeholder="Наименование предприятия"  name = "full_name_common" value="{{ current_user.organization.full_name if current_user.organization else '' }}" readonly>
+                                {%if count_reports == 0 and current_user.type != 'Аудитор'%}
+                                    <a class="show_organiz" id = "link_chooseOrgModal"> 
+                                        <img class="" src="{{ url_for('static', filename='img/Search.svg')}}" alt="">
+                                    </a>
+                                {%else%} {%endif%}
+                                <input type="hidden" name="id_org" value="{% if current_user.organization %}{{ current_user.organization.id }}{% else %}{% endif %}">
+                        </td>
+                    </tr>
+                    {%if current_user.type != 'Аудитор'%}
                         <tr>
-                            <td>Имя &#42;</td>
-                            <td>                    
-                                <div class="clear-input_container">
-                                    <input type="text" name="name_common" placeholder="Введите имя" 
-                                value="{{current_user.fio.split()[1] if current_user.fio else ''}}" 
-                                required id="name_input" maxlength="50">
-                                    <span class="clear-btn">
-                                         &times;
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span title = "Не обязательно для заполнения">Отчество</span></td>
-                            <td>                    
-                                <div class="clear-input_container">
-                                    <input type="text" name="patronymic_common" placeholder="Введите отчество (не обязательно)" 
-                                value="{{current_user.fio.split()[2] if current_user.fio else ''}}" 
-                                id="patronymic_input" maxlength="50">
-                                    <span class="clear-btn">
-                                        &times;
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span title = "Организация за которую отчитываются">Предприятие &#42;</span></td>
-                            <td style = "display: flex; flex-direction: row;">
+                            <td><span title = "Общестатистический код предприятий и организаций">ОКПО</span></td>
+                            <td>    
                                 <input 
-                                    class = "pred_name" type="text" style = "{%if count_reports == 0 and current_user.type != 'Аудитор'%}
-                                    border-top-right-radius: 0;
-                                    border-bottom-right-radius: 0; 
-                                    background: white; 
-                                    width: calc(100% - 70px);
-                                    {%else%} {%endif%}" 
-                                    placeholder="Наименование предприятия"  name = "full_name_common" value="{{ current_user.organization.full_name if current_user.organization else '' }}" readonly>
-                                    {%if count_reports == 0 and current_user.type != 'Аудитор'%}
-                                        <a class="show_organiz" id = "link_chooseOrgModal"> 
-                                            <img class="" src="{{ url_for('static', filename='img/Search.svg')}}" alt="">
-                                        </a>
-                                    {%else%} {%endif%}
-                                    <input type="hidden" name="id_org" value="{% if current_user.organization %}{{ current_user.organization.id }}{% else %}{% endif %}">
-                            </td>
-                        </tr>
-                        {%if current_user.type != 'Аудитор'%}
-                            <tr>
-                                <td><span title = "Общестатистический код предприятий и организаций">ОКПО</span></td>
-                                <td>    
-                                    <input 
-                                    type="text" 
-                                    name = "okpo_common" 
-                                    placeholder="Окпо предприятия" 
-                                    value="{{current_user.organization.okpo if current_user.organization.okpo else ''}}" readonly>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span title = "Учетный номер плательщика (может быть пусто)">УНП</span></td>
-                                <td>    
-                                    <input 
-                                    type="text" 
-                                    name = "ynp_common" 
-                                    placeholder="Унп предприятия (может быть пусто)" 
-                                    value="{{current_user.organization.ynp if current_user.organization.ynp else 'Нет данных'}}" readonly>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span title = "Республиканский орган государственного управления">Министерство</span></td>
-                                <td>    
-                                    <input 
-                                        type="text" 
-                                        name = "ministry_common"  
-                                        placeholder="Министерство предприятия" 
-                                        value="{{current_user.organization.ministry if current_user.organization.ministry else 'Вышестоящая организация'}}" readonly>
-                                </td>
-                            </tr>    
-                        {%else%}
-                        {%endif%}
-                    </table>
-                    <table>
-                        <tr>
-                            <td>E-mail &#42;</td>
-                            <td>                        
-                                <input type="text" value="{{current_user.email}}" readonly>
+                                type="text" 
+                                name = "okpo_common" 
+                                placeholder="Окпо предприятия" 
+                                value="{{current_user.organization.okpo if current_user.organization.okpo else ''}}" readonly>
                             </td>
                         </tr>
                         <tr>
-                            <td>Номер телефона &#42;</td>
-                            <td>
-                                <div class="clear-input_container">
-                                    <input 
-                                        type="text" 
-                                        name="telephone_common" 
-                                        placeholder="Введите номер телефона" 
-                                        value="{{current_user.telephone if current_user.telephone else ''}}" 
-                                        required 
-                                        id="telephone_input"  maxlength="13">
-                                    <span class="clear-btn">
-                                         &times; 
-                                    </span>
-                                </div>
+                            <td><span title = "Учетный номер плательщика (может быть пусто)">УНП</span></td>
+                            <td>    
+                                <input 
+                                type="text" 
+                                name = "ynp_common" 
+                                placeholder="Унп предприятия (может быть пусто)" 
+                                value="{{current_user.organization.ynp if current_user.organization.ynp else 'Нет данных'}}" readonly>
                             </td>
                         </tr>
-                    </table>
-                    <div class = "title-ab-func" style = "max-width: 100%;">Наименование &#42; — обязательные поля для заполнения/выбора.</div>
-                    <button class = "blue_button" type="submit">
-                        <img src="/static/img/Add.svg" alt="" class="button-icon">
-                        <span>Применить изменения</span>
-                    </button>
-                </form>
+                        <tr>
+                            <td><span title = "Республиканский орган государственного управления">Министерство</span></td>
+                            <td>    
+                                <input 
+                                    type="text" 
+                                    name = "ministry_common"  
+                                    placeholder="Министерство предприятия" 
+                                    value="{{current_user.organization.ministry if current_user.organization.ministry else 'Вышестоящая организация'}}" readonly>
+                            </td>
+                        </tr>    
+                    {%else%}
+                    {%endif%}
+                </table>
+                <table>
+                    <tr>
+                        <td>E-mail &#42;</td>
+                        <td>                        
+                            <input type="text" value="{{current_user.email}}" readonly>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Номер телефона &#42;</td>
+                        <td>
+                            <div class="clear-input_container">
+                                <input 
+                                    type="text" 
+                                    name="telephone_common" 
+                                    placeholder="Введите номер телефона" 
+                                    value="{{current_user.telephone if current_user.telephone else ''}}" 
+                                    required 
+                                    id="telephone_input"  maxlength="13">
+                                <span class="clear-btn">
+                                        &times; 
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div class = "title-ab-func" style = "max-width: 100%;">Наименование &#42; — обязательные поля для заполнения/выбора.</div>
+                <button class = "blue_button" type="submit">
+                    <img src="/static/img/Add.svg" alt="" class="button-icon">
+                    <span>Применить изменения</span>
+                </button>
+            </form>
         </div>
     </div>
 </div>

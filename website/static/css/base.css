@@ -1436,33 +1436,97 @@ main {
     resize: none;
 }
 
+.steps-list {
+    --step-color: #6390f1;
+    --step-bg: #f8fafc;
+    --step-border: #e2e8f0;
+    --step-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
+    
+    counter-reset: step-counter;
+    list-style: none;
+    padding: 0;
+    margin: 24px 0;
+    position: relative;
+}
+
+.steps-list::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, 
+        var(--step-color) 0%, 
+        rgba(99, 102, 241, 0.3) 100%);
+    z-index: 0;
+}
+
+.steps-list li {
+    position: relative;
+    margin-bottom: 32px;
+    padding-left: 56px;
+
+}
+
+.steps-list li:last-child {
+    margin-bottom: 0;
+}
+
+.steps-list li::before {
+    content: counter(step-counter);
+    counter-increment: step-counter;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 36px;
+    height: 36px;
+    background: white;
+    border: 2px solid var(--step-color);
+    color: var(--step-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+
+    box-shadow: var(--step-shadow);
+    transition: all 0.3s ease;
+}
+
+.steps-list li:hover::before {
+    background: var(--step-color);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 6px 24px rgba(99, 102, 241, 0.2);
+}
+
+.steps-list li strong {
+    font-size: 16px;
+    color: #1e293b;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.steps-list li p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+}
 
 .askquestion_form form .answer-highlight-second{
     text-align: start;    
-    
-    
     max-width: 657px;
 }
-
-
 
 .askquestion_form form button{
     width: 300px;
 }
 
-/* hz-row end*/
-
-
-
-
-
 
 /*beginPage.css end*/
-
-
-
-
-
 
 /*account.css begin*/
 .account_cont{
@@ -4343,6 +4407,7 @@ th .resizer {
     line-height: 1.5 !important;
     color: black !important;
     margin-bottom: 0 !important;
+    /* font-weight: 500; */
 }
 
 .answer-highlight-second ul,
@@ -4509,17 +4574,8 @@ th .resizer {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* .video-container:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-        0 8px 40px rgba(67, 97, 238, 0.15),
-        0 2px 8px rgba(0, 0, 0, 0.1);
-} */
-
-/* === Контейнер видео === */
 .video-wrapper {
     position: relative;
-
     aspect-ratio: 16/9;
 }
 
@@ -4536,12 +4592,16 @@ th .resizer {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    
+    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: 100% 100%; /* Растягивает на всю ширину и высоту */
+    background-position: center;
+    background-repeat: no-repeat;
+    
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 2;
     transition: opacity 0.3s ease;
 }
 
@@ -4557,12 +4617,11 @@ th .resizer {
         rgba(0, 0, 0, 0.3),
         rgba(0, 0, 0, 0.1)
     );
-    z-index: 1;
+
 }
 
 .poster-content {
     position: relative;
-    z-index: 2;
     text-align: center;
 }
 
@@ -4625,7 +4684,6 @@ th .resizer {
     opacity: 0;
     transform: translateY(10px);
     transition: all 0.3s ease;
-    z-index: 10;
     pointer-events: none;
 }
 
@@ -4935,7 +4993,7 @@ th .resizer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 25px 0;
+    padding: 25px 0;
     text-align: center;
     width: 100%;
     overflow: hidden;
@@ -4944,15 +5002,25 @@ th .resizer {
 .p_img img {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-height: 450px;
+    border-radius: 12px;
+    /* box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1); */
+    border: 1px solid rgba(0, 0, 0, 0.212);
+    /* filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3)); */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.p_img img:hover {
+    box-shadow: 0 12px 22px rgba(0, 0, 0, 0.1);
+    filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.2));
+    transform: scale(1.01);
 }
 
 .p_img span {
-    margin: 8px 0 15px 0;
+    margin: 20px 0 15px 0;
     font-size: 14px;
-    color: #4e4e4e;
-    font-weight: 500;
+    color: #000000;
+    font-weight: 600;
     padding: 0 10px;
 }
 

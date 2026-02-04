@@ -7,9 +7,8 @@ from user_agents import parse
 import requests
 from .time_for_app import current_utc_time
 
-
+"""Timeout by type user"""
 def get_user_session_timeout(user_type):
-    """Возвращает таймаут сессии в зависимости от типа пользователя."""
     return timedelta(hours=9) if user_type in ['Администратор', 'Аудитор'] else timedelta(minutes=60)
 
 def get_device_place(ip):
@@ -35,8 +34,8 @@ def delete_all_user_sessions(user_id):
     UserSession.query.filter_by(user_id=user_id).delete()
     db.session.commit()
 
+"""del all session where last_active > timeout"""
 def delete_all_user_sessions_timeout(timeout):
-    """Удаляет все пользовательские сессии, у которых last_active превышает таймаут."""
     now = current_utc_time()
     expired_sessions = UserSession.query.filter(
         UserSession.last_active < (now - timeout)

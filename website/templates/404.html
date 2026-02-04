@@ -2,8 +2,6 @@
 {% block title %}404 - ErespondentN{% endblock %}
 {% block content %}
 
-
-
 <style>
     .error-page {
         display: flex;
@@ -11,9 +9,8 @@
         align-items: center;
         justify-content: center;
         top: 60px;
-        height: calc(100vh - 60px);
+        height: calc(100vh);
         text-align: center;
-  
         font-family: Arial, sans-serif;
     }
 
@@ -36,11 +33,6 @@
         align-items: center;
         gap: 0.5rem;
         animation: slideDown 0.3s ease;
-    }
-
-    .error-message::before {
-        content: '⚠';
-        font-size: 1.4rem;
     }
 
     @keyframes slideDown {
