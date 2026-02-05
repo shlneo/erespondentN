@@ -13,7 +13,7 @@ from .models import (
     Report, Version_report, Sections
 )
 
-from sqlalchemy import case, func, desc
+from sqlalchemy import asc, case, func, desc
 from sqlalchemy import func, String
 from sqlalchemy.orm import joinedload
 
@@ -31,13 +31,13 @@ def generate_excel_report(version_id):
     )
 
     sections1 = Sections.query.filter_by(id_version=version_id, section_number=1)\
-        .order_by(priority, desc(Sections.id)).all()
+        .order_by(priority, asc(Sections.code_product)).all()
 
     sections2 = Sections.query.filter_by(id_version=version_id, section_number=2)\
-        .order_by(priority, desc(Sections.id)).all()
+        .order_by(priority, asc(Sections.code_product)).all()
 
     sections3 = Sections.query.filter_by(id_version=version_id, section_number=3)\
-    .order_by(priority, desc(Sections.id)).all()
+    .order_by(priority, asc(Sections.code_product)).all()
     
     
     from openpyxl import Workbook
