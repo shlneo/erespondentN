@@ -175,10 +175,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     handleModal(document.getElementById('changefuel_modal'), document.getElementById('link_changefuel_modal'), changefuel_modal.querySelector('.close'));
     handleModal(document.getElementById('addSection_modal'), document.querySelector('[data-action="link_addSection_modal"]'), addSection_modal.querySelector('.close'));
-
-    handleModal(document.getElementById('DirProductModal'), document.getElementById('DirProductLink'), DirProductModal.querySelector('.close'));
-    handleModal(document.getElementById('DirUnitModal'), document.getElementById('DirUnitLink'), DirUnitModal.querySelector('.close'));
-
 });
 
 

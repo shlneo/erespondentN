@@ -56,3 +56,4 @@ eventlet
 lxml
 python-dotenv
 email_validator
+flask_wtf

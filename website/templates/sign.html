@@ -101,8 +101,8 @@
                             пользовательского соглашения
                         </a></span>
                 </div>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="log_buttons_area">
-                    
                     <button type="submit" class = "submit_button blue_button">
                         <img src="/static/img/Sign.svg" alt="" class="button-icon">
                         <span>Зарегистрироваться</span>

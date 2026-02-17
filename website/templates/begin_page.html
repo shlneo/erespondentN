@@ -12,7 +12,7 @@
             </div>
             <div class = "hellow_buttonarea"> 
                 {% if current_user.is_authenticated%}
-                    {% if user.type == 'Респондент'%}
+                    {% if user.type == 'Респондент' or user.type == 'Администратор'%}
                         <button onclick="window.location.href='/report-area'" class="blue_button">
                             <img src="/static/img/Add.svg" alt="" class="button-icon">
                             <span>Подать отчет</span>
@@ -22,11 +22,6 @@
                             <img src="/static/img/Search.svg" alt="" class="button-icon">
                             <span>Просмотр отчетов</span>
                         </button> 
-                    {% elif user.type == 'Администратор' %}
-                        <button onclick="window.location.href='/admin'" class="blue_button">
-                            <img src="/static/img/Login-n.svg" alt="" class="button-icon">
-                            <span>Админ панель</span>
-                        </button>        
                     {% endif %}
 
                 {% else %}

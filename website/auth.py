@@ -53,6 +53,8 @@ from .email import send_email
 auth = Blueprint('auth', __name__)
 login_manager = LoginManager()
 
+ZERO_DECIMAL = Decimal('0.00')
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -357,15 +359,11 @@ def relod_password():
 @login_required 
 @session_required
 def create_new_report():
-    if request.method == 'POST':    
-        organization_name = request.form.get('modal_organization_name')
-        okpo = request.form.get('modal_organization_okpo')
-        year =  parse_int(request.form.get('modal_report_year'))
-        quarter =  parse_int(request.form.get('modal_report_quarter'))
-
-        organization = Organization.query.filter_by(
-            okpo = okpo, 
-            full_name=organization_name).first()
+    if request.method == 'POST': 
+        year =  parse_int(request.form.get('modal_add_year'))
+        quarter =  parse_int(request.form.get('modal_add_quarter'))
+        
+        organization = current_user.organization
         
         has_report = Report.query.filter_by(
             org_id=organization.id, 
@@ -433,21 +431,21 @@ def create_new_report():
             flash(f'Отчет {year} года {quarter} квартала уже существует.', 'error')
     return redirect(url_for('views.report_area'))
 
-@auth.route('/update-report', methods=['POST'])
+@auth.route('/change-period-report', methods=['POST'])
 @login_required 
 @session_required
-def update_report():
+def change_period_report():
     if request.method == 'POST':
-        id = request.form.get('modal_report_id')
-        okpo = request.form.get('modal_report_okpo')
+        id = int(request.form.get('modal_change_report_id'))
         year = request.form.get('modal_change_report_year')
-        quarter = request.form.get('modal_change_report_quarter')   
+        quarter = request.form.get('modal_change_report_quarter')  
+         
         current_report = Report.query.filter_by(id=id).first()
         versions = Version_report.query.filter_by(report_id=id).all()
 
         if current_report:
             existing_report = Report.query.filter_by(
-                okpo=okpo,
+                user_id=current_user.id,
                 year=year,
                 quarter=quarter
             ).first()
@@ -466,7 +464,6 @@ def update_report():
                 flash('Отчет с таким годом и кварталом уже существует.', 'error')
                 return redirect(url_for('views.report_area'))
 
-            current_report.okpo = okpo
             current_report.year = year
             current_report.quarter = quarter
             db.session.commit()
@@ -475,54 +472,71 @@ def update_report():
             flash('Отчет не найден.', 'error')
 
         return redirect(url_for('views.report_area'))
-    
-@auth.route('/сopy-report', methods=['POST'])
+  
+@auth.route('/copy-full-report', methods=['POST'])
 @login_required 
 @session_required
-def сopy_report():
+def copy_full_report():
     if request.method == 'POST':
-        coppy_report_id = request.form.get('coppy_report_id')
-        new_organization_name = request.form.get('coppy_organization_name')
-        new_organization_okpo = request.form.get('coppy_organization_okpo')
-        new_report_year = request.form.get('coppy_report_year')
-        new_report_quarter = request.form.get('coppy_report_quarter')
+        try:
+            copy_report_id = parse_int(request.form.get('modal_copy_report_id'))
+            new_year = parse_int(request.form.get('modal_copy_report_year'))
+            new_quarter = parse_int(request.form.get('modal_copy_report_quarter'))
+            
+            if not all([copy_report_id, new_year, new_quarter]):
+                flash('Не все данные заполнены', 'error')
+                return redirect(url_for('views.report_area'))
+            
+            original_report = Report.query.get(copy_report_id)
+            if not original_report:
+                flash('Исходный отчет не найден', 'error')
+                return redirect(url_for('views.report_area'))
 
-        current_report_version = Version_report.query.filter_by(
-            report_id = coppy_report_id).first()
-        
-        current_sections = Sections.query.filter_by(
-            id_version=current_report_version.id).all()
-
-        current_org = Organization.query.filter_by(
-            full_name = new_organization_name, 
-            okpo = new_organization_okpo).first()
-
-        proverka_report = Report.query.filter_by(
-            org_id=current_org.id, 
-            year = new_report_year, 
-            quarter=new_report_quarter, 
-            okpo = current_org.okpo).first()
-        
-        if not proverka_report:
+            existing_report = Report.query.filter_by(
+                org_id=current_user.organization.id,
+                year=new_year,
+                quarter=new_quarter,
+                user_id=current_user.id
+            ).first()
+            
+            if existing_report:
+                flash(f'Отчет {new_year} года {new_quarter} квартала уже существует.', 'error')
+                return redirect(url_for('views.report_area'))
+            
+            original_version = Version_report.query.filter_by(
+                report_id=copy_report_id
+            ).order_by(Version_report.begin_time.desc()).first()
+            
+            if not original_version:
+                flash('Версия исходного отчета не найдена', 'error')
+                return redirect(url_for('views.report_area'))
+            
+            original_sections = Sections.query.filter_by(
+                id_version=original_version.id
+            ).all()
+            
             new_report = Report(
-                okpo=current_org.okpo,
-                org_id= current_org.id,
-                year=new_report_year,
-                quarter=new_report_quarter,
-                user_id = current_user.id
+                okpo=current_user.organization.okpo,
+                org_id=current_user.organization.id,
+                year=new_year,
+                quarter=new_quarter,
+                user_id=current_user.id
             )
             db.session.add(new_report)
-            db.session.commit()
+            db.session.flush()
+            
             new_version = Version_report(
-                status = "Заполнение",
-                fio = current_user.fio,
-                telephone = current_user.telephone,
-                email = current_user.email,
-                report=new_report
+                begin_time=current_utc_time(),
+                status="Заполнение",
+                fio=current_user.fio,
+                telephone=current_user.telephone,
+                email=current_user.email,
+                report_id=new_report.id
             )
             db.session.add(new_version)
-            db.session.commit()
-            for section in current_sections:
+            db.session.flush()
+            
+            for section in original_sections:
                 new_section = Sections(
                     id_version=new_version.id,
                     id_product=section.id_product,
@@ -538,78 +552,103 @@ def сopy_report():
                     note=section.note
                 )
                 db.session.add(new_section)
+            
             db.session.commit()
-            flash('Отчет успешно скопирован.', 'success')
-        else:
-            flash('Отчет с таким годом и квараталом уже существует.','error')
+            flash('Отчет успешно скопирован со всеми данными.', 'success')
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка при копировании: {str(e)}', 'error')
+            
         return redirect(url_for('views.report_area'))
 
-@auth.route('/сopy-without-numbers-report', methods=['POST'])
+@auth.route('/copy-structure-report', methods=['POST'])
 @login_required 
 @session_required
-def сopy_without_numbers_report():
+def copy_structure_report():
     if request.method == 'POST':
-        coppy_report_id = request.form.get('coppy_report_id')
-        new_organization_name = request.form.get('coppy_organization_name')
-        new_organization_okpo = request.form.get('coppy_organization_okpo')
-        new_report_year = request.form.get('coppy_report_year')
-        new_report_quarter = request.form.get('coppy_report_quarter')
+        try:
+            copy_report_id = parse_int(request.form.get('modal_copy_report_id'))
+            new_year = parse_int(request.form.get('modal_copy_report_year'))
+            new_quarter = parse_int(request.form.get('modal_copy_report_quarter'))
+            
+            if not all([copy_report_id, new_year, new_quarter]):
+                flash('Не все данные заполнены', 'error')
+                return redirect(url_for('views.report_area'))
 
-        current_report_version = Version_report.query.filter_by(
-            report_id = coppy_report_id).first()
-        
-        current_sections = Sections.query.filter_by(
-            id_version=current_report_version.id).all()
-
-        current_org = Organization.query.filter_by(
-            full_name = new_organization_name, 
-            okpo = new_organization_okpo).first()
-
-        proverka_report = Report.query.filter_by(
-            org_id=current_org.id, 
-            year = new_report_year, 
-            quarter=new_report_quarter, 
-            okpo = current_org.okpo).first()
-        
-        if not proverka_report:
+            original_report = Report.query.get(copy_report_id)
+            if not original_report:
+                flash('Исходный отчет не найден', 'error')
+                return redirect(url_for('views.report_area'))
+            
+            existing_report = Report.query.filter_by(
+                org_id=current_user.organization.id,
+                year=new_year,
+                quarter=new_quarter,
+                user_id=current_user.id
+            ).first()
+            
+            if existing_report:
+                flash(f'Отчет {new_year} года {new_quarter} квартала уже существует.', 'error')
+                return redirect(url_for('views.report_area'))
+            
+            original_version = Version_report.query.filter_by(
+                report_id=copy_report_id
+            ).order_by(Version_report.begin_time.desc()).first()
+            
+            if not original_version:
+                flash('Версия исходного отчета не найдена', 'error')
+                return redirect(url_for('views.report_area'))
+            
+            original_sections = Sections.query.filter_by(
+                id_version=original_version.id
+            ).all()
+            
             new_report = Report(
-                okpo=current_org.okpo,
-                org_id= current_org.id,
-                year=new_report_year,
-                quarter=new_report_quarter,
-                user_id = current_user.id
+                okpo=current_user.organization.okpo,
+                org_id=current_user.organization.id,
+                year=new_year,
+                quarter=new_quarter,
+                user_id=current_user.id
             )
             db.session.add(new_report)
-            db.session.commit()
+            db.session.flush()
+            
             new_version = Version_report(
-                status = "Заполнение",
-                fio = current_user.fio,
-                telephone = current_user.telephone,
-                email = current_user.email,
-                report=new_report
+                begin_time=current_utc_time(),
+                status="Заполнение",
+                fio=current_user.fio,
+                telephone=current_user.telephone,
+                email=current_user.email,
+                report_id=new_report.id
             )
             db.session.add(new_version)
-            db.session.commit()
-            for section in current_sections:
+            db.session.flush()
+            
+            for section in original_sections:
                 new_section = Sections(
                     id_version=new_version.id,
                     id_product=section.id_product,
                     code_product=section.code_product,
                     section_number=section.section_number,
                     Oked=section.Oked,
-                    produced=Decimal('0.00'),
-                    Consumed_Quota=Decimal('0.00'),
-                    Consumed_Fact=Decimal('0.00'),
-                    Consumed_Total_Quota=Decimal('0.00'),
-                    Consumed_Total_Fact=Decimal('0.00'),
-                    total_differents=Decimal('0.00'),
+                    produced=ZERO_DECIMAL,
+                    Consumed_Quota=ZERO_DECIMAL,
+                    Consumed_Fact=ZERO_DECIMAL,
+                    Consumed_Total_Quota=ZERO_DECIMAL,
+                    Consumed_Total_Fact=ZERO_DECIMAL,
+                    total_differents=ZERO_DECIMAL,
                     note=section.note
                 )
                 db.session.add(new_section)
+            
             db.session.commit()
-            flash('Отчет успешно скопирован.', 'success')
-        else:
-            flash('Отчет с таким годом и квараталом уже существует.','error')
+            flash('Отчет успешно скопирован (скопирована только структура).', 'success')
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка при копировании: {str(e)}', 'error')
+            
         return redirect(url_for('views.report_area'))
 
 @auth.route('/delete-report/<report_id>', methods=['POST'])
@@ -965,7 +1004,7 @@ def control_func(id):
     if current_version.status == 'Заполнение':
         for key, section in sections.items():
             if section is None or not section.note:
-                flash('Примечание с кодом строки "9010" обязательно для заполнения.', 'error')
+                flash('"Примечание" с кодом строки "9010" обязательно для заполнения.', 'error')
                 return redirect(url_for('views.report_section', report_type=key, id=id_version))
 
         current_version.status = 'Контроль пройден'

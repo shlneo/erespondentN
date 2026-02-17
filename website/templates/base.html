@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -62,20 +63,6 @@
     </header>
     {% endif %}
 
-    {% if circle_buttons %}
-    <div class="circle-buttons-container">
-       <button class="circle-button" onclick="window.location.href='/FAQ'">
-        <img src="{{ url_for('static', filename='img/faq.png') }}" alt="{{ _('FAQ') }}" class="circle-button-icon">
-      </button>
-      <button class="circle-button" onclick="window.location.href='/login'">
-        <img src="{{ url_for('static', filename='img/people.png') }}" alt="{{ _('Логин') }}" class="circle-button-icon">
-      </button>
-      <button class="circle-button" onclick="window.location.href='/'">
-        <img src="{{ url_for('static', filename='img/logo_blue.png') }}" alt="{{ _('Главная') }}" class="circle-button-icon">
-      </button>
-    </div>
-    {% endif %}
-
     {% if left_men_block %}
       {% block left_menu %}
         <nav class = "left_menu">
@@ -110,8 +97,6 @@
         </nav>
       {% endblock %}
     {% endif %}
-
-
     <main> 
       {% with messages = get_flashed_messages(with_categories=true) %} 
         {% if messages %}
@@ -132,11 +117,27 @@
     {% endblock %}
 
     {% block javascript %} 
-  
       <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/period.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/cookie.js') }}"></script>
     {% endblock %}
 
     </main>
+    <div id="cookie-consent-banner" class="cookie-banner" style="display: none;">
+        <div class="cookie-banner-content">
+            <div class="cookie-banner-text">
+                <p>Мы используем файлы cookie для улучшения работы сайта. Продолжая использовать наш сайт, вы соглашаетесь с <a href="/privacy-policy">политикой конфиденциальности</a>.</p>
+            </div>
+            <div class="cookie-banner-buttons">
+                <button class="succes-button" id="accept-cookies">
+                    <span class="btn-text">Принять</span>
+                </button>
+                <button class="no-submit-button" id="decline-cookies">
+                    <span class="btn-text">Отказаться</span>
+                </button>
+            </div>
+        </div>
+    </div>
     <footer class="footer">
       <div class="footer-container">
           <div class="footer-row">

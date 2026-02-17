@@ -28,7 +28,8 @@
                         {% endfor %}
                     </div>
                 </div>
-                
+                    
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="log_buttons_area">
                     <button type="submit" class="submit_button blue_button">         
                         <img src="/static/img/Send.svg" alt="" class="button-icon">

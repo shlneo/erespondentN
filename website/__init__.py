@@ -14,10 +14,13 @@ from authlib.integrations.flask_client import OAuth
 from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 
+from flask_wtf.csrf import CSRFProtect
+
 load_dotenv() 
 db = SQLAlchemy()
 babel = Babel()
 migrate = Migrate()
+csrf = CSRFProtect()
 bcrypt = Bcrypt()
 scheduler = BackgroundScheduler()
 
@@ -46,25 +49,10 @@ def create_app():
     app.config['SESSION_TYPE'] = 'sqlalchemy'
     app.config['SESSION_SQLALCHEMY'] = db
     app.config['SESSION_PERMANENT'] = True
-
-    # app.config.update(
-    #     SESSION_COOKIE_SECURE=True,
-    #     SESSION_COOKIE_HTTPONLY=True,
-    #     SESSION_COOKIE_SAMESITE='Lax',
-    # )
-    
     app.config['FLASK_ADMIN_SWATCH'] = 'cosmo'
     app.config['BABEL_DEFAULT_LOCALE'] = 'ru'
-
     app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('postrgeuser')}:{os.getenv('postrgepass')}@localhost:5432/{os.getenv('postrgedbname')}"
-
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    # app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    #     'pool_size': 50,      # 50 соединений сразу
-    #     'max_overflow': 100,  # при необходимости еще 100 создаст
-    #     'pool_timeout': 30,   # ждать до 30 секунд
-    #     'pool_recycle': 280  # обновлять соединения каждые 30 минут
-    # }
 
     oauth = OAuth(app)
     google = oauth.register(
@@ -79,7 +67,8 @@ def create_app():
     babel.init_app(app)
     bcrypt.init_app(app)
     migrate.init_app(app, db, render_as_batch=True)
-
+    csrf.init_app(app)
+    
     from .views import views
     from .auth import auth
 
