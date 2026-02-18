@@ -1,16 +1,16 @@
 from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
 from flask_login import current_user, login_required
-from .email import send_email
+from ..email import send_email
 from website.session_utils import session_required
-from .models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News, UserSession
-from . import db
+from ..models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News, UserSession
+from .. import db
 from sqlalchemy import asc, or_, desc
 from functools import wraps
 from sqlalchemy.sql import func, or_
 from sqlalchemy.types import String
 
-from .time_for_app import get_previous_quarter, get_report_year, current_utc_time
+from ..time import get_previous_quarter, get_report_year, current_utc_time
 
 views = Blueprint('views', __name__)
 
@@ -363,21 +363,14 @@ def report_area():
             version.tickets = Ticket.query.filter_by(version_report_id=version.id).all()
 
     organization = Organization.query.filter_by(id=current_user.organization.id).first()
-    open_report_id = session.pop('open_report_id', None) # номер отчета для автоматического раскрытия
-
-    # show_welcome = session.get('first_time_report_area', True)
-    # if show_welcome:
-    #     session['first_time_report_area'] = False
-
+    
     return render_template('report_area.html',
                            previous_quarter = get_previous_quarter(),
                            previous_year=get_report_year(),
                            report=report,
                            user=current_user,
                            organization=organization,
-                           version=version,
-                           open_report_id=open_report_id,
-                        #    show_welcome=show_welcome
+                           version=version
                            )
 
 

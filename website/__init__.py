@@ -9,10 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
-from .load_data_indb import create_database
+from .database import create_database
 from authlib.integrations.flask_client import OAuth
 from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
+from website.logs import setup_logging
 
 from flask_wtf.csrf import CSRFProtect
 
@@ -67,10 +68,12 @@ def create_app():
     babel.init_app(app)
     bcrypt.init_app(app)
     migrate.init_app(app, db, render_as_batch=True)
-    csrf.init_app(app)
+    csrf.init_app(app) 
+       
+    setup_logging(app)
     
-    from .views import views
-    from .auth import auth
+    from .routes.views import views
+    from .routes.auth import auth
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
@@ -94,7 +97,6 @@ def create_app():
     from website.admin.news_view import NewsView
     
     from website.admin.image_view import ImageView
-    from website.admin.dop_view import DopView
     
     admin = Admin(app, 'Вернуться', index_view=MyMainView(), template_mode='bootstrap4', url='/account')
     admin.add_view(UserView(User, db.session))
@@ -109,7 +111,6 @@ def create_app():
     admin.add_view(MessageView(Message, db.session)) 
     admin.add_view(NewsView(News, db.session)) 
     admin.add_view(ImageView())
-    admin.add_view(DopView())
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

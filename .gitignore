@@ -4,6 +4,13 @@
 *.db
 *.sqlite3
 
+dop_info/
+dop_info
+
+# Logs
+*.log
+logs/
+
 .venv/
 .env
 

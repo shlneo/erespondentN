@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Numeric
 import uuid
-from .time_for_app import current_utc_time
+from .time import current_utc_time
 
 class Message(db.Model):
     __tablename__ = 'message'

@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (section_id) {
                 var deleteForm = document.getElementById('remove_section_form');
                 deleteForm.action = '/remove_section/' + section_id;
+                addCsrfTokenToForm(deleteForm);  // Добавляем CSRF-токен
             }
         } else {
             alert('Выберите продукцию для удаления');

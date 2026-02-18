@@ -28,14 +28,11 @@
                     <div class="text_area">
                         <a class="this_device_name">{{current_session.device_name}}</a>
                         <a class="this_device_app">{{current_session.device_app}}</a>
-                        <!-- <a class="this_device_place">{{current_session.device_place}}</a> -->
-
                         <a class="this_device_last_active">Последняя активность: {{ current_session.last_active.strftime('%d.%m.%Y %H:%M') }}</a> 
                         <a class="this_device_ip">IP: {{current_session.ip_address}}</a> 
                         <hr class="border: none; border-bottom: 1px solid rgb(56, 56, 56); border-top: none">
                     </div>
                 </div>
-                
                 <form action="/sessions/clear-others" method="POST" style="display: inline; padding-bottom: 0;">
                     <button type="submit" class="second_floor" style="width: 100%;">
                         <img src="{{ url_for('static', filename='img/stop.png')}}" alt="">
@@ -43,7 +40,6 @@
                     </button>
                 </form>
             </div>
-
             <a class="name_of_card" style="margin-top: 50px;">Активные сеансы</a>
             {% if other_sessions %}
                 {% for s in other_sessions %}
@@ -53,7 +49,6 @@
                         <div class="text_area">
                             <a class="this_device_name">{{ s.device_name }}</a>
                             <a class="this_device_app">{{ s.device_app }}</a>
-                            <!-- <a class="this_device_place">{{ s.device_place }}</a> -->
                             <a class="this_device_last_active">Последняя активность: {{ s.last_active.strftime('%d.%m.%Y %H:%M') }}</a>
                             <a class="this_device_ip">IP: {{ s.ip_address }}</a>
                         </div>
@@ -69,9 +64,7 @@
                     </div>
                 </div>
             </div>
-
             {% endif %}
-
             <a class="name_of_card" style="margin-top: 50px;">Автоматически завершать сеансы</a>
             <div class="this_device">
                 <div class="first_floor">
@@ -81,7 +74,6 @@
                     </div>
                 </div>
             </div>
-
             <a class="name_of_card" style="margin-top: 50px;">Автоматически удалять аккаунт</a>
             <div class="this_device">
                 <div class="first_floor">

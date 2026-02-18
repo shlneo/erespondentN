@@ -20,14 +20,26 @@
                             </a>
                         </section>
                         <section>
-                            <div class="functions_menu">
-                                <li id = "link_edit_sections" data-action="editSectionButtonMenu">
-                                    <img src="{{ url_for('static', filename='img/edit.png') }}" alt="Редактировать разделы">
-                                    <a>Изменить</a>
+                            <div class="functions_menu"> 
+                                <form id="control-version-form" method="POST" style="display: none;">
+                                </form>
+                                <li id="control_versionButton">
+                                    <img src="{{ url_for('static', filename='img/icon_control.png') }}" alt="">
+                                    <a>Контроль</a>
+                                </li>
+                                <form id="agreed-version-form" method="POST" style="display: none;">
+                                </form>
+                                <li id = "agreedVersionButton">
+                                    <img src="{{ url_for('static', filename='img/icon_galochka.png') }}" alt="">
+                                    <a>Согласовать</a>
+                                </li>
+                                <li id = "sentVersionButton">
+                                    <img src="{{ url_for('static', filename='img/icon_send.png') }}" alt="">
+                                    <a>Отправить</a>
                                 </li>
                             </div>
                             <a class="functions_menu_name">
-                                Разделы
+                                Смена статуса отчета
                             </a>
                         </section>
                         <section>
@@ -36,33 +48,15 @@
                                 </form>    
                                 <li id="export_versionButton">
                                     <img src="{{ url_for('static', filename='img/icon_excel.png') }}" alt="">
-                                    <a>Экспорт</a>
-                                </li>
-
-                                <li id="control_versionButton">
-                                    <img src="{{ url_for('static', filename='img/icon_control.png') }}" alt="">
-                                    <a>Контроль</a>
-                                </li>
-
-                                    <form id="control-version-form" action="/control_version" method="POST" style="display: none;">
-                                    </form>
-                        
-                                <li id = "agreedVersionButton">
-                                    <img src="{{ url_for('static', filename='img/icon_galochka.png') }}" alt="">
-                                    <a>Согласовать</a>
-                                </li>
-                                    <form id="agreed-version-form" action="/agreed_version" method="POST" style="display: none;">
-                                    </form>
-                                <li id = "sentVersionButton">
-                                    <img src="{{ url_for('static', filename='img/icon_send.png') }}" alt="">
-                                    <a>Отправить</a>
+                                    <a>Excel</a>
                                 </li>
                             </div>
                             <a class="functions_menu_name">
-                                Версия
+                                Экспорт
                             </a>
                         </section>
-                        <section>
+
+                        {#<section>
                             <div class="functions_menu">
                                 <li id = "PrintTicketButton">
                                     <img src="{{ url_for('static', filename='img/icon_print_file.png') }}" alt="">
@@ -74,60 +68,16 @@
                             <a class="functions_menu_name">
                                 Квитанция
                             </a>
-                        </section>
-                        <section>
-                            <div class="functions_menu">
-                                <li onclick="window.location.href='/FAQ#faq9'">
-                                    <svg viewBox="0 0 800 600" fill="none" >
-                                        <rect  fill="#F0F4F8"/>
-                                        <!-- Стол -->
-                                        <rect x="150" y="400" width="500" height="30" fill="#4A5568"/>
-                                        <rect x="100" y="430" width="600" height="20" fill="#2D3748"/>
-                                        <rect x="250" y="450" width="300" height="150" fill="#1A202C"/>
-                                        <!-- Монитор -->
-                                        <rect x="200" y="100" width="400" height="250" rx="15" fill="#2D3748"/>
-                                        <rect x="220" y="120" width="360" height="210" rx="10" fill="#1A202C"/>
-                                        <!-- Экран монитора -->
-                                        <rect x="230" y="130" width="340" height="190" rx="8" fill="#2D3748"/>
-                                        <rect x="240" y="140" width="320" height="170" rx="6" fill="#6db1ff"/>
-                                        <!-- Содержимое экрана -->
-                                        <!-- Заголовок инструкции -->
-                                        <rect x="260" y="160" width="280" height="25" rx="4" fill="#FFFFFF"/>
-                                        <rect x="270" y="165" width="160" height="15" rx="2" fill="#4299E1"/>
-                                        <!-- Шаги инструкции -->
-                                        <circle cx="280" cy="210" r="8" fill="#38B2AC"/>
-                                        <rect x="300" y="205" width="200" height="10" rx="2" fill="#FFFFFF"/>   
-                                        <circle cx="280" cy="235" r="8" fill="#38B2AC"/>
-                                        <rect x="300" y="230" width="180" height="10" rx="2" fill="#FFFFFF"/>
-                                        <circle cx="280" cy="260" r="8" fill="#38B2AC"/>
-                                        <rect x="300" y="255" width="220" height="10" rx="2" fill="#FFFFFF"/>
-                                        <circle cx="280" cy="285" r="8" fill="#38B2AC"/>
-                                        <rect x="300" y="280" width="150" height="10" rx="2" fill="#FFFFFF"/>
-                                        <!-- Подставка монитора -->
-                                        <rect x="370" y="350" width="60" height="50" fill="#4A5568"/>
-                                        <rect x="350" y="400" width="100" height="30" rx="5" fill="#2D3748"/>
-                                        <!-- Книга -->
-                                        <rect x="50" y="380" width="40" height="60" fill="#C53030"/>
-                                        <rect x="50" y="380" width="40" height="10" fill="#E53E3E"/>
-                                        <!-- Чашка кофе -->
-                                    </svg>
-                                    <a>Инструкция</a>
-                                </li>
-                            </div>
-                            <a class="functions_menu_name">
-                                Помощь
-                            </a>
-                        </section>
+                        </section>#}
                     </ul>
                 </nav>
             </div>
         </div>
     </div>
 
-    <div id="report_automat_open" data-open-report-id="{{ open_report_id }}"></div> 
     <div class="report-area" >
-        <table class="table_report-area">
-            <thead class="order-table_titels">
+        <table class="table-report-area">
+            <thead class="table-title">
                 <tr>
                     <th></th>
                     <th style = "white-space: nowrap;">+/&times;</th>
@@ -135,18 +85,22 @@
                     <th class="resizable" style="white-space: nowrap; min-width: 320px;">Наименование предприятия<div class="resizer"></div></th>
                     <th class="resizable" style="min-width: 80px;">Год<div class="resizer"></div></th>
                     <th class="resizable" style="min-width: 80px;">Квартал<div class="resizer"></div></th>
+                    <th class="resizable" style="min-width: 100px;">Статус<div class="resizer"></div></th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 {%if report%}
                     {% for row in report %}
-                    <tr class="report_row" data-id="{{ row.id }}">
+                    <tr class="report_row" data-id="{{ row.id }}" data-version-id="{{ row.versions[0].id }}">
                         <td></td>
                         <td style = "padding: 4px;">
-                            <button class="show-versions_button">  
-                                <img src="{{ url_for('static', filename='img/Plus.svg')}}" class = "close_black" alt="Просмотреть версии">
-                                <span>Раскрыть</span>
+                            <button class="open-report-btn" onclick="window.location.href='/report-area/fuel/{{row.versions[0].id}}'">  
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <span>Просмотр</span>
                             </button>
                         </td>
                         <td style = "display: none;">
@@ -164,6 +118,55 @@
                         <td>
                             <input type = "text" id = "report_quarter" value = "{{ row.quarter }}" readonly>
                         </td>
+                        {% set version = row.versions[0] if row.versions else None %}
+                        {% set style_control_passed = 'background: rgb(96, 255, 228);' %}
+                        {% set style_approved = 'background: rgb(152, 255, 169);' %}
+                        {% set style_sent = 'background: rgb(96, 215, 255);' %}
+                        {% set style_comments = 'background: rgb(255, 186, 96);' %}
+                        {% set style_ready_delete = 'background: rgb(255, 96, 96);' %}
+                        {% set style_confirmed = 'background: rgb(96, 255, 122);' %}
+                        {% set style_filling = 'background: rgb(236, 236, 236);' %}
+                        {% set style_default = 'background: transparent;' %}
+
+                        {% set input_style = 'color: black;' %}
+                        {% set input_style_bold = 'color: black; font-weight: 600;' %}
+
+                        {% if version %}
+                            {% if version.status == 'Контроль пройден' %}
+                                <td style="{{ style_control_passed }}">
+                                    <input type="text" style="{{ input_style }}" value="{{ version.status }}" readonly>
+                                </td>
+                            {% elif version.status == 'Согласовано' %}
+                                <td style="{{ style_approved }}">
+                                    <input type="text" style="{{ input_style }}" value="{{ version.status }}" readonly>
+                                </td>
+                            {% elif version.status == 'Отправлен' %}
+                                <td style="{{ style_sent }}">
+                                    <input type="text" style="{{ input_style }}" value="На рассмотрении" readonly>
+                                </td>
+                            {% elif version.status == 'Есть замечания' %}
+                                <td style="{{ style_comments }}">
+                                    <input type="text" style="{{ input_style }}" value="{{ version.status }}" readonly>
+                                </td>
+                            {% elif version.status == 'Готов к удалению' %}
+                                <td style="{{ style_ready_delete }}">
+                                    <input type="text" style="{{ input_style }}" value="{{ version.status }}" readonly>
+                                </td>
+                            {% elif version.status == 'Одобрен' %}
+                                <td style="{{ style_confirmed }}">
+                                    <input type="text" style="{{ input_style }}" value="Одобрен" readonly>
+                                </td>
+                            {% elif version.status == 'Заполнение' %}
+                                <td style="{{ style_filling }}">
+                                    <input type="text" style="{{ input_style_bold }}" value="Заполнение" readonly>
+                                </td>
+                            {% else %}
+                                <td style="{{ style_default }}">
+                                    <input type="text" style="{{ input_style }}" value="{{ version.status }}" readonly>
+                                </td>
+                            {% endif %}
+                        {% else %}
+                        {% endif %}
                         <td></td>
                     </tr>
                     <tr class="change_input_row">
@@ -173,7 +176,7 @@
                         <td colspan="10" class="vers_cont">
                             <div class="text_vers">--Версия--</div>
                             <table class="table-versions">
-                                <thead class="order-table_titels">
+                                <thead class="table-title">
                                     <tr>
                                         <th style = "white-space: nowrap;">+/&times;</th>
                                         <th class="resizable" style ="white-space: nowrap; width: 100px;">Дата начала<div class="resizer"></div></th>
@@ -189,7 +192,7 @@
                                     {% for rows in row.versions %}
                                     <tr class="version-row" data-id="{{ rows.id }}">
                                         <td style = "padding: 4px;">
-                                            <button class="show-tickets_button">  
+                                            <button class="open-report-btn">  
                                                 <img src="{{ url_for('static', filename='img/Plus.svg')}}" class = "close_black" alt="">
                                                 <span>Раскрыть</span>
                                             </button>
@@ -204,39 +207,7 @@
                                             &nbsp;
                                             {% endif %}
                                         </td>
-                                        {% if rows.status == 'Контроль пройден'%}
-                                            <td style = "background: rgb(96, 255, 228);"> 
-                                                <input type = "text" style = "color: black;" value = "{{ rows.status }}"  readonly>
-                                            </td> 
-                                        {% elif rows.status == 'Согласовано'%}
-                                            <td style = "background: rgb(152, 255, 169);"> 
-                                                <input type = "text" style = "color: black;" value = "{{ rows.status }}"  readonly>
-                                            </td> 
-                                        {% elif rows.status == 'Отправлен'%}
-                                            <td style = "background: rgb(96, 215, 255);"> 
-                                                <input type = "text" style = "color: black;" value = "На рассмотрении"  readonly>
-                                            </td>  
-                                        {% elif rows.status == 'Есть замечания'%}
-                                            <td style = "background: rgb(255, 186, 96);"> 
-                                                <input type = "text" style = "color: black;" value = "{{ rows.status }}"  readonly>
-                                            </td>  
-                                        {% elif rows.status == 'Готов к удалению'%}
-                                            <td style = "background: rgb(255, 96, 96);"> 
-                                                <input type = "text" style = "color: black;" value = "{{ rows.status }}"  readonly>
-                                            </td>
-                                        {% elif rows.status == 'Одобрен'%}
-                                            <td style = "background:  rgb(96, 255, 122);"> 
-                                                <input type = "text" style = "color: black;" value = "Одобрен"  readonly>
-                                            </td>
-                                        {% elif rows.status == 'Заполнение'%}
-                                            <td style = "background:  rgb(218, 218, 218); "> 
-                                                <input type = "text" style = "color: black; font-weight: 600;" value = "Заполнение"  readonly>
-                                            </td>
-                                        {% else %}
-                                            <td> 
-                                                <input type = "text" value = "{{ rows.status }}"  readonly>
-                                            </td>  
-                                        {% endif %}
+                                        
                                         <td>
                                             {% if rows.sent_time %}
                                             <input type = "text" value = "{{ rows.sent_time }}" readonly>
@@ -254,11 +225,11 @@
                                             <input type = "text" value = "{{ rows.email }}" readonly>
                                         </td> 
                                     </tr>
-                                    <tr class="tickets_row">
+                                    {#<tr class="tickets_row">
                                         <td colspan="22" class = "check_cont">
                                             <div class="text_tickets">--Квитанции--</div>
                                             <table class="tickets_table">
-                                                <thead class="order-table_titels">
+                                                <thead class="table-title">
                                                     <tr>
                                                         <th class="resizable" style ="white-space: nowrap; width: 100px;">Дата выдачи<div class="resizer"></div></th>
                                                         <th class="resizable" style ="white-space: nowrap; width: 100px;">Успех<div class="resizer"></div></th>
@@ -290,7 +261,7 @@
                                                 </tbody>
                                             </table>
                                         </td>
-                                    </tr>
+                                    </tr>#}
                                     {% endfor %}
                                 </tbody>
                             </table>
@@ -301,7 +272,7 @@
                 <tr>
                     <td></td>
                     <td></td>
-                    <td style = "height: 24px;" colspan="5">
+                    <td style = "height: 24px;" colspan="6">
                         <input type = "text"  value = "Для начала работы создайте новый отчет" readonly>
                     </td>
                 </tr>
@@ -360,7 +331,7 @@
             
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="model_but_area right">
-                <button type="submit" class="blue_button">
+                <button type="submit" class="blue_btn">
                     <img src="/static/img/Add.svg" alt="" class="button-icon">
                     <span>Создать отчет</span>
                 </button>
@@ -369,11 +340,11 @@
     </div>
 </div>
 
-<div id="change_report_modal" class="modal">
+<div id="change_period_report_modal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <h3 class="change-position">Редактирование периода отчета</h3>
-            <img src="{{ url_for('static', filename='img/Close.svg')}}" class="close" id="close_change_report_modal" alt="">
+            <img src="{{ url_for('static', filename='img/Close.svg')}}" class="close" id="close_change_period_report_modal" alt="">
         </div>
        
         <div class="answer-highlight-second">
@@ -420,7 +391,7 @@
 
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="model_but_area right">
-                <button type="submit" class="blue_button">
+                <button type="submit" class="blue_btn">
                     <img src="/static/img/Edit.svg" alt="" class="button-icon">
                     <span>Применить изменения</span>
                 </button>
@@ -482,12 +453,12 @@
 
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class = "model_but_area">
-                <button type="submit" formaction="/copy-full-report" class="blue_button">
+                <button type="submit" formaction="/copy-full-report" class="blue_btn">
                     <img src="/static/img/Copy.svg" alt="" class="button-icon">
                     <span>Обычная копия</span>
                 </button>
 
-                <button type="submit" formaction="/copy-structure-report" class="blue_button_invizback">
+                <button type="submit" formaction="/copy-structure-report" class="blue_btn_invizback">
                     <span>Неполное копирование</span>
                 </button>
             </div>
@@ -498,10 +469,9 @@
 <div id="SentModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 class="change-position">Отправка отчета</h3>
-            <a class="close">&times;</a>
+            <h3 class="change-position">Отправить отчет</h3>
+            <img src="{{ url_for('static', filename='img/Close.svg')}}" class="close" alt="">
         </div>
-
         <div class="answer-highlight-second" style = "max-width: 550px;">
             <div class="highlight-icon">💡</div>
             <p>Перетащите <strong>файл сертификата ЭЦП</strong> для отправки отчета. Если у вас возникнут вопросы, пожалуйста, ознакомьтесь с <a href="/FAQ#faq11" class="instruction-link">инструкцией</a> по работе.</p>
@@ -517,12 +487,14 @@
                 <input type="file" id="certificate_to_check" name="certificate" accept=".cer,.pem,.der" hidden 
                     aria-describedby="file-format-hint">
             </div>
-            <div style = "display: flex; justify-content: center; width: 100%;">     
-                <button type="submit" id = "submit_sent_button" class="blue_button report-submit"> 
+            
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="model_but_area right">
+                <button type="submit" id = "send_button" class="blue_btn">
                     <img src="/static/img/Send.svg" alt="" class="button-icon">
                     <span>Отправить</span>
                 </button>
-            </div>    
+            </div>  
         </form>           
     </div>
 </div>
@@ -543,51 +515,5 @@
         </button>
     </form>
 </div>
-
-<div id="contextMenu_version" class="white-panel">
-    <button data-action="checkVersionButton">
-        <img src="/static/img/Edit.svg" alt="" class="button-icon-bl">
-        <span>Редактировать разделы</span>
-    </button>
-    <button disabled = 'True'>
-        <img src="/static/img/Delete-black.svg" alt="" class="button-icon-bl">
-        <span>Удалить</span>
-    </button> 
-</div>
-
-<script>
-
-document.addEventListener('DOMContentLoaded', function () {
-    const info = document.getElementById('report_automat_open');
-    if (!info) {
-        console.log("Элемент #report_automat_open не найден");
-        return;
-    }
-
-    const openReportId = info.dataset.openReportId;
-    console.log("openReportId:", openReportId);
-
-    if (openReportId) {
-        const reportRow = document.querySelector(`.report_row[data-id="${openReportId}"]`);
-        if (reportRow) {
-            const versionsRow = reportRow.nextElementSibling.nextElementSibling;
-
-            if (versionsRow && (versionsRow.style.display === 'none' || versionsRow.style.display === '')) {
-                versionsRow.style.display = 'table-row';
-                setTimeout(() => {
-                    versionsRow.classList.add('show');
-                }, 10);
-            }
-
-            const imgBlack = reportRow.querySelector('.show-versions_button .close_black');
-            if (imgBlack) {
-                imgBlack.classList.add('rotated');
-            }
-        } else {
-            console.log("Не найдена строка отчета");
-        }
-    }
-});
-</script>
 
 {% endblock %}

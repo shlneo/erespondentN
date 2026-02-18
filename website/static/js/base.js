@@ -1,4 +1,16 @@
-const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+function addCsrfTokenToForm(form) {
+    var csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!csrfToken) return;
+    
+    var csrfInput = form.querySelector('input[name="csrf_token"]');
+    if (!csrfInput) {
+        csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        form.appendChild(csrfInput);
+    }
+    csrfInput.value = csrfToken;
+}
 
 const header = document.querySelector('.fixed-header');
 function scrollToForm() {
@@ -44,7 +56,7 @@ clearButtons.forEach(btn => {
 
 function searchUnit() {
     let input = document.getElementById('searchUnit').value.toLowerCase();
-    let rows = document.querySelectorAll('.table_report-area .dirUnit tr');
+    let rows = document.querySelectorAll('.table-report-area .dirUnit tr');
 
     rows.forEach(row => {
         let code = row.cells[0].querySelector('input').value.toLowerCase();
@@ -130,7 +142,6 @@ function filterSentedReports() {
     window.location.href = url;
 }
 
-
 /* message-animation */
 (function() {
     var alertBox = document.querySelector('.custom-alert');
@@ -215,7 +226,7 @@ numeric_dotInputs.forEach(function(input) {
 /* end numbers + dot only */
 
 function initResizableTables() {
-    const tables = document.querySelectorAll('.table_report-area');
+    const tables = document.querySelectorAll('.table-report-area');
     tables.forEach(table => {
         const thElements = table.querySelectorAll('th.resizable');
         let isResizing = false;
@@ -261,12 +272,10 @@ function initResizableTables() {
     });
 }
 
-
 document.addEventListener('DOMContentLoaded', function () {
-    if(document.querySelector('.table_report-area')){
+    if(document.querySelector('.table-report-area')){
         initResizableTables();
     }
-
 
     const menuButton = document.getElementById('menu-button');   
     const img = menuButton.querySelector('img'); 
@@ -274,13 +283,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const headerCenter = document.querySelector('.header-center');
     const fixed_header = document.querySelector('.fixed-header');
     
-    const userHoverNavigation = document.getElementById('user_hover_navigation');
-    const closeHeaderCenter = document.querySelector('.close_header_center');
+    const usernavigation = document.getElementById('user-navigation');
     const overlay = document.querySelector('.overlay');
     
     function showHeaderCenter() {
         if (headerCenter && overlay) {
-            userHoverNavigation.classList.add('hidden');
+            usernavigation.classList.add('hidden');
             headerCenter.classList.remove('hidden');                 
             fixed_header.style.backgroundColor = '#fff';
             headerCenter.classList.add('show');
@@ -300,11 +308,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (menuButton && headerCenter && overlay) {
         menuButton.addEventListener('click', function(event) {
             if (headerCenter.classList.contains('show')) {
-                // Если headerCenter уже показан, скрываем его и удаляем rotate
                 img.classList.remove('rotate');
                 hideHeaderCenter();
             } else {
-                // Если headerCenter скрыт, показываем его и добавляем rotate
                 showHeaderCenter();
                 img.classList.toggle('rotate');
             }
@@ -324,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     
-  /* end menuButton */
+    /* end menuButton */
 
     /* show and hide buttons passwords */
     setupPasswordToggle('password-field', 'show-icon', 'hide-icon');
@@ -335,19 +341,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const userImgs = document.querySelectorAll('.icon_black, .icon_white');
     let timeoutId;
     
-    function showUserHoverNavigation() {
-        if (userHoverNavigation && overlay) {
+    function showusernavigation() {
+        if (usernavigation && overlay) {
             headerCenter.classList.add('hidden');
-            userHoverNavigation.classList.remove('hidden');
-            userHoverNavigation.classList.add('show');
+            usernavigation.classList.remove('hidden');
+            usernavigation.classList.add('show');
             overlay.classList.add('show');
         }
     }
     
-    function hideUserHoverNavigation() {
-        if (userHoverNavigation && overlay) {
-            userHoverNavigation.classList.remove('show');
-            userHoverNavigation.classList.add('hidden');
+    function hideusernavigation() {
+        if (usernavigation && overlay) {
+            usernavigation.classList.remove('show');
+            usernavigation.classList.add('hidden');
             overlay.classList.remove('show');
         }
     }
@@ -355,71 +361,52 @@ document.addEventListener('DOMContentLoaded', function () {
     function setupEventListeners(element) {
         element.addEventListener('click', function(event) {
             clearTimeout(timeoutId);
-            showUserHoverNavigation();
+            showusernavigation();
             event.stopPropagation();
         });
     }
     
-    if (userHoverNavigation && overlay) {
+    if (usernavigation && overlay) {
         document.addEventListener('click', function(event) {
-            if (!userHoverNavigation.contains(event.target)) {
-                hideUserHoverNavigation();
+            if (!usernavigation.contains(event.target)) {
+                hideusernavigation();
             }
         });
     
-        userHoverNavigation.addEventListener('click', function(event) {
+        usernavigation.addEventListener('click', function(event) {
             event.stopPropagation();
         });
     }
     
-    // Для всех иконок обработчик клика
+
     userImgs.forEach(setupEventListeners);
-    
-    // Обработчик клика для документа
     document.addEventListener('click', function(event) {
-        if (!user_hover_navigation.contains(event.target)) {
-            hideUserHoverNavigation();
+        if (!usernavigation.contains(event.target)) {
+            hideusernavigation();
         }
     });
     
-    //  скрытие, если клик был внутри user_hover_navigation
-    user_hover_navigation.addEventListener('click', function(event) {
+    usernavigation.addEventListener('click', function(event) {
         event.stopPropagation();
     });
     /* end hoveruser panel */
 
-    /* for report_area*/
+    /* ============= report_area =============*/
     var reportRows = document.querySelectorAll('.report_row');
-    var versionRows = document.querySelectorAll('.version-row');
-    var ticketRows = document.querySelectorAll('.ticket-row');
-    
     var previousReportRow = null;
-    var previousVersionRow = null;
-    var previousTicketRow = null;
 
     var contextMenuReport = document.getElementById('contextMenu_report');
-    var contextMenuVersion = document.getElementById('contextMenu_version');
 
     reportRows.forEach(function(row) {
         row.addEventListener('click', function() {
-            contextMenuVersion.style.display = 'none';
-            versionRows.forEach(function(versionRow) {
-                versionRow.classList.remove('active-report_version');
-            });
-            ticketRows.forEach(function(ticketRow) {
-                ticketRow.classList.remove('active-ticket');
-            });
             activeRow = null;
-
-            updateVersionButtonStyle(false, false, false, false);         
-            updateTicketButtonStyle(false);
+            updateHeaderButtonStyle(true, true, true, true);
             if (this.dataset.id) {
                 selectedReportId = this.dataset.id;
                 if (this.classList.contains('active-report')) {
                     this.classList.remove('active-report');
                     previousReportRow = null;
-                    updateVersionButtonStyle(false, false, false, false);
-                    updateTicketButtonStyle(false);
+                    updateHeaderButtonStyle(false, false, false, false);
                 } else {
                     if (previousReportRow !== null) {
                         previousReportRow.classList.remove('active-report');
@@ -429,47 +416,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-
-        row.addEventListener('dblclick', function() {
-            contextMenuVersion.style.display = 'none';
-            var versionsRow = this.nextElementSibling.nextElementSibling;
-            if (versionsRow.style.display === 'none' || versionsRow.style.display === '') {
-                versionsRow.style.display = 'table-row';
-                setTimeout(function() {
-                    versionsRow.classList.add('show');
-                }, 10);
-                contextMenuReport.style.display = 'none';
-                contextMenuVersion.style.display = 'none';
-            } else {
-                versionsRow.classList.remove('show');
-                versionsRow.addEventListener('transitionend', function handler() {
-                    versionsRow.style.display = 'none';
-                    versionsRow.removeEventListener('transitionend', handler);
-                });
-                contextMenuReport.style.display = 'none';
-                contextMenuVersion.style.display = 'none';
-            }
-
-            var imgBlack = this.querySelector('.close_black');
-            if (imgBlack) {
-                imgBlack.classList.toggle('rotated');
-            }
-        });
         row.addEventListener('contextmenu', function(event) {
-            contextMenuVersion.style.display = 'none';
             event.preventDefault();
-        
-            versionRows.forEach(function(versionRow) {
-                versionRow.classList.remove('active-report_version');
-            });
-        
+
             if (this.dataset.id) {
                 selectedReportId = this.dataset.id;
-        
+                
                 if (previousReportRow !== null) {
                     previousReportRow.classList.remove('active-report');
                 }
                 this.classList.add('active-report');
+                
+                updateHeaderButtonStyle(true, true, true, true);
                 previousReportRow = this;
         
                 contextMenuReport.style.top = event.pageY + 'px';
@@ -479,201 +437,32 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    versionRows.forEach(function(row) {
-        row.addEventListener('click', function() {
-            contextMenuVersion.style.display = 'none';
-
-            reportRowsd.forEach(function(versionRow) {
-                versionRow.classList.remove('active-report');
-            });
-
-            if (this.dataset.id) {
-                selectedVersiontId = this.dataset.id;
-
-                if (this.classList.contains('active-report_version')) {
-                    this.classList.remove('active-report_version');
-                    previousVersionRow = null;
-
-                } else {
-                    if (previousVersionRow !== null) {
-                        previousVersionRow.classList.remove('active-report_version');
-                    }
-                    this.classList.add('active-report_version');
-                    previousVersionRow = this;
-                }
-            }
-        });
-
-        
-
-        row.addEventListener('contextmenu', function(event) {
-            contextMenuReport.style.display = 'none';
-            event.preventDefault();
-        
-            reportRows.forEach(function(reportRow) {
-                reportRow.classList.remove('active-report');
-            });
-        
-            if (this.dataset.id) {
-                selectedVersionId = this.dataset.id;
-        
-                if (previousVersionRow !== null) {
-                    previousVersionRow.classList.remove('active-report_version');
-                }
-                this.classList.add('active-report_version');
-                previousVersionRow = this;
-        
-                contextMenuVersion.style.top = event.pageY + 'px';
-                contextMenuVersion.style.left = event.pageX + 'px';
-                contextMenuVersion.style.display = 'flex';
-            }
-        });
-    });
-
-    ticketRows.forEach(function(row) {
-        row.addEventListener('click', function() {
-            reportRowsd.forEach(function(ticketRow) {
-                ticketRow.classList.remove('active-ticket');
-            });
-            if (this.dataset.id) {
-                selectedTicketId = this.dataset.id;
-    
-                if (this.classList.contains('active-ticket')) {
-                    this.classList.remove('active-ticket');
-                    previousTicketRow = null;
-    
-                } else {
-                    if (previousTicketRow !== null) {
-                        previousTicketRow.classList.remove('active-ticket');
-                    }
-                    this.classList.add('active-ticket');
-                    previousTicketRow = this;
-                }
-            }
-        });
-    });
-
     document.addEventListener('click', function(event) {
         if (!contextMenuReport.contains(event.target)) {
             contextMenuReport.style.display = 'none';
-        }
-        if (!contextMenuVersion.contains(event.target)) {
-            contextMenuVersion.style.display = 'none';
         }
     });
     /*end*/
 
     /*Переход на страницу с fuel*/
-    document.querySelectorAll('.version-row').forEach(function(row) {
-        row.addEventListener('dblclick', function() {
-            var id = this.dataset.id;
-            var url = "/report-area/fuel/" + id;
-            console.log(id);
-            window.location.href = url;
-        });
-    });
-
-
-    document.querySelector('[data-action="editSectionButtonMenu"]').addEventListener('click', function() {
-        var activeVersionRow = document.querySelector('.version-row.active-report_version');
-        if (activeVersionRow) {
-            var id = activeVersionRow.dataset.id;
-            var url = "/report-area/fuel/" + id;
-            console.log(id);
-            window.location.href = url;
-        } else {
-            alert('Нет активной версии. Пожалуйста, выберите версию.');
-        }
-    });
-
-    document.querySelector('[data-action="checkVersionButton"]').addEventListener('click', function() {
-        var activeVersionRow = document.querySelector('.version-row.active-report_version');
-        if (activeVersionRow) {
-            var id = activeVersionRow.dataset.id;
-            var url = "/report-area/fuel/" + id;
-            console.log(id);
-            window.location.href = url;
-        } else {
-            alert('Нет активной версии. Пожалуйста, выберите версию.');
-        }
-    });
+    // document.querySelector('[data-action="editSectionButtonMenu"]').addEventListener('click', function() {
+    //     var activeReport = document.querySelector('.report_row.active-report');
+    //     if (activeReport) {
+    //         var id = activeReport.dataset.versionId;
+    //         var url = "/report-area/fuel/" + id;
+    //         window.location.href = url;
+    //     } else {
+    //         alert('Пожалуйста, выберите отчет.');
+    //     }
+    // });
     /*end*/
-
-    /*кнопка для отображения версий отчета*/
-    var show_versions_button = document.querySelectorAll('.show-versions_button');
-    show_versions_button.forEach(function(button) {
-        button.addEventListener('click', function(event) {
-            event.stopPropagation();
-            var versionsRow = this.closest('.report_row').nextElementSibling.nextElementSibling;
-            var span = this.querySelector('span');
-            
-            if (versionsRow.style.display === 'none' || versionsRow.style.display === '') {
-                versionsRow.style.display = 'table-row';
-                setTimeout(function() {
-                    versionsRow.classList.add('show');
-                }, 10);
-                if (span) span.textContent = 'Скрыть';
-                contextMenuReport.style.display = 'none';
-                contextMenuVersion.style.display = 'none';
-            } else {
-                versionsRow.classList.remove('show');
-                versionsRow.addEventListener('transitionend', function handler() {
-                    versionsRow.style.display = 'none';
-                    versionsRow.removeEventListener('transitionend', handler);
-                });
-                if (span) span.textContent = 'Раскрыть';
-                contextMenuReport.style.display = 'none';
-                contextMenuVersion.style.display = 'none';
-            }
-            var imgBlack = this.querySelector('.close_black');
-            if (imgBlack) {
-                imgBlack.classList.toggle('rotated');
-            }
-        });
-    });
-    /*end*/
-
-    /*кнопка для отображения квитанций отчета*/
-    var showCheksButtons = document.querySelectorAll('.show-tickets_button');   
-    showCheksButtons.forEach(function(button) {
-        button.addEventListener('click', function(event) {
-            event.stopPropagation();
-            var checkRow = this.closest('.version-row').nextElementSibling;
-            var span = this.querySelector('span');
-            
-            if (checkRow.style.display === 'none' || checkRow.style.display === '') {
-                checkRow.style.display = 'table-row';
-                setTimeout(function() {
-                    checkRow.classList.add('show');
-                }, 10);
-                if (span) span.textContent = 'Скрыть';
-                contextMenuReport.style.display = 'none';
-                contextMenuVersion.style.display = 'none';
-            } else {
-                checkRow.classList.remove('show');
-                checkRow.addEventListener('transitionend', function handler() {
-                    checkRow.style.display = 'none';
-                    checkRow.removeEventListener('transitionend', handler);
-                });
-                if (span) span.textContent = 'Раскрыть';
-                contextMenuReport.style.display = 'none';
-                contextMenuVersion.style.display = 'none';
-            }
-            var imgBlack = this.querySelector('.close_black');
-            if (imgBlack) {
-                imgBlack.classList.toggle('rotated');
-            }
-        });
-    });
-    /*end*/
-
 
     handleModal(document.getElementById('add_report_modal'), document.getElementById('link_add_report'), document.getElementById('close_add_report_modal'));
-    handleModal(document.getElementById('change_report_modal'), document.getElementById('link_change_report'), document.getElementById('close_change_report_modal'));
+    handleModal(document.getElementById('change_period_report_modal'), document.getElementById('link_change_report'), document.getElementById('close_change_period_report_modal'));
     handleModal(document.getElementById('copy_report_modal'), document.getElementById('link_coppy_report'), copy_report_modal.querySelector('.close'));
     handleModal(document.getElementById('SentModal'), document.getElementById('sentVersionButton'), SentModal.querySelector('.close'));
 
-   link_change_report.addEventListener('click', function(event) {
+    link_change_report.addEventListener('click', function(event) {
         event.preventDefault();
         var reportRow = document.querySelector('.report_row.active-report');
         if (reportRow) {
@@ -692,10 +481,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         }
-        change_report_modal.classList.add('active');
+        change_period_report_modal.classList.add('active');
         contextMenuReport.style.display = 'none';
     });
-
 
     link_coppy_report.addEventListener('click', function(event) {
         event.preventDefault();
@@ -720,7 +508,7 @@ document.addEventListener('DOMContentLoaded', function () {
         contextMenuReport.style.display = 'none';
     });
 
-    var del_reportButton = document.getElementById('del_reportButton');
+    const del_reportButton = document.getElementById('del_reportButton');
     del_reportButton.addEventListener('click', function(event) {
         var activeRow = document.querySelector('.report_row.active-report');
         if (activeRow !== null) {
@@ -728,6 +516,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (ReportId) {
                 var deleteForm = document.getElementById('deleteReport');
                 deleteForm.action = '/delete-report/' + ReportId;
+                addCsrfTokenToForm(deleteForm);
             }
         } else {
             alert('Выберите отчет для удаления');
@@ -735,21 +524,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    var agreedVersionButton = document.getElementById('agreedVersionButton');
-    var agreedForm = document.getElementById('agreed-version-form');
+    
+    const agreedVersionButton = document.getElementById('agreedVersionButton');
+    const controlVersionButton = document.getElementById('control_versionButton');
+    const sentVersionButton = document.getElementById('sentVersionButton');
+    const exportVersionButton = document.getElementById('export_versionButton');
 
-    var controlVersionButton = document.getElementById('control_versionButton');
-
-    var controlForm = document.getElementById('control-version-form');
-    var sentVersionButton = document.getElementById('sentVersionButton');
-
-    var exportVersionButton = document.getElementById('export_versionButton');
-    var exportForm = document.getElementById('export-version-form');
-
-    var link_edit_sections = document.getElementById('link_edit_sections');
-
-
-    function updateVersionButtonStyle(agreedActive, controlActive, sentActive, exportActive, editActive) {
+    function updateHeaderButtonStyle(agreedActive, controlActive, sentActive, exportActive) {
         if (agreedActive) {
             agreedVersionButton.style.opacity = '1';
             agreedVersionButton.style.cursor = 'pointer';
@@ -794,98 +575,19 @@ document.addEventListener('DOMContentLoaded', function () {
             exportVersionButton.querySelector('img').style.filter = 'grayscale(100%)';
             exportVersionButton.querySelector('a').style.filter = 'grayscale(100%)';
         }
-        if (editActive) {
-            link_edit_sections.style.opacity = '1';
-            link_edit_sections.style.cursor = 'pointer';
-            link_edit_sections.querySelector('img').style.filter = 'none';
-            link_edit_sections.querySelector('a').style.filter = 'none';
-        } else {
-            link_edit_sections.style.opacity = '0.5';
-            link_edit_sections.style.cursor = 'not-allowed';
-            link_edit_sections.querySelector('img').style.filter = 'grayscale(100%)';
-            link_edit_sections.querySelector('a').style.filter = 'grayscale(100%)';
-        }
     }
 
-
-    var activeAgreedRow = document.querySelector('.version-row.active-report_version');
-    updateVersionButtonStyle(activeAgreedRow !== null, activeAgreedRow !== null, activeAgreedRow !== null, activeAgreedRow !== null);
-
-    var versionRows = document.querySelectorAll('.version-row');
-    versionRows.forEach(function(row) {
-        row.addEventListener('click', function() {
-            var isActive = this.classList.contains('active-report_version');
-
-            versionRows.forEach(function(row) {
-                row.classList.remove('active-report_version');
-            });
-            if (isActive) {
-                activeAgreedRow = null;
-                updateVersionButtonStyle(false, false, false, false, false);
-            } else {
-                this.classList.add('active-report_version');
-                activeAgreedRow = this;
-                updateVersionButtonStyle(true, true, true, true, true);
-            }
-        });
-    });
-
-    var PrintTicketButton = document.getElementById('PrintTicketButton');
-    var printForm = document.getElementById('print-ticket-form');
-
-    function updateTicketButtonStyle(printActive) {
-        if (printActive) {
-            PrintTicketButton.style.opacity = '1';
-            PrintTicketButton.style.cursor = 'pointer';
-            PrintTicketButton.querySelector('img').style.filter = 'none';
-            PrintTicketButton.querySelector('a').style.filter = 'none';
-        } else {
-            PrintTicketButton.style.opacity = '0.5';
-            PrintTicketButton.style.cursor = 'not-allowed';
-            PrintTicketButton.querySelector('img').style.filter = 'grayscale(100%)';
-            PrintTicketButton.querySelector('a').style.filter = 'grayscale(100%)';
-        }
-    }
-
-    var activePrintRow = document.querySelector('.ticket-row.active-ticket');
-    updateTicketButtonStyle(activePrintRow !== null);
-
-    var ticketRows = document.querySelectorAll('.ticket-row');
-    ticketRows.forEach(function(row) {
-        row.addEventListener('click', function() {
-            var isActive = this.classList.contains('active-ticket');
-            ticketRows.forEach(function(row) {
-                row.classList.remove('active-ticket');
-            });
-            if (isActive) {
-                activeAgreedRow = null;
-                updateTicketButtonStyle(false);
-            } else {
-                this.classList.add('active-ticket');
-                activeAgreedRow = this;
-                updateTicketButtonStyle(true);
-            }
-        });
-    });
-
-    agreedVersionButton.addEventListener('click', function(event) {
-        if (activeAgreedRow === null) {
-            event.preventDefault();
-        } else {
-            var versionId = activeAgreedRow.dataset.id;
-            if (versionId) {
-                agreedForm.action = '/agreed-version/' + versionId;
-                agreedForm.submit();
-            }
-        }
-    });
+    const activeAgreedRow = document.querySelector('.report_row.active-report');
+    updateHeaderButtonStyle(activeAgreedRow !== null, activeAgreedRow !== null, activeAgreedRow !== null, activeAgreedRow !== null);
 
     controlVersionButton.addEventListener('click', function(event) {
-        var activeControlRow = document.querySelector('.version-row.active-report_version');
+        var activeControlRow = document.querySelector('.report_row.active-report');
         if (activeControlRow !== null) {
-            var versionId = activeControlRow.dataset.id;
-            if (versionId) {
-                controlForm.action = '/control-version/' + versionId; // control_version_onReportAreaPage
+            var controlForm = document.getElementById('control-version-form');
+            var id = activeControlRow.dataset.versionId;
+            if (id) {
+                controlForm.action = '/control-version/' + id;
+                addCsrfTokenToForm(controlForm);
                 controlForm.submit();
             }
         } else {
@@ -893,12 +595,29 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    agreedVersionButton.addEventListener('click', function(event) {
+        var activeRow = document.querySelector('.report_row.active-report');
+        if (activeRow !== null) {
+            var agreedForm = document.getElementById('agreed-version-form');
+            var id = activeRow.dataset.versionId;
+            if (id) {
+                agreedForm.action = '/agreed-version/' + id;
+                addCsrfTokenToForm(agreedForm);
+                agreedForm.submit();
+            }
+        } else {
+            event.preventDefault();
+        }
+    });
+
     exportVersionButton.addEventListener('click', function(event) {
-        var activeexportRow = document.querySelector('.version-row.active-report_version');
+        var activeexportRow = document.querySelector('.report_row.active-report');
         if (activeexportRow !== null) {
-            var versionId = activeexportRow.dataset.id;
-            if (versionId) {
-                exportForm.action = '/export-version/' + versionId;
+            var exportForm = document.getElementById('export-version-form');
+            var id = activeexportRow.dataset.versionId;
+            if (id) {
+                exportForm.action = '/export-version/' + id;
+                addCsrfTokenToForm(exportForm);
                 exportForm.submit();
             }
         } else {
@@ -906,25 +625,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     
-    PrintTicketButton.addEventListener('click', function(event) {
-        var activePrintRow = document.querySelector('.ticket-row.active-ticket');
-        if (activePrintRow !== null) {
-            var ticketId = activePrintRow.dataset.id;
-            if (ticketId) {
-                printForm.action = '/print-ticket/' + ticketId;
-                printForm.submit();
-            }
-        } else {
-            event.preventDefault();
-        }
-    });
+    // PrintTicketButton.addEventListener('click', function(event) {
+    //     var activePrintRow = document.querySelector('.ticket-row.active-ticket');
+    //     if (activePrintRow !== null) {
+    //         var ticketId = activePrintRow.dataset.id;
+    //         if (ticketId) {
+    //             printForm.action = '/print-ticket/' + ticketId;
+    //             printForm.submit();
+    //         }
+    //     } else {
+    //         event.preventDefault();
+    //     }
+    // });
 });
 
 document.addEventListener('DOMContentLoaded', function() {
     const dropArea = document.getElementById("drop-area");
     const fileInput = document.getElementById("certificate_to_check");
 
-    var submit_sent_button = document.getElementById('submit_sent_button');
+    var send_button = document.getElementById('send_button');
     var sentForm = document.getElementById('sentForm');
 
     dropArea.addEventListener("click", function () {
@@ -965,12 +684,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    submit_sent_button.addEventListener('click', function(event) {
-        var activesentRow = document.querySelector('.version-row.active-report_version');
-        if (activesentRow !== null) {
-            var versionId = activesentRow.dataset.id;
-            if (versionId) {
-                sentForm.action = '/sent-version/' + versionId;
+    send_button.addEventListener('click', function(event) {
+        var activeRow = document.querySelector('.report_row.active-report');
+        if (activeRow !== null) {
+            var id = activeRow.dataset.versionId;
+            if (id) {
+                sentForm.action = '/sent-version/' + id;
             }
         } else {
             event.preventDefault();
@@ -1019,7 +738,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 let sortOrder = 'asc';
 function sortTable() {
     var table, rows, switching, i, x, y, shouldSwitch;
-    table = document.querySelector(".table_report-area tbody");
+    table = document.querySelector(".table-report-area tbody");
     switching = true;
     while (switching) {
         switching = false;
@@ -1142,10 +861,13 @@ function performDeletion(messageId, messageElement, deleteBtn, originalText, can
         cancelBtn.remove();
     }
     
+    var csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    
     fetch(`/delete_message/${messageId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
         }
     })
     .then(response => response.json())

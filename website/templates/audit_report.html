@@ -97,8 +97,8 @@
 
     <div class="report-area">
         <div id="fuel_section_table"> 
-            <table class = "table_report-area">
-                <thead class="order-table_titels">
+            <table class = "table-report-area">
+                <thead class="table-title">
                     <tr>
                         <th class="resizable" rowspan="2"></th>
                         <th class="resizable" style = "white-space: nowrap;" rowspan="2">Наименование вида продукции (работ услуг)<div class="resizer"></div></th>
@@ -264,8 +264,8 @@
             </table>        
         </div>
         <div id="heat_section_table" style="display: none;">
-            <table class = "table_report-area">
-                <thead class="order-table_titels">
+            <table class = "table-report-area">
+                <thead class="table-title">
                     <tr>
                         <th class="resizable" rowspan="2"></th>
                         <th class="resizable" style = "white-space: nowrap;" rowspan="2">Наименование вида продукции (работ услуг)<div class="resizer"></div></th>
@@ -420,8 +420,8 @@
             </table>        
         </div>
         <div id="electro_section_table" style="display: none;">
-            <table class = "table_report-area">
-                <thead class="order-table_titels">
+            <table class = "table-report-area">
+                <thead class="table-title">
                     <tr>
                         <th class="resizable" rowspan="2"></th>
                         <th class="resizable" style="white-space: nowrap;" rowspan="2">Наименование вида продукции (работ услуг)<div class="resizer"></div></th>
@@ -559,6 +559,64 @@
                 </div>
             </div>
         </div>
+        <div class="report-details">
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">Начало заполнения</div>
+                    <div class="detail-value">
+                        {% if current_version.begin_time %}
+                            {{ current_version.begin_time.strftime('%d.%m.%Y') }}
+                        {% else %}
+                            Не указано
+                        {% endif %}</div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">Последнее изменение</div>
+                    <div class="detail-value">
+                        {% if current_version.change_time %}
+                            {{ current_version.change_time.strftime('%d.%m.%Y') }}
+                        {% else %}
+                            {{ current_version.begin_time.strftime('%d.%m.%Y') if current_version.begin_time else 'Не изменялся' }}
+                        {% endif %}</div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">Время отправки</div>
+                    <div class="detail-value">
+                        {% if current_version.sent_time %}
+                            {{ current_version.sent_time.strftime('%d.%m.%Y') }}
+                        {% else %}
+                            -
+                        {% endif %}</div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">Время проверки</div>
+                    <div class="detail-value">
+                        {% if current_version.audit_time %}
+                            {{ current_version.audit_time.strftime('%d.%m.%Y') }}
+                        {% else %}
+                            -
+                        {% endif %}</div>
+                </div>
+            </div>
+        </div>
     </section>
 </div>
 
@@ -566,7 +624,7 @@
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Респондент</h3>
-            <a class="close" id = "CloseRespondent">&times;</a>
+            <img src="/static/img/Close.svg"class="close" id = "CloseRespondent" alt="">
         </div>
         <div class="modal-middle-text">
             <div>Информация об респонденте.</div>
@@ -609,12 +667,11 @@
         </div>
     </div>
 </div>
-
 <div id="addCommentModal" class="modal">
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Сообщение респонденту</h3>
-            <a class="close" id = "CloseaddComment">&times;</a>
+            <img src="/static/img/Close.svg" class="close" id = "CloseaddComment" alt="">
         </div>
 
         <div class="answer-highlight-second" style = "max-width: 510px;">
@@ -664,7 +721,7 @@
                     <tr>
                         <td></td>
                         <td style = "display: flex; justify-content: end; padding: 15px; ">
-                            <button type="submit" class="blue_button report-submit"> 
+                            <button type="submit" class="blue_btn report-submit"> 
                                 <img src="/static/img/Send.svg" alt="" class="button-icon">
                                 <span>Отправить</span>
                             </button>
@@ -680,7 +737,7 @@
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Сообщения</h3>
-            <a class="close" id = "CloseshowComments">&times;</a>
+            <img src="/static/img/Close.svg" class="close" id = "CloseshowComments" alt="">
         </div>
 
         <div class="answer-highlight-second" style = "max-width: 545px;">

@@ -13,23 +13,23 @@
             <div class = "hellow_buttonarea"> 
                 {% if current_user.is_authenticated%}
                     {% if user.type == 'Респондент' or user.type == 'Администратор'%}
-                        <button onclick="window.location.href='/report-area'" class="blue_button">
+                        <button onclick="window.location.href='/report-area'" class="blue_btn">
                             <img src="/static/img/Add.svg" alt="" class="button-icon">
                             <span>Подать отчет</span>
                         </button> 
                     {% elif user.type == 'Аудитор' %}
-                        <button onclick="window.location.href='/audit-area/not_viewed?year={{previous_year}}&quarter={{previous_quarter}}';" class = "blue_button">
+                        <button onclick="window.location.href='/audit-area/not_viewed?year={{previous_year}}&quarter={{previous_quarter}}';" class = "blue_btn">
                             <img src="/static/img/Search.svg" alt="" class="button-icon">
                             <span>Просмотр отчетов</span>
                         </button> 
                     {% endif %}
 
                 {% else %}
-                    <button onclick="window.location.href='/login'" class = "blue_button">
+                    <button onclick="window.location.href='/login'" class = "blue_btn">
                         <img src="/static/img/Login-n.svg" alt="" class="button-icon">
                         <span>Войти</span>
                     </button>
-                    <button onclick="window.location.href='/sign'" class = "blue_button_invizback">Зарегистрироваться</button>
+                    <button onclick="window.location.href='/sign'" class = "blue_btn_invizback">Зарегистрироваться</button>
                 {% endif %}
             </div>
         </div>    
@@ -93,7 +93,9 @@
                     <textarea type="text" name="text" placeholder="Опишите проблему" maxlength="399" value = "" required></textarea>
                     <input type="text" name="email" value = "{{current_user.email}}" readonly>
                     {#<input type="text" name="phone" value = "{{current_user.telephone}}" readonly>#}
-                    <button type = "submit" class="blue_button">
+                    
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type = "submit" class="blue_btn">
                         <img src="/static/img/Send.svg" alt="" class="button-icon">
                         <span>Отправить вопрос</span>
                     </button>

@@ -5,7 +5,7 @@ from functools import wraps
 from datetime import timedelta
 from user_agents import parse
 import requests
-from .time_for_app import current_utc_time
+from .time import current_utc_time
 
 """Timeout by type user"""
 def get_user_session_timeout(user_type):
@@ -22,7 +22,7 @@ def get_device_place(ip):
         return 'None'
 
 def force_logout():
-    from website.auth import logout_user
+    from website.routes.auth import logout_user
     logout_user()
     session.clear()
     response = make_response(redirect(url_for('auth.login')))

@@ -1,8 +1,8 @@
 from flask import flash, redirect, request
-from ..models import (
+from .models import (
     Version_report, Sections
 )
-from .. import db
+from . import db
 
 def cancel_sending(id):
     current_version = Version_report.query.filter_by(id=id).first()

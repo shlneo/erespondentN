@@ -30,7 +30,7 @@ from flask_login import (
 from sqlalchemy import func, desc
 from sqlalchemy.orm import joinedload
 from sqlalchemy.types import String
-from .export import generate_excel_report
+from ..export import generate_excel_report
 from werkzeug.security import check_password_hash, generate_password_hash
 from user_agents import parse
 
@@ -39,16 +39,16 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 
-from . import db
-from .models import (
+from .. import db
+from ..models import (
     User, Organization, Report, Version_report, DirUnit,
     DirProduct, Sections, Ticket, Message, UserSession
 )
 
 from website.ecp import check_certificate_expiry
 from website.session_utils import create_user_session, get_session_token_from_cookie, session_required
-from .time_for_app import current_utc_time
-from .email import send_email
+from ..time import current_utc_time
+from ..email import send_email
 
 auth = Blueprint('auth', __name__)
 login_manager = LoginManager()
@@ -1013,7 +1013,6 @@ def control_func(id):
     else:
         flash('Контроль уже был пройден.', 'error')
 
-    session['open_report_id'] = current_version.report_id
     return redirect(url_for('views.report_area'))
 
 @auth.route('/control-version/<id>', methods=['POST'])
@@ -1037,7 +1036,6 @@ def agreed_version(id):
             flash('Отчет уже согласован.', 'succeful')
         else:
             flash('Необходимо пройти контроль.', 'error')
-        session['open_report_id'] = current_version.report_id
         return redirect(url_for('views.report_area'))
 
 @auth.route('/sent-version/<id>', methods=['POST'])
@@ -1047,7 +1045,6 @@ def sent_version(id):
     if request.method == 'POST':
         uploaded_file = request.files.get('certificate')
         current_version = Version_report.query.filter_by(id=id).first()
-        session['open_report_id'] = current_version.report_id
         
         if current_version.status == 'Отправлен':
             flash('Отчет уже отправлен.', 'error')
@@ -1085,7 +1082,7 @@ def sent_version(id):
 @login_required 
 @session_required
 def cancle_sent_version(id):
-    from .report.report import cancel_sending
+    from ..report import cancel_sending
     return cancel_sending(id)
 
 @auth.route('/change-category-report', methods=['POST'])
@@ -1286,7 +1283,7 @@ def print_ticket(id):
 @session_required
 def exportDBF():
     if request.method == 'POST':
-        from .export import create_dbf_zip, get_approved_versions, send_zip_file
+        from ..export import create_dbf_zip, get_approved_versions, send_zip_file
         try:
             versions = get_approved_versions(request.form)
             if not versions:

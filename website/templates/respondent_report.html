@@ -74,7 +74,7 @@
                                     <a>Контроль</a>   
                                 </li> 
                             </div>  
-                            <a class="functions_menu_name">Версия отчета</a>
+                            <a class="functions_menu_name">Отчет</a>
                         </section>
                         <section>
                             <div class = "functions_menu">                         
@@ -84,49 +84,6 @@
                                 </li>  
                             </div>  
                             <a class="functions_menu_name">Таблица</a>
-                        </section>
-                        <section>
-                            <div class="functions_menu">
-                                <li onclick="window.location.href='/FAQ#faq8'">
-                                    <svg viewBox="0 0 800 600" fill="none" >
-                                        <rect  fill="#F0F4F8"/>
-                                        <!-- Стол -->
-                                        <rect x="150" y="400" width="500" height="30" fill="#4A5568"/>
-                                        <rect x="100" y="430" width="600" height="20" fill="#2D3748"/>
-                                        <rect x="250" y="450" width="300" height="150" fill="#1A202C"/>
-                                        <!-- Монитор -->
-                                        <rect x="200" y="100" width="400" height="250" rx="15" fill="#2D3748"/>
-                                        <rect x="220" y="120" width="360" height="210" rx="10" fill="#1A202C"/>
-                                        <!-- Экран монитора -->
-                                        <rect x="230" y="130" width="340" height="190" rx="8" fill="#2D3748"/>
-                                        <rect x="240" y="140" width="320" height="170" rx="6" fill="#6db1ff"/>
-                                        <!-- Содержимое экрана -->
-                                        <!-- Заголовок инструкции -->
-                                        <rect x="260" y="160" width="280" height="25" rx="4" fill="#FFFFFF"/>
-                                        <rect x="270" y="165" width="160" height="15" rx="2" fill="#4299E1"/>
-                                        <!-- Шаги инструкции -->
-                                        <circle cx="280" cy="210" r="8" fill="#38B2AC"/>
-                                        <rect x="300" y="205" width="200" height="10" rx="2" fill="#FFFFFF"/>   
-                                        <circle cx="280" cy="235" r="8" fill="#38B2AC"/>
-                                        <rect x="300" y="230" width="180" height="10" rx="2" fill="#FFFFFF"/>
-                                        <circle cx="280" cy="260" r="8" fill="#38B2AC"/>
-                                        <rect x="300" y="255" width="220" height="10" rx="2" fill="#FFFFFF"/>
-                                        <circle cx="280" cy="285" r="8" fill="#38B2AC"/>
-                                        <rect x="300" y="280" width="150" height="10" rx="2" fill="#FFFFFF"/>
-                                        <!-- Подставка монитора -->
-                                        <rect x="370" y="350" width="60" height="50" fill="#4A5568"/>
-                                        <rect x="350" y="400" width="100" height="30" rx="5" fill="#2D3748"/>
-                                        <!-- Книга -->
-                                        <rect x="50" y="380" width="40" height="60" fill="#C53030"/>
-                                        <rect x="50" y="380" width="40" height="10" fill="#E53E3E"/>
-                                        <!-- Чашка кофе -->
-                                    </svg>
-                                    <a>Инструкция</a>
-                                </li>
-                            </div>
-                            <a class="functions_menu_name">
-                                Помощь
-                            </a>
                         </section>
                     </ul>
                 </nav>
@@ -154,8 +111,8 @@
         </div>
     </div>
     <div class = "report-area">
-        <table class = "table_report-area">
-            <thead class="order-table_titels">
+        <table class = "table-report-area">
+            <thead class="table-title">
                 <tr>
                     <th class="resizable" rowspan="2"></th>
                     <th class="resizable" style = "white-space: nowrap;" rowspan="2">Наименование вида продукции (работ услуг)<div class="resizer"></div></th>
@@ -317,6 +274,7 @@
             </tbody>
         </table>  
     </div>
+
     <section class="report-header">
         <div class="report-details">
             <div class="detail-item">
@@ -359,14 +317,78 @@
                 </div>
             </div>
         </div>
+        <div class="report-details">
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">Начало заполнения</div>
+                    <div class="detail-value">
+                        {% if current_version.begin_time %}
+                            {{ current_version.begin_time.strftime('%d.%m.%Y') }}
+                        {% else %}
+                            Не указано
+                        {% endif %}</div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">Последнее изменение</div>
+                    <div class="detail-value">
+                        {% if current_version.change_time %}
+                            {{ current_version.change_time.strftime('%d.%m.%Y') }}
+                        {% else %}
+                            {{ current_version.begin_time.strftime('%d.%m.%Y') if current_version.begin_time else 'Не изменялся' }}
+                        {% endif %}</div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">Время отправки</div>
+                    <div class="detail-value">
+                        {% if current_version.sent_time %}
+                            {{ current_version.sent_time.strftime('%d.%m.%Y') }}
+                        {% else %}
+                            -
+                        {% endif %}</div>
+                </div>
+            </div>
+            
+            
+            
+            <div class="detail-item">
+                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="detail-content">
+                    <div class="detail-label">Время проверки</div>
+                    <div class="detail-value">
+                        {% if current_version.audit_time %}
+                            {{ current_version.audit_time.strftime('%d.%m.%Y') }}
+                        {% else %}
+                            -
+                        {% endif %}</div>
+                </div>
+            </div>
+        </div>
     </section>
+
+
+
 </div>
 
 <div id="addSection_modal" class="modal">
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Добавить продукцию</h3>
-            <a class="close">&times;</a>
+            <img src="/static/img/Close.svg" class="close" alt="">
         </div>
         <div class="answer-highlight-second">
             <div class="highlight-icon">💡</div>
@@ -378,8 +400,8 @@
                     <a>Поиск</a>
                     <input type="text" name = "search_product" >
                 </div>
-                <table class="table_report-area">
-                    <thead class = "order-table_titels">
+                <table class="table-report-area">
+                    <thead class = "table-title">
                         <tr>
                             <th>Код продукта</th>
                             <th>Наименование продукта</th>
@@ -515,12 +537,12 @@
             </table>
             
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div style = "display: flex; justify-content: right; width: 100%;">     
-                <button type="submit" class="blue_button report-submit">
+            <div class="model_but_area right">
+                <button type="submit" class="blue_btn">
                     <img src="/static/img/Add.svg" alt="" class="button-icon">
                     <span>Добавить</span>
                 </button>
-            </div>    
+            </div>
         </form>   
     </div>
 </div>
@@ -529,7 +551,7 @@
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Редактирование продукции</h3>
-            <a class="close">&times;</a>
+            <img src="/static/img/Close.svg" class="close" alt="">
         </div>
         <div class="answer-highlight-second">
             <div class="highlight-icon">💡</div>
@@ -654,12 +676,13 @@
                 </tr>
             </table>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div style = "display: flex; justify-content: right; width: 100%;">     
-                <button type="submit" class="blue_button report-submit">
-                    <img src="/static/img/Edit.svg" alt="" class="button-icon">
-                    <span>Изменить</span>
-                </button>    
-            </div>              
+            
+            <div class="model_but_area right">
+                <button type="submit" class="blue_btn">
+                    <img src="/static/img/Add.svg" alt="" class="button-icon">
+                    <span>Применить изменения</span>
+                </button>
+            </div>           
         </form> 
     </div>
 </div>

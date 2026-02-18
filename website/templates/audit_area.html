@@ -152,8 +152,8 @@
 
     <div class="report-list">
         <div class="report-area" >
-            <table class="table_report-area">
-                <thead class="order-table_titels">
+            <table class="table-report-area">
+                <thead class="table-title">
                     <tr>
                         <th></th>
                         <th></th>
@@ -173,7 +173,11 @@
                                 <tr class="report_row {% if version.hasNot %} hascomment-row {% endif %}" data-id="{{ row.id }}" draggable="true">
                                     <td></td>
                                     <td style = "padding: 4px;">
-                                        <button class="show-tickets_button" onclick="window.location.href='/audit-area/report/{{row.id}}'">  
+                                        <button class="open-report-btn" onclick="window.location.href='/audit-area/report/{{row.versions[0].id}}'">   
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
                                             <span>Просмотр</span>
                                         </button>
 
@@ -242,6 +246,7 @@
         <span>Просмотреть</span>
     </button>
     <form id="deleteReport" method="POST" action="/rollbackreport/">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" id="rollbackButton">
             <img src="/static/img/Edit.svg" alt="" class="button-icon-bl">
             <span>Отменить действие</span>
@@ -252,7 +257,7 @@
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Проверка отчетов</h3>
-            <a class="close">&times;</a>
+            <img src="/static/img/Close.svg"class="close" alt="">
         </div>
         <div class="answer-highlight-second" style = "max-width: 510px;">
             <div class="highlight-icon">💡</div>
@@ -293,7 +298,7 @@
         <div class="model_but_area" >
             <button 
                 type="button" 
-                class="blue_button" 
+                class="blue_btn" 
                 
                 onclick="filterSentedReports()">
                     <img src="/static/img/Calendar.svg" alt="" class="button-icon">
@@ -302,7 +307,7 @@
 
             <button 
                 type="button"
-                class="blue_button_invizback" 
+                class="blue_btn_invizback" 
                 style = "font-size: 13px;"
                 onclick="location.href='/audit-area/all_reports?year=&quarter='">
                 Все периоды
@@ -316,7 +321,7 @@
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Экспорт отчетов</h3>
-            <a class="close">&times;</a>
+            <img src="/static/img/Close.svg"class="close" alt="">
         </div>
         <div class="answer-highlight-second" style = "max-width: 510px;">
             <div class="highlight-icon">💡</div>

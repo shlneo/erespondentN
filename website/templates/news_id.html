@@ -3,10 +3,9 @@
 {% block content %}
 
 <div class="news_portal">
-           <div class="headline_aurora">
-            <h1>{{post.title}}</h1>
-        </div>
-
+    <div class="headline_aurora">
+        <h1>{{post.title}}</h1>
+    </div>
     <article class="article_crystal">
         <nav class="nav_flow">
             <a href="/news" class="back_orbital">
@@ -16,9 +15,6 @@
                 Назад к новостям
             </a>
         </nav>
-
- 
-
         <div class="content_hologram">
             {% if post.img_name %}
             <div class="media_illuminate">
@@ -33,7 +29,6 @@
                 {{post.text|safe}}
             </div>
         </div>
-
         <div class="article_footer">
             <div class="meta_tags">
                 {% if post.created_time %}
@@ -45,13 +40,10 @@
                     {{post.created_time.strftime('%d %B %Y')}}
                 </time>
                 {% endif %}
-                
                 {% if post.category %}
-                
                 {% endif %}
             </div>
         </div>
     </article>
 </div>
-
 {% endblock %}
