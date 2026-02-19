@@ -38,7 +38,7 @@
         </div> 
         <div class="scroll-to-down">
             {%if current_user.is_authenticated%}
-                <button onclick="scrollToForm()">
+                <button onclick="scrollToAdmin()">
                     <img src="{{ url_for('static', filename='img/support.png')}}" alt="">
                 </button>
             {% endif %}

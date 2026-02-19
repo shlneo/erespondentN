@@ -13,8 +13,13 @@ function addCsrfTokenToForm(form) {
 }
 
 const header = document.querySelector('.fixed-header');
-function scrollToForm() {
+function scrollToAdmin() {
     const formElement = document.getElementById('toadmin');
+    if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+    }
+}function scrollToTickets() {
+    const formElement = document.getElementById('ticket-area');
     if (formElement) {
         formElement.scrollIntoView({ behavior: 'smooth' });
     }

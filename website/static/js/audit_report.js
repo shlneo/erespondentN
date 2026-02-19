@@ -1,13 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Получаем параметр из URL
     function getURLParameter(name) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(name);
     }
-    // Пытаемся получить значение параметра 'modal'
     const modalId = getURLParameter('modal');
     if (modalId) {
-        // Ищем модальное окно с соответствующим id
         const modalElement = document.getElementById(modalId);
         if (modalElement) {
             modalElement.classList.add('active');
@@ -17,6 +14,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+function updateCounter(textarea) {
+    const counter = document.getElementById('messageCounter');
+    const currentLength = textarea.value.length;
+    const maxLength = textarea.getAttribute('maxlength');
+    counter.textContent = currentLength + '/' + maxLength;
+    
+    if (currentLength > maxLength * 0.9) {
+        counter.style.color = '#ef4444';
+    } else if (currentLength > maxLength * 0.7) {
+        counter.style.color = '#f59e0b';
+    } else {
+        counter.style.color = '#a0aec0';
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     var urladdComment_modal = new URLSearchParams(window.location.search);
@@ -53,10 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    if(document.getElementById('addCommentModal')){
-        handleModal(document.getElementById('addCommentModal'), document.getElementById('addCommentLink'), document.getElementById('CloseaddComment'));
-    }
-
+    
     const sectionLinks = document.querySelectorAll('[data-section]');
     sectionLinks.forEach(link => {
         link.addEventListener('click', function() {
@@ -237,10 +245,8 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // Инициализация
     const tableNav = initTableKeyboardNavigation();
 
-    // Функции переключения таблиц
     function switchToFuelTable() {
         document.getElementById('fuel_section_table').style.display = '';
         document.getElementById('heat_section_table').style.display = 'none';
@@ -260,6 +266,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('heat_section_table').style.display = 'none';
         document.getElementById('electro_section_table').style.display = '';
         tableNav.clearSelection();
+    }
+
+    if (document.querySelector('.message-field__textarea')) {
+        updateCounter(textareaAudit);
     }
 });
 

@@ -1225,59 +1225,78 @@ def export_table():
 def export_version(id):
     return generate_excel_report(id)
 
-@auth.route('/print-ticket/<int:id>', methods=['POST'])
+@auth.route('/print-version-tickets', methods=['POST'])
 @login_required 
 @session_required
-def print_ticket(id):
+def print_version_tickets():
     if request.method == 'POST':
-        ticket = Ticket.query.get(id)
-        if ticket is None:
-            flash("Квитанция не найдена", "error")
+        version_id = request.form.get('version_id')
+        
+        tickets = Ticket.query.filter_by(version_report_id=version_id).all()
+        
+        if not tickets:
+            flash("Квитанции не найдены.", "error")
             return redirect(request.referrer)
 
-        version_report = ticket.version_report
+        version_report = tickets[0].version_report
         report = version_report.report
 
         buffer = BytesIO()
         c = canvas.Canvas(buffer, pagesize=letter)
 
-        font_path_bold = os.path.join(os.path.dirname(__file__), 'static', 'fonts', 'Montserrat-Bold.ttf')
-        font_path_regular = os.path.join(os.path.dirname(__file__), 'static', 'fonts', 'Montserrat-Regular.ttf')
+        font_path_bold = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'fonts', 'Montserrat-Bold.ttf')
+        font_path_regular = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'fonts', 'Montserrat-Regular.ttf')
         pdfmetrics.registerFont(TTFont('MontserratBold', font_path_bold))
         pdfmetrics.registerFont(TTFont('MontserratRegular', font_path_regular))
 
-        c.setFont("MontserratBold", 12)
-        y_position = 730 
+        c.setFont("MontserratBold", 16)
+        c.drawString(100, 780, "Квитанции по отчету")
+        
+        c.setFont("MontserratRegular", 12)
+        c.drawString(100, 760, f"ОКПО: {report.okpo}")
+        c.drawString(100, 740, f"Год: {report.year}, Квартал: {report.quarter}")
+        c.drawString(100, 720, f"Всего квитанций: {len(tickets)}")
+        
+        y_position = 680
 
-        data = {
-            "Отчет по форме": "Сведения о нормах",
-            "Период": f"Год: {report.year}; Квартал: {report.quarter}",
-            "ОКПО предприятия": report.okpo,
-            "Результат обработки": "Отчет принят в обработку" if ticket.luck else "Отчет не принят в обработку",
-            "Дата обработки": ticket.begin_time.strftime("%Y-%m-%d"),
-            "Причина отказа": " " if ticket.luck else ticket.note,
-        }
+        for ticket in tickets:
+            if y_position < 100:
+                c.showPage()
+                c.setFont("MontserratBold", 16)
+                c.drawString(100, 780, "Квитанции по отчету (продолжение)")
+                c.setFont("MontserratRegular", 12)
+                c.drawString(100, 760, f"ОКПО: {report.okpo}")
+                c.drawString(100, 740, f"Год: {report.year}, Квартал: {report.quarter}")
+                y_position = 700
 
-        name_x = 100
-        value_x = 250
-        y_position -= 20
-
-        for key, value in data.items():
             c.setFont("MontserratBold", 12)
-            c.drawString(name_x, y_position, f"{key}:")
+            c.drawString(100, y_position, f"Дата обработки: {ticket.begin_time.strftime('%Y-%m-%d %H:%M')}")
+            y_position -= 20
+            
+            c.setFont("MontserratBold", 12)
+            c.drawString(100, y_position, "Результат:")
             c.setFont("MontserratRegular", 12)
-            c.drawString(value_x, y_position, f"{value}")
+            result = "Отчет принят в обработку" if ticket.luck else "Отчет не принят в обработку"
+            c.drawString(180, y_position, result)
+            y_position -= 20
+            
+            if not ticket.luck:
+                c.setFont("MontserratBold", 12)
+                c.drawString(100, y_position, "Причина:")
+                c.setFont("MontserratRegular", 12)
+                c.drawString(180, y_position, ticket.note if ticket.note else "")
+                y_position -= 20
+            
             y_position -= 20
 
         c.save()
         buffer.seek(0)
 
-        return send_file(
-            buffer,
-            as_attachment=True,
-            download_name=f"{report.okpo}_{report.year}_{report.quarter}.pdf",
-            mimetype="application/pdf"
-        )
+        response = make_response(buffer.getvalue())
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'attachment; filename=' + f"kvitancii_{report.okpo}_{report.year}_{report.quarter}.pdf"
+        
+        return response
 
 @auth.route('/exportDBF', methods=['POST'])
 @login_required 
