@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var nameOfProductInput = document.querySelector('input[name="name_of_product"]');
     var add_id_productInput = document.querySelector('input[name="add_id_product"]');
-    var chooseProductArea = document.querySelector('.choose-product_area');
+    var chooseProductArea = document.querySelector('.choose-product-area');
     var chooseProdTableBody = document.getElementById('chooseProdTableBody');
     var nameOfProductButton = document.getElementById('nameOfProductButton');
 
@@ -274,15 +274,26 @@ document.querySelector('#chooseProdTableBody').addEventListener('click', functio
     }
 });
 
-document.getElementById('control-report-btn').addEventListener('click', function() {
-    document.getElementById('control-report-form').submit();
-});
+if(document.getElementById('control-report-btn')){
+    document.getElementById('control-report-btn').addEventListener('click', function() {
+        document.getElementById('control-report-form').submit();
+    });
+}
+
+if(document.getElementById('agreed-report-btn')){
+    document.getElementById('agreed-report-btn').addEventListener('click', function() {
+        document.getElementById('agreed-report-form').submit();
+    });
+}
+
+if(document.getElementById('sent-report-btn')){
+    handleModal(document.getElementById('SentModal'), document.getElementById('sent-report-btn'), SentModal.querySelector('.close'));
+}
 
 if(cancel_send = document.getElementById('cancel-sending-bnt')){
     document.getElementById('cancel-sending-bnt').addEventListener('click', function() {
         document.getElementById('cancel-sending-form').submit();
     });
-
 }
 
 document.getElementById('export-table-btn').addEventListener('click', function() {

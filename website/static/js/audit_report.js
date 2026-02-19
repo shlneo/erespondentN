@@ -53,11 +53,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    // handleModal(document.getElementById('RespondentModal'), document.getElementById('RespondentLink'), document.getElementById('CloseRespondent'));
-    handleModal(document.getElementById('addCommentModal'), document.getElementById('addCommentLink'), document.getElementById('CloseaddComment'));
-    handleModal(document.getElementById('showCommentsModal'), document.getElementById('showCommentsLink'), document.getElementById('CloseshowComments'));
-    /* end */
+    if(document.getElementById('addCommentModal')){
+        handleModal(document.getElementById('addCommentModal'), document.getElementById('addCommentLink'), document.getElementById('CloseaddComment'));
+    }
 
     const sectionLinks = document.querySelectorAll('[data-section]');
     sectionLinks.forEach(link => {

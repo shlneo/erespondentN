@@ -92,6 +92,7 @@
                                             </li>  
                                             
                                             <form id="change-category-form" style="display: none;" method="post" action="/change-category-report">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <input type="hidden" name="reportId" id="report-id-input">
                                                 <input type="hidden" name="action" id="action-input">
                                             </form>
@@ -104,10 +105,12 @@
                             </section>
                             <section>
                                 <form id = "douwnload_DBF_form" action="/exportDBF" method="POST" style = "display: none;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type = "hidden" name = "year_filter" value = "{% if year_filter == '' and quarter_filter == '' %}{%else%}{{year_filter}}{%endif%}">         
                                     <input type = "hidden" name = "quarter_filter" value = "{% if year_filter == '' and quarter_filter == '' %}{%else%}{{quarter_filter}}{%endif%}">
                                 </form>  
                                  <form id = "douwnload_XML_form" action="/exportXML" method="POST" style = "display: none;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type = "hidden" name = "year_filter" value = "{% if year_filter == '' and quarter_filter == '' %}{%else%}{{year_filter}}{%endif%}">         
                                     <input type = "hidden" name = "quarter_filter" value = "{% if year_filter == '' and quarter_filter == '' %}{%else%}{{quarter_filter}}{%endif%}">
                                 </form>   
@@ -241,14 +244,12 @@
     </div>
 </div>
 <div id="contextMenu_report" class="white-panel">
-    <button data-action="checkSectionsButton">
-        <img src="/static/img/Search.svg" alt="" class="button-icon-bl">
-        <span>Просмотреть</span>
-    </button>
     <form id="deleteReport" method="POST" action="/rollbackreport/">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" id="rollbackButton">
-            <img src="/static/img/Edit.svg" alt="" class="button-icon-bl">
+            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
             <span>Отменить действие</span>
         </button>
     </form>
@@ -263,38 +264,42 @@
             <div class="highlight-icon">💡</div>
             <p>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>. Для просмотра отчетов за все время - выберите <strong>"Все периоды"</strong>.</p>
         </div>
-        <table class="modal_table">      
-            <tr>
-                <td>Год</td>
-                <td>
-                    <div class="choose_period-cont">
-                        <button class="inc_button" type="button" onclick="changeValueByButton(this)">-</button>
-                        <input class="inc_dis_input" type="text" 
-                            id="quantity_year" 
-                            value="{{previous_year}}" 
-                            name="modal_report_year" 
-                            data-type="year"
-                            readonly>
-                        <button class="dis_button" type="button" onclick="changeValueByButton(this)">+</button>
+        <input type="hidden" name="year" id="selected-year-audit" value="{{year_filter}}">
+        <input type="hidden" name="quarter" id="selected-quarter-audit" value="{{quarter_filter}}">
+        <input type="hidden" name="sratus" id="status-audit" value="{{status_reports}}">
+
+        <div class="period-selector-advanced" id="audit-period-selector">
+            <div class="selector-card">
+                <div class="selector-grid">
+                    <div class="year-wheel">
+                        <button type="button" class="year-arrow up-arrow">↑</button>
+                        <div class="year-display"></div>
+                        <button type="button" class="year-arrow down-arrow">↓</button>
                     </div>
-                </td>
-            </tr>
-            <tr>
-                <td>Квартал</td>
-                <td>
-                    <div class="choose_period-cont">
-                        <button class="inc_button" type="button" onclick="changeValueByButton(this)">-</button>
-                        <input class="inc_dis_input" type="text" 
-                            id="quantity_quarter" 
-                            value="{{previous_quarter}}" 
-                            name="modal_report_quarter" 
-                            data-type="quarter"
-                            readonly>
-                        <button class="dis_button" type="button" onclick="changeValueByButton(this)">+</button>
+                    
+                    <div class="quarter-grid">
+                        <button type="button" class="q-cell" data-q="1">
+                            <span class="q-number">1 кв.</span>
+                            <span class="q-months">Янв-Мар</span>
+                        </button>
+                        <button type="button" class="q-cell" data-q="2">
+                            <span class="q-number">2 кв.</span>
+                            <span class="q-months">Апр-Июн</span>
+                        </button>
+                        <button type="button" class="q-cell" data-q="3">
+                            <span class="q-number">3 кв.</span>
+                            <span class="q-months">Июл-Сен</span>
+                        </button>
+                        <button type="button" class="q-cell" data-q="4">
+                            <span class="q-number">4 кв.</span>
+                            <span class="q-months">Окт-Дек</span>
+                        </button>
                     </div>
-                </td>
-            </tr>
-        </table>
+                </div>
+            </div>
+        </div>
+        <div id="selector-info-audit" class="period-info"></div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="model_but_area" >
             <button 
                 type="button" 
@@ -304,7 +309,6 @@
                     <img src="/static/img/Calendar.svg" alt="" class="button-icon">
                     <span>Выбранный период</span>
             </button>
-
             <button 
                 type="button"
                 class="blue_btn_invizback" 
@@ -315,8 +319,6 @@
         </div>
     </div>
 </div>
-
-
 <div id="load_reports_modal" class="modal">
     <div class="modal-content">
         <div class = "modal-header">
@@ -329,7 +331,7 @@
                 Подробнее — в <a href="/FAQ#faq14" class="instruction-link">инструкции</a></p>
         </div>
         
-        <div class="model_but_area">
+        <div class="model_but_area nogap">
             <button 
                 type="button"
                 class="dbf_button"
@@ -347,4 +349,5 @@
     </div>
 </div>
 <script src="{{ url_for('static', filename='js/audit.js') }}"></script>
+
 {% endblock %}

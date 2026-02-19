@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Часть 1: Обработка полей ввода кода
     const inputs = document.querySelectorAll('.activation_code_input');
-    
-    // Автоматическое перемещение между полями ввода
     inputs.forEach((input, index) => {
         input.addEventListener('input', () => {
             if (input.value.length >= input.maxLength && index < inputs.length - 1) {
@@ -22,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Обработка вставки из буфера обмена
     inputs[0].addEventListener('paste', (e) => {
         e.preventDefault();
         const pasteData = e.clipboardData.getData('text').trim();
@@ -38,12 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
         inputs[nextFocusIndex].focus();
     });
 
-    // Часть 2: Таймер для кнопки повторной отправки
     const resendButton = document.getElementById('relod_button_kod');
     const TIME_LIMIT = 60; // 60 секунд (1 минута)
     const STORAGE_KEY = 'resend_code_timer';
-    
-    // Глобальная переменная для хранения интервала таймера
+
     let timerInterval = null;
 
     function formatTime(seconds) {
@@ -79,28 +73,20 @@ document.addEventListener('DOMContentLoaded', () => {
         clearExistingTimer();
         
         let timeLeft = seconds;
-        
-        // Блокируем кнопку и показываем таймер
         updateButtonState(false, `Повторная отправка через ${formatTime(timeLeft)}`);
-        
-        // Сохраняем начальное состояние
         saveTimerState(timeLeft);
         
         timerInterval = setInterval(() => {
             timeLeft--;
             
             if (timeLeft <= 0) {
-                // Таймер завершен
                 clearExistingTimer();
                 updateButtonState(true, 'Отправить ещё раз');
                 localStorage.removeItem(STORAGE_KEY);
             } else {
-                // Обновляем сохраненное время только раз в 5 секунд для производительности
                 if (timeLeft % 5 === 0) {
                     saveTimerState(timeLeft);
                 }
-                
-                // Обновляем отображение
                 updateButtonState(false, `Повторная отправка через ${formatTime(timeLeft)}`);
             }
         }, 1000);
@@ -115,19 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const timeLeft = endTime - currentTime;
 
             if (timeLeft > 0 && timeLeft <= TIME_LIMIT) {
-                // Продолжаем отсчет с сохраненного времени
                 startTimer(timeLeft);
             } else if (timeLeft > TIME_LIMIT) {
-                // Время в хранилище некорректно (больше лимита)
-                // Запускаем новый таймер
                 startTimer(TIME_LIMIT);
             } else {
-                // Таймер уже истек или некорректный
                 localStorage.removeItem(STORAGE_KEY);
                 updateButtonState(true, 'Отправить ещё раз');
             }
         } else {
-            // Нет сохраненного таймера, кнопка активна
             updateButtonState(true, 'Отправить ещё раз');
         }
     }
@@ -137,50 +118,45 @@ document.addEventListener('DOMContentLoaded', () => {
         startTimer(TIME_LIMIT);
     }
 
-    // Инициализация таймера сразу при загрузке страницы
     initTimer();
 
-    // Обработчик клика по кнопке повторной отправки
     resendButton.addEventListener('click', async (e) => {
         e.preventDefault();
         
         if (resendButton.disabled) return;
         
-        // Блокируем кнопку сразу при клике
         updateButtonState(false, 'Отправка...');
         
         try {
-            // Отправляем запрос на повторную отправку кода
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
             const response = await fetch('/resend-code', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                }
             });
             
             const data = await response.json();
             
             if (data.status === 'success') {
-                // Запускаем таймер после успешной отправки
                 resetTimer();
                 
-                // Показываем уведомление, если нужно
                 if (data.message) {
                     showNotification(data.message, 'success');
                 }
             } else {
-                // В случае ошибки возвращаем кнопку в активное состояние
                 updateButtonState(true, 'Отправить ещё раз');
                 showNotification(data.message || 'Произошла ошибка при отправке кода', 'error');
             }
         } catch (error) {
             console.error('Ошибка при отправке кода:', error);
             updateButtonState(true, 'Отправить ещё раз');
-            showNotification('Не удалось отправить код. Проверьте подключение к интернету.', 'error');
         }
     });
 
-    // Функция для показа уведомлений (можно заменить на свою реализацию)
     function showNotification(message, type = 'info') {
-        // Временная реализация - можно заменить на toast или модальное окно
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.textContent = message;
@@ -204,10 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
-    // Обработка видимости страницы для синхронизации таймера
     document.addEventListener('visibilitychange', () => {
         if (!document.hidden && timerInterval) {
-            // Страница снова стала активной - пересчитываем таймер
             const savedEndTime = localStorage.getItem(STORAGE_KEY);
             if (savedEndTime) {
                 const currentTime = Math.floor(Date.now() / 1000);
@@ -215,11 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const timeLeft = endTime - currentTime;
                 
                 if (timeLeft > 0 && timeLeft <= TIME_LIMIT) {
-                    // Перезапускаем таймер с актуальным временем
                     clearExistingTimer();
                     startTimer(timeLeft);
                 } else if (timeLeft <= 0) {
-                    // Таймер истек, пока страница была неактивна
                     clearExistingTimer();
                     updateButtonState(true, 'Отправить ещё раз');
                     localStorage.removeItem(STORAGE_KEY);

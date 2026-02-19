@@ -527,7 +527,6 @@ def create_dbf_zip(versions):
             dbf_data = prepare_dbf_data(version)
             dbf_content = create_dbf_file(dbf_data, version.report)
             zip_file.writestr(
-                # f'{version.report.okpo}_{version.report.year}_{version.report.quarter}_{version.report.id}.dbf',
                 f'{version.report.okpo}_{version.report.year}_{version.report.quarter}.dbf',
                 dbf_content
             )

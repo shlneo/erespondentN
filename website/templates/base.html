@@ -113,6 +113,42 @@
         </nav>
       {% endblock %}
     {% endif %}
+
+    {% if SentModal %}
+      <div id="SentModal" class="modal">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h3 class="change-position">Отправить отчет</h3>
+                  <img src="{{ url_for('static', filename='img/Close.svg')}}" class="close" alt="">
+              </div>
+              <div class="answer-highlight-second" style = "max-width: 550px;">
+                  <div class="highlight-icon">💡</div>
+                  <p>Перетащите <strong>файл сертификата ЭЦП</strong> для отправки отчета. Если у вас возникнут вопросы, пожалуйста, ознакомьтесь с <a href="/FAQ#faq11" class="instruction-link">инструкцией</a> по работе.</p>
+              </div>
+              <form id="sentForm" style = "text-align: center;" method="POST" enctype="multipart/form-data">
+                  <div id="drop-area" class="drop-area" role="button" tabindex="0" aria-labelledby="file-upload-label">
+                      <p id="file-upload-label">
+                          {{ _('Перетащите файл сертификата сюда или') }} 
+                      </p> 
+                      <p class="file-input-label">
+                          {{ _('нажмите для выбора') }} 
+                      </p>
+                      <input type="file" id="certificate_to_check" name="certificate" accept=".cer,.pem,.der" hidden 
+                          aria-describedby="file-format-hint">
+                  </div>
+                  
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" id = "report-id-null" name="report-id-null" value="{% if current_version and current_version.id %}{{current_version.id}}{% endif %}">
+                  <div class="model_but_area right">
+                      <button type="submit" id = "send_button" class="blue_btn">
+                          <img src="/static/img/Send.svg" alt="" class="button-icon">
+                          <span>Отправить</span>
+                      </button>
+                  </div>  
+              </form>           
+          </div>
+      </div>
+    {% endif %}
     <main> 
       {% with messages = get_flashed_messages(with_categories=true) %} 
         {% if messages %}
@@ -142,7 +178,8 @@
     <div id="cookie-consent-banner" class="cookie-banner" style="display: none;">
         <div class="cookie-banner-content">
             <div class="cookie-banner-text">
-                <p>Мы используем файлы cookie для улучшения работы сайта. Продолжая использовать наш сайт, вы соглашаетесь с <a href="/privacy-policy">политикой конфиденциальности</a>.</p>
+                <p>Мы используем файлы cookie для улучшения работы сайта. Продолжая использовать наш сайт, вы соглашаетесь с <a href="{{ url_for('static', filename='files/user_agreement/пользовательское_соглашение.pdf') }}" download="Пользовательское_соглашение.pdf">
+                            пользовательским соглашением</a>.</p>
             </div>
             <div class="cookie-banner-buttons">
                 <button class="succes-button" id="accept-cookies">
@@ -162,7 +199,7 @@
                   <ul>
                       <li onclick="window.location.href='/news'"><a>Новости</a></li>
                       <li onclick="window.location.href='/contacts'"><a>Контакты</a></li>
-                      <li onclick="window.location.href='/FAQ'"><a>FAQ</a></li>
+                      <li onclick="window.location.href='/FAQ'"><a>Помощь</a></li>
                   </ul>
               </div>
               <div class="footer-col">

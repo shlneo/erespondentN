@@ -196,8 +196,6 @@ def kod():
             )
             db.session.add(new_user)
             db.session.commit()
-            session.pop('temp_user', None)
-            session.pop('activation_code', None)
             
             remember = True
             
@@ -220,7 +218,7 @@ def resend_code():
         new_activation_code = gener_password()
         session['activation_code'] = new_activation_code
         send_email(new_activation_code, email, 'kod')
-        return jsonify({'status': 'success', 'message': 'Код активации отправлен повторно!'})
+        return jsonify({'status': 'success'})
     else:
         return jsonify({'status': 'error', 'message': 'Не удалось отправить код повторно.'}), 400
 
@@ -288,7 +286,10 @@ def add_personal_parametrs():
         #     return redirect(url_for('views.profile_common'))
         
         current_user.organization_id = organization.id
-
+        
+        session.pop('temp_user', None)
+        session.pop('activation_code', None)
+        
         db.session.commit()
         flash('Данные успешно обновлены.', 'success')
         
@@ -1013,7 +1014,7 @@ def control_func(id):
     else:
         flash('Контроль уже был пройден.', 'error')
 
-    return redirect(url_for('views.report_area'))
+    return redirect(request.referrer) 
 
 @auth.route('/control-version/<id>', methods=['POST'])
 @login_required 
@@ -1036,9 +1037,9 @@ def agreed_version(id):
             flash('Отчет уже согласован.', 'succeful')
         else:
             flash('Необходимо пройти контроль.', 'error')
-        return redirect(url_for('views.report_area'))
+        return redirect(request.referrer)
 
-@auth.route('/sent-version/<id>', methods=['POST'])
+@auth.route('/send-version/<id>', methods=['POST'])
 @login_required 
 @session_required
 def sent_version(id):
@@ -1076,7 +1077,7 @@ def sent_version(id):
         db.session.commit()
 
         flash('Отчет отправлен.', 'successful')
-        return redirect(url_for('views.report_area'))
+        return redirect(request.referrer)
 
 @auth.route('/cancel-sent-version/<id>', methods=['POST'])
 @login_required 
@@ -1566,8 +1567,8 @@ def get_organizations_with_reports_excel_xlsx(year: int, quarter: int, statuses:
 @login_required 
 @session_required
 def load_org_stat():
-    year_filter = request.form.get('modal_report_year')
-    quarter_filter = request.form.get('modal_report_quarter')
+    year_filter = request.form.get('modal_add_year')
+    quarter_filter = request.form.get('modal_add_quarter')
 
     if not year_filter or not quarter_filter:
         flash('Не указан год или квартал.', 'error')

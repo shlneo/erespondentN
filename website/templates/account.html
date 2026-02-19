@@ -138,41 +138,48 @@
         </div>
         <div class="answer-highlight-second" style = "max-width: 510px;">
             <div class="highlight-icon">💡</div>
-            <p>Выберите необходимый <strong>год</strong> и <strong>квартал</strong>, чтобы загрузить отчет о списке <strong>отчитавшихся организаций</strong>.</p>
+            <p>Выберите необходимый <strong>отчетный период</strong>, чтобы загрузить отчет о списке <strong>отчитавшихся организаций</strong>.</p>
         </div>
         <form action="/load_org_stat" method="POST">
-            <table class="modal_table">      
-                <tr>
-                    <td>Год</td>
-                    <td>
-                        <div class="choose_period-cont">
-                            <button class="inc_button" type="button" onclick="changeValueByButton(this)">-</button>
-                            <input class="inc_dis_input" type="text" 
-                                id="coppy_quantity_year" 
-                                value="{{previous_year}}" 
-                                name="modal_report_year" 
-                                data-type="year"
-                                readonly>
-                            <button class="dis_button" type="button" onclick="changeValueByButton(this)">+</button>
+            <input type="hidden" name="modal_add_year" id="selected-year-add" value="{{previous_year}}">
+            <input type="hidden" name="modal_add_quarter" id="selected-quarter-add" value="{{previous_quarter}}">
+
+            <div class="period-selector-advanced" id="add-period-selector">
+                <div class="selector-card">
+                    <div class="selector-grid">
+                        <div class="year-wheel">
+                            <button type="button" class="year-arrow up-arrow">↑</button>
+                            <div class="year-display"></div>
+                            <button type="button" class="year-arrow down-arrow">↓</button>
                         </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Квартал</td>
-                    <td>
-                        <div class="choose_period-cont">
-                            <button class="inc_button" type="button" onclick="changeValueByButton(this)">-</button>
-                            <input class="inc_dis_input" type="text" 
-                                id="coppy_quantity_quarter" 
-                                value="{{previous_quarter}}" 
-                                name="modal_report_quarter" 
-                                data-type="quarter"
-                                readonly>
-                            <button class="dis_button" type="button" onclick="changeValueByButton(this)">+</button>
+                        
+                        <div class="quarter-grid">
+                            <button type="button" class="q-cell" data-q="1">
+                                <span class="q-number">1 кв.</span>
+                                <span class="q-months">Янв-Мар</span>
+                            </button>
+                            <button type="button" class="q-cell" data-q="2">
+                                <span class="q-number">2 кв.</span>
+                                <span class="q-months">Апр-Июн</span>
+                            </button>
+                            <button type="button" class="q-cell" data-q="3">
+                                <span class="q-number">3 кв.</span>
+                                <span class="q-months">Июл-Сен</span>
+                            </button>
+                            <button type="button" class="q-cell" data-q="4">
+                                <span class="q-number">4 кв.</span>
+                                <span class="q-months">Окт-Дек</span>
+                            </button>
                         </div>
-                    </td>
-                </tr>
-            </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="selector-info-add" class="period-info"></div>
+            
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+
             <div class="model_but_area" >
                 <button type="submit" class="blue_btn">
                     <img src="/static/img/Calendar.svg" alt="" class="button-icon">

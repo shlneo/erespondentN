@@ -7,20 +7,7 @@
         <div class="report-area_podmenu">    
             <div class="content-podmenu">
                 <nav>
-                    <ul> 
-                        <form id="cancel-sending-form" action="/cancel-sent-version/{{current_version.id}}" method="POST" style="display: none;">
-                        </form>
-                        {% if current_version.status == 'Отправлен'%}   
-                        <section>
-                            <div class="functions_menu">                         
-                                <li id = "cancel-sending-bnt">           
-                                    <img src="{{ url_for('static', filename='img/cancel-send.svg')}}" alt="">
-                                    <a>Отменить отправку</a>   
-                                </li>  
-                            </div>  
-                            <a class="functions_menu_name">Отчет</a>
-                        </section>
-                        {% endif %}
+                    <ul>
                         <section>    
                             <div class="functions_menu {% if current_version.status in ['Отправлен', 'Одобрен'] %}disabled{% endif %}">
                                 <li data-action="link_addSection_modal">
@@ -59,7 +46,12 @@
                         </section>
                         <section>
                             <div class = "functions_menu">                         
+                                <li onclick="sortTable()"  title = 'Сортировка по [Б]'>           
+                                    <img src="{{ url_for('static', filename='img/icon_sort.png')}}" alt="">
+                                    <a>Сортировка</a>   
+                                </li>                           
                                 <form style = "display: none;" id = "export-table-form" action="/export-table" method="post">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type = "hidden" name = "version_id" value = "{{current_version.id}}" readonly>
                                     <input type = "hidden" name = "numb_section" value = "1" readonly>
                                 </form>
@@ -67,23 +59,49 @@
                                     <img src="{{ url_for('static', filename='img/icon_excel.png')}}" alt="">
                                     <a>Экспорт</a>   
                                 </li>   
-                                <form id="control-report-form" action="/control-version/{{current_version.id}}" method="POST" style="display: none;">
-                                </form>
-                                <li id="control-report-btn">           
-                                    <img src="{{ url_for('static', filename='img/icon_control.png')}}" alt="">
-                                    <a>Контроль</a>   
-                                </li> 
-                            </div>  
-                            <a class="functions_menu_name">Отчет</a>
-                        </section>
-                        <section>
-                            <div class = "functions_menu">                         
-                                <li onclick="sortTable()"  title = 'Сортировка по [Б]'>           
-                                    <img src="{{ url_for('static', filename='img/icon_sort.png')}}" alt="">
-                                    <a>Сортировка</a>   
-                                </li>  
                             </div>  
                             <a class="functions_menu_name">Таблица</a>
+                        </section>
+                        <section>
+                            <div class = "functions_menu">  
+                                {% if current_version.status == 'Отправлен'%} 
+                                    <form id="cancel-sending-form" action="/cancel-sent-version/{{current_version.id}}" method="POST" style="display: none;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    </form>                       
+                                    <li id = "cancel-sending-bnt">           
+                                        <img src="{{ url_for('static', filename='img/cancel-send.svg')}}" alt="">
+                                        <a>Отменить</a>   
+                                    </li>  
+                                {% endif %}
+                                
+                                {% if current_version.status == 'Заполнение'%} 
+                                    <form id="control-report-form" action="/control-version/{{current_version.id}}" method="POST" style="display: none;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    </form>
+                                    <li id="control-report-btn">           
+                                        <img src="{{ url_for('static', filename='img/icon_control.png')}}" alt="">
+                                        <a>Контроль</a>   
+                                    </li> 
+                                {% endif %}
+                                
+                                {% if current_version.status == 'Контроль пройден'%} 
+                                    <form id="agreed-report-form" action="/agreed-version/{{current_version.id}}" method="POST" style="display: none;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    </form>
+                                    <li id = "agreed-report-btn">
+                                        <img src="{{ url_for('static', filename='img/icon_galochka.png') }}" alt="">
+                                        <a>Согласовать</a>
+                                    </li>
+                                {% endif %}
+
+                                {% if current_version.status == 'Согласовано'%} 
+                                    <li id = "sent-report-btn">
+                                        <img src="{{ url_for('static', filename='img/icon_send.png') }}" alt="">
+                                        <a>Отправить</a>
+                                    </li>
+                                {% endif %}
+                            </div>  
+                            <a class="functions_menu_name">{% if current_version.status == 'Отправлен'%} Отправка {% else %}Cтатус{% endif %}</a>
                         </section>
                     </ul>
                 </nav>
@@ -379,9 +397,6 @@
             </div>
         </div>
     </section>
-
-
-
 </div>
 
 <div id="addSection_modal" class="modal">
@@ -395,7 +410,7 @@
             <p><strong>Выберите</strong> необходимую продукцию и заполните <strong>активные</strong> парамметры. Если у вас возникнут вопросы, пожалуйста, ознакомьтесь с <a href="/FAQ#faq8" class="instruction-link">инструкцией</a> по работе.</p>
         </div>
         <form method="POST" action="/add-section-param">
-            <div class="choose-product_area">
+            <div class="choose-product-area">
                 <div class = "serchProduct_cont">
                     <a>Поиск</a>
                     <input type="text" name = "search_product" >
@@ -405,7 +420,7 @@
                         <tr>
                             <th>Код продукта</th>
                             <th>Наименование продукта</th>
-                            <th>Единица измерения</th>
+                            <th>Ед. изм.</th>
                             <th style="display:none;">id</th>
                         </tr>
                     </thead>
@@ -535,12 +550,22 @@
                     </td>
                 </tr>
             </table>
-            
+            <div class="dop-info-cont" style = "margin: 5px 0;">
+                <div class="dop-cont-note">
+                        <svg class="dop-cont-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <path d="M10 7v4M10 13h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    <span>
+                        <span class="gray-field-note">Серый текст</span> — только для просмотра
+                    </span>
+                </div>
+            </div>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="model_but_area right">
                 <button type="submit" class="blue_btn">
                     <img src="/static/img/Add.svg" alt="" class="button-icon">
-                    <span>Добавить</span>
+                    <span>Добавить продукцию</span>
                 </button>
             </div>
         </form>   
@@ -674,7 +699,18 @@
                         >
                     </td>
                 </tr>
-            </table>
+            </table>            
+            <div class="dop-info-cont" style = "margin: 5px 0;">
+                <div class="dop-cont-note">
+                        <svg class="dop-cont-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <path d="M10 7v4M10 13h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    <span>
+                        <span class="gray-field-note">Серый текст</span> — только для просмотра
+                    </span>
+                </div>
+            </div>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             
             <div class="model_but_area right">
@@ -689,13 +725,17 @@
 
 <div id="contextMenu_report" class="white-panel">
     <button id="link_changefuel_modal" class="{% if current_version.status in ['Отправлен', 'Одобрен'] %}disabled{% endif %}">
-        <img src="/static/img/Edit.svg" alt="" class="button-icon-bl">
+        <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+        </svg>
         <span>Редактировать</span>
     </button>
 
     <form id="remove_section_form" method="POST" action="/remove_section/">
         <button type="submit" id="remove_section" class="{% if current_version.status in ['Отправлен', 'Одобрен'] %}disabled{% endif %}">
-            <img src="/static/img/Delete-black.svg" alt="" class="button-icon-bl">
+            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
             <span>Удалить</span>
         </button>
     </form>

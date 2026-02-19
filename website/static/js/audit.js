@@ -81,9 +81,9 @@ document.addEventListener('DOMContentLoaded', function () {
     
         imgs.forEach((img, index) => {
    
-            with_remarks.style.background = isDragging ? 'rgba(255, 186, 96)' : '';
-            to_conf.style.background = isDragging ? 'rgb(96, 255, 122)' : '';
-            to_del.style.background = isDragging ? 'rgb(255, 96, 96)' : '';
+            with_remarks.style.background = isDragging ? 'rgb(255, 211, 129)' : '';
+            to_conf.style.background = isDragging ? 'rgb(144, 255, 162)' : '';
+            to_del.style.background = isDragging ? 'rgb(255, 139, 139)' : '';
 
             const colorStyle = isDragging ? 'black' : '';
             with_remarks.style.color = colorStyle;
@@ -293,19 +293,6 @@ document.getElementById('douwnload_XML_link').addEventListener('click', function
 });
 
 
-document.querySelector('[data-action="checkSectionsButton"]').addEventListener('click', function() {
-    var activeVersionRow = document.querySelector('.report_row.active-report');
-    if (activeVersionRow) {
-        var id = activeVersionRow.dataset.id;
-        var url = "/audit-area/report/" + id;
-        window.location.href = url;
-    } else {
-        alert('Нет активного отчета. Пожалуйста, выберите отчет.');
-    }
-    });
-
-
-// Открытие всплывающего окна
 function handleModal(modalElement, openLink, closeLink) {
     openLink.addEventListener('click', function(event) {
         if (openLink.style.opacity === '0.5') {

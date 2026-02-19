@@ -74,6 +74,8 @@
             </form>
             <div class = "log_buttons_area">
                 <form action= "/relod-password" method="POST">
+                    
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class = "forgot_cont">
                         <input   
                             type="hidden"

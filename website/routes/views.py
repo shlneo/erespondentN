@@ -370,7 +370,8 @@ def report_area():
                            report=report,
                            user=current_user,
                            organization=organization,
-                           version=version
+                           version=version,
+                           SentModal = True
                            )
 
 
@@ -423,7 +424,8 @@ def report_section(report_type, id):
         dirProduct=dirProduct,
         current_user=current_user, 
         current_report=current_report,
-        current_version=current_version
+        current_version=current_version,
+        SentModal = True
     )
 
 @views.route('/audit-area/<status>', methods=['GET'])
@@ -442,7 +444,7 @@ def audit_area(status):
     approved_count = len(get_reports_by_status('to_download', year_filter, quarter_filter))
     delete_count = len(get_reports_by_status('to_delete', year_filter, quarter_filter))
     total_count = len(get_reports_by_status('all_reports', year_filter, quarter_filter))
-
+    
     return render_template('audit_area.html',
                            current_user=current_user,
                            reports=reports,
@@ -455,6 +457,7 @@ def audit_area(status):
                            approved_count=approved_count,
                            delete_count=delete_count,
                            total_count=total_count,
+                           status_reports=status
                            )
 
 @views.route('/audit-area/report/<int:id>', methods=['GET'])

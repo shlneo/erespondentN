@@ -207,10 +207,10 @@
                     infoElement: document.getElementById('selector-info-add'),
                     callbacks: {
                         onInit: (selector) => {
-                            console.log('Селектор создания отчета готов');
+                            // console.log('Селектор создания отчета готов');
                         },
                         onQuarterSelect: (data) => {
-                            console.log('Создание отчета:', data);
+                            // console.log('Создание отчета:', data);
                         }
                     }
                 });
@@ -228,10 +228,10 @@
                     infoElement: document.getElementById('selector-info-change'),
                     callbacks: {
                         onInit: (selector) => {
-                            console.log('Селектор изменения отчета готов');
+                            // console.log('Селектор изменения отчета готов');
                         },
                         onQuarterSelect: (data) => {
-                            console.log('Изменение отчета:', data);
+                            // console.log('Изменение отчета:', data);
                         }
                     }
                 });
@@ -249,10 +249,30 @@
                     infoElement: document.getElementById('selector-info-copy'),
                     callbacks: {
                         onInit: (selector) => {
-                            console.log('Селектор копирования отчета готов');
+                            // console.log('Селектор копирования отчета готов');
                         },
                         onQuarterSelect: (data) => {
-                            console.log('Копирование отчета:', data);
+                            // console.log('Копирование отчета:', data);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Ошибка инициализации селектора копирования:', error);
+            }
+        }
+        const periodAuditSelector = document.getElementById('audit-period-selector');
+        if (periodAuditSelector) {
+            try {
+                window.periodSelectors.audit = new PeriodSelector('audit-period-selector', {
+                    hiddenYearInput: document.getElementById('selected-year-audit'),
+                    hiddenQuarterInput: document.getElementById('selected-quarter-audit'),
+                    infoElement: document.getElementById('selector-info-audit'),
+                    callbacks: {
+                        onInit: (selector) => {
+                            // console.log('Селектор копирования отчета готов');
+                        },
+                        onQuarterSelect: (data) => {
+                            // console.log('Копирование отчета:', data);
                         }
                     }
                 });

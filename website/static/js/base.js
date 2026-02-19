@@ -136,9 +136,11 @@ function setupPasswordToggle(passwordFieldId, showIconClass, hideIconClass) {
 }
 
 function filterSentedReports() {
-    var year = document.getElementById('quantity_year').value;
-    var quarter = document.getElementById('quantity_quarter').value;
-    var url = `/audit-area/all_reports?year=${year}&quarter=${quarter}`;
+    var year = document.getElementById('selected-year-audit').value;
+    var quarter = document.getElementById('selected-quarter-audit').value;
+    var status = document.getElementById('status-audit').value;
+    
+    var url = `/audit-area/${status}?year=${year}&quarter=${quarter}`;
     window.location.href = url;
 }
 
@@ -460,7 +462,9 @@ document.addEventListener('DOMContentLoaded', function () {
     handleModal(document.getElementById('add_report_modal'), document.getElementById('link_add_report'), document.getElementById('close_add_report_modal'));
     handleModal(document.getElementById('change_period_report_modal'), document.getElementById('link_change_report'), document.getElementById('close_change_period_report_modal'));
     handleModal(document.getElementById('copy_report_modal'), document.getElementById('link_coppy_report'), copy_report_modal.querySelector('.close'));
-    handleModal(document.getElementById('SentModal'), document.getElementById('sentVersionButton'), SentModal.querySelector('.close'));
+    if(document.getElementById('SentModal')){
+        handleModal(document.getElementById('SentModal'), document.getElementById('sentVersionButton'), SentModal.querySelector('.close'));
+    }
 
     link_change_report.addEventListener('click', function(event) {
         event.preventDefault();
@@ -685,15 +689,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     send_button.addEventListener('click', function(event) {
-        var activeRow = document.querySelector('.report_row.active-report');
-        if (activeRow !== null) {
-            var id = activeRow.dataset.versionId;
-            if (id) {
-                sentForm.action = '/sent-version/' + id;
-            }
+        var reportIdNull = document.getElementById('report-id-null');
+        var reportIdNullValue = reportIdNull ? reportIdNull.value.trim() : '';
+        
+        if (reportIdNullValue !== '') {
+            sentForm.action = '/send-version/' + reportIdNullValue;
         } else {
-            event.preventDefault();
-            alert('Выберите отчет перед отправкой!');
+            var activeRow = document.querySelector('.report_row.active-report');
+            if (activeRow !== null) {
+                var id = activeRow.dataset.versionId;
+                if (id) {
+                    sentForm.action = '/send-version/' + id;
+                } else {
+                    event.preventDefault();
+                    alert('Не найден ID версии для отправки!');
+                }
+            } else {
+                event.preventDefault();
+                alert('Выберите отчет перед отправкой!');
+            }
         }
     });
 });
@@ -999,7 +1013,6 @@ function showReplyForm(messageId, recipientEmail) {
     replyForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// Отмена ответа
 function cancelReply(messageId) {
     const replyForm = document.getElementById(`replyForm-${messageId}`);
     const textarea = document.getElementById(`replyText-${messageId}`);
@@ -1008,7 +1021,6 @@ function cancelReply(messageId) {
     replyForm.style.display = 'none';
 }
 
-// Отправка ответа
 function submitReply(messageId) {
     const textarea = document.getElementById(`replyText-${messageId}`);
     const replyText = textarea.value.trim();
@@ -1026,6 +1038,7 @@ function submitReply(messageId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
         body: JSON.stringify({
             text: replyText
