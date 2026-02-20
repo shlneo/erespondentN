@@ -1,15 +1,3 @@
-//header
-const sticky_menu = document.querySelector('.sticky_menu');
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 0) {
-        // sticky_menu.style.boxShadow = '0 10px 10px rgb(0, 0, 0, 0.1)';
-        sticky_menu.style.boxShadow = 'none';
-    } else {
-        sticky_menu.style.boxShadow = 'none';
-    }
-});
-//end
-
 var rollbackButton = document.getElementById('rollbackButton');
 rollbackButton.addEventListener('click', function(event) {
     var activeRow = document.querySelector('.report_row.active-report');
@@ -25,6 +13,16 @@ rollbackButton.addEventListener('click', function(event) {
     }
 });
 
+window.addEventListener('scroll', function() {
+    const menu = document.querySelector('.sticky_menu');
+    if (window.scrollY > 60) {
+        menu.classList.add('shadow');
+    } else {
+        menu.classList.remove('shadow');
+    }
+});
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
     var reportRows = document.querySelectorAll('.report_row');
@@ -37,19 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var reportIdInput = document.getElementById('report-id-input');
     var actionInput = document.getElementById('action-input');
 
-    // var showFilterButton = document.getElementById('show-filter');
-    var filterSection = document.getElementById('filtr_section');
-
-
-    // showFilterButton.addEventListener('click', function () {
-    //     filterSection.classList.toggle('active');
-        
-    //     if (filterSection.classList.contains('active')) {
-    //         showFilterButton.classList.add('activefunctions_menu');
-    //     } else {
-    //         showFilterButton.classList.remove('activefunctions_menu');
-    //     }
-    // });
     
     function filterTable() {
         const okpoValue = document.getElementById('okpo-filter').value.toLowerCase();
@@ -80,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
         var to_del = document.querySelector('li[data-action="to_delete"]');
     
         imgs.forEach((img, index) => {
-   
             with_remarks.style.background = isDragging ? 'rgb(255, 211, 129)' : '';
             to_conf.style.background = isDragging ? 'rgb(144, 255, 162)' : '';
             to_del.style.background = isDragging ? 'rgb(255, 139, 139)' : '';
@@ -158,9 +142,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         row.addEventListener('dragstart', function(event) {
             var reportId = this.dataset.id; 
-            var sevenColumnValue = this.children[8].querySelector('input').value;
 
-            if (sevenColumnValue === 'Не просмотрено') {
+            var statusCell = this.children[8];
+            var statusBadge = statusCell.querySelector('.status-badge');
+            var sevenColumnValue = statusBadge ? statusBadge.querySelector('span:last-child').textContent.trim(): '';
+
+            if (sevenColumnValue === 'Непросмотренный') {
                 event.dataTransfer.setData('text/plain', reportId);
                 this.classList.add('dragging');
                 setDraggingState(true);

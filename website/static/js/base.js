@@ -18,7 +18,8 @@ function scrollToAdmin() {
     if (formElement) {
         formElement.scrollIntoView({ behavior: 'smooth' });
     }
-}function scrollToTickets() {
+}
+function scrollToTickets() {
     const formElement = document.getElementById('ticket-area');
     if (formElement) {
         formElement.scrollIntoView({ behavior: 'smooth' });
@@ -345,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* end show and hide buttons passwords */
 
     /* hoveruser panel */
-    const userImgs = document.querySelectorAll('.icon_black, .icon_white');
+    const userImgs = document.querySelectorAll('.user-icon-header');
     let timeoutId;
     
     function showusernavigation() {
@@ -407,13 +408,13 @@ document.addEventListener('DOMContentLoaded', function () {
     reportRows.forEach(function(row) {
         row.addEventListener('click', function() {
             activeRow = null;
-            updateHeaderButtonStyle(true, true, true, true);
+            updateHeaderButtonStyle(true, true, true, true, true);
             if (this.dataset.id) {
                 selectedReportId = this.dataset.id;
                 if (this.classList.contains('active-report')) {
                     this.classList.remove('active-report');
                     previousReportRow = null;
-                    updateHeaderButtonStyle(false, false, false, false);
+                    updateHeaderButtonStyle(false, false, false, false, false);
                 } else {
                     if (previousReportRow !== null) {
                         previousReportRow.classList.remove('active-report');
@@ -434,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 this.classList.add('active-report');
                 
-                updateHeaderButtonStyle(true, true, true, true);
+                updateHeaderButtonStyle(true, true, true, true, true);
                 previousReportRow = this;
         
                 contextMenuReport.style.top = event.pageY + 'px';
@@ -445,31 +446,28 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.addEventListener('click', function(event) {
-        if (!contextMenuReport.contains(event.target)) {
-            contextMenuReport.style.display = 'none';
-        }
+         if (!contextMenuReport.contains(event.target)) {
+             contextMenuReport.style.display = 'none';
+         }
     });
     /*end*/
 
-    /*Переход на страницу с fuel*/
-    // document.querySelector('[data-action="editSectionButtonMenu"]').addEventListener('click', function() {
-    //     var activeReport = document.querySelector('.report_row.active-report');
-    //     if (activeReport) {
-    //         var id = activeReport.dataset.versionId;
-    //         var url = "/report-area/fuel/" + id;
-    //         window.location.href = url;
-    //     } else {
-    //         alert('Пожалуйста, выберите отчет.');
-    //     }
-    // });
-    /*end*/
+    
 
-    handleModal(document.getElementById('add_report_modal'), document.getElementById('link_add_report'), document.getElementById('close_add_report_modal'));
-    handleModal(document.getElementById('change_period_report_modal'), document.getElementById('link_change_report'), document.getElementById('close_change_period_report_modal'));
-    handleModal(document.getElementById('copy_report_modal'), document.getElementById('link_coppy_report'), copy_report_modal.querySelector('.close'));
+    if(document.getElementById('add_report_modal')){
+        handleModal(document.getElementById('add_report_modal'), document.getElementById('link_add_report'), document.getElementById('close_add_report_modal'));
+    }
     if(document.getElementById('SentModal')){
         handleModal(document.getElementById('SentModal'), document.getElementById('sentVersionButton'), SentModal.querySelector('.close'));
     }
+    if(document.getElementById('change_period_report_modal')){
+        handleModal(document.getElementById('change_period_report_modal'), document.getElementById('link_change_report'), document.getElementById('close_change_period_report_modal'));
+    }
+    if(document.getElementById('copy_report_modal')){
+        handleModal(document.getElementById('copy_report_modal'), document.getElementById('link_coppy_report'), copy_report_modal.querySelector('.close'));
+    }
+
+    link_change_report = document.getElementById('link_change_report')
 
     link_change_report.addEventListener('click', function(event) {
         event.preventDefault();
@@ -538,8 +536,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const controlVersionButton = document.getElementById('control_versionButton');
     const sentVersionButton = document.getElementById('sentVersionButton');
     const exportVersionButton = document.getElementById('export_versionButton');
+    const toTicketsBtn = document.getElementById('toTicketsBtn');
 
-    function updateHeaderButtonStyle(agreedActive, controlActive, sentActive, exportActive) {
+    function updateHeaderButtonStyle(agreedActive, controlActive, sentActive, exportActive, ticketsActive) {
         if (agreedActive) {
             agreedVersionButton.style.opacity = '1';
             agreedVersionButton.style.cursor = 'pointer';
@@ -584,10 +583,21 @@ document.addEventListener('DOMContentLoaded', function () {
             exportVersionButton.querySelector('img').style.filter = 'grayscale(100%)';
             exportVersionButton.querySelector('a').style.filter = 'grayscale(100%)';
         }
+        if (ticketsActive) {
+            toTicketsBtn.style.opacity = '1';
+            toTicketsBtn.style.cursor = 'pointer';
+            toTicketsBtn.querySelector('img').style.filter = 'none';
+            toTicketsBtn.querySelector('a').style.filter = 'none';
+        } else {
+            toTicketsBtn.style.opacity = '0.5';
+            toTicketsBtn.style.cursor = 'not-allowed';
+            toTicketsBtn.querySelector('img').style.filter = 'grayscale(100%)';
+            toTicketsBtn.querySelector('a').style.filter = 'grayscale(100%)';
+        }
     }
 
     const activeAgreedRow = document.querySelector('.report_row.active-report');
-    updateHeaderButtonStyle(activeAgreedRow !== null, activeAgreedRow !== null, activeAgreedRow !== null, activeAgreedRow !== null);
+    updateHeaderButtonStyle(activeAgreedRow !== null);
 
     controlVersionButton.addEventListener('click', function(event) {
         var activeControlRow = document.querySelector('.report_row.active-report');
@@ -634,18 +644,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     
-    // PrintTicketButton.addEventListener('click', function(event) {
-    //     var activePrintRow = document.querySelector('.ticket-row.active-ticket');
-    //     if (activePrintRow !== null) {
-    //         var ticketId = activePrintRow.dataset.id;
-    //         if (ticketId) {
-    //             printForm.action = '/print-ticket/' + ticketId;
-    //             printForm.submit();
-    //         }
-    //     } else {
-    //         event.preventDefault();
-    //     }
-    // });
+    toTicketsBtn.addEventListener('click', function(event) {
+        var activeRow = document.querySelector('.report_row.active-report');
+        if (activeRow !== null) {
+            var id = activeRow.dataset.versionId;
+            if (id) {
+                window.location.href = '/report-area/fuel/' + id + '#ticket-area';
+            }
+        } else {
+            event.preventDefault();
+        }
+    });
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -655,66 +664,69 @@ document.addEventListener('DOMContentLoaded', function() {
     var send_button = document.getElementById('send_button');
     var sentForm = document.getElementById('sentForm');
 
-    dropArea.addEventListener("click", function () {
-        fileInput.click();
-    });
+    if(dropArea){
+        dropArea.addEventListener("click", function () {
+            fileInput.click();
+        });
 
 
-    fileInput.addEventListener("change", function () {
-        handleFiles(fileInput.files);
-    });
+        fileInput.addEventListener("change", function () {
+            handleFiles(fileInput.files);
+        });
 
-    ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-    });
+        ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
 
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    ["dragenter", "dragover"].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => dropArea.classList.add("highlight"), false);
-    });
-    
-    ["dragleave", "drop"].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => dropArea.classList.remove("highlight"), false);
-    });
-
-    dropArea.addEventListener("drop", function (e) {
-        const files = e.dataTransfer.files;
-        fileInput.files = files;
-        handleFiles(files);
-    });
-
-    function handleFiles(files) {
-        if (files.length > 0) {
-            dropArea.querySelector("p").textContent = `Выбран файл: ${files[0].name}`;
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
-    }
 
-    send_button.addEventListener('click', function(event) {
-        var reportIdNull = document.getElementById('report-id-null');
-        var reportIdNullValue = reportIdNull ? reportIdNull.value.trim() : '';
+        ["dragenter", "dragover"].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.add("highlight"), false);
+        });
         
-        if (reportIdNullValue !== '') {
-            sentForm.action = '/send-version/' + reportIdNullValue;
-        } else {
-            var activeRow = document.querySelector('.report_row.active-report');
-            if (activeRow !== null) {
-                var id = activeRow.dataset.versionId;
-                if (id) {
-                    sentForm.action = '/send-version/' + id;
-                } else {
-                    event.preventDefault();
-                    alert('Не найден ID версии для отправки!');
-                }
-            } else {
-                event.preventDefault();
-                alert('Выберите отчет перед отправкой!');
+        ["dragleave", "drop"].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.remove("highlight"), false);
+        });
+
+        dropArea.addEventListener("drop", function (e) {
+            const files = e.dataTransfer.files;
+            fileInput.files = files;
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                dropArea.querySelector("p").textContent = `Выбран файл: ${files[0].name}`;
             }
         }
-    });
+
+        send_button.addEventListener('click', function(event) {
+            var reportIdNull = document.getElementById('report-id-null');
+            var reportIdNullValue = reportIdNull ? reportIdNull.value.trim() : '';
+            
+            if (reportIdNullValue !== '') {
+                sentForm.action = '/send-version/' + reportIdNullValue;
+            } else {
+                var activeRow = document.querySelector('.report_row.active-report');
+                if (activeRow !== null) {
+                    var id = activeRow.dataset.versionId;
+                    if (id) {
+                        sentForm.action = '/send-version/' + id;
+                    } else {
+                        event.preventDefault();
+                        alert('Не найден ID версии для отправки!');
+                    }
+                } else {
+                    event.preventDefault();
+                    alert('Выберите отчет перед отправкой!');
+                }
+            }
+        });
+    }
+   
 });
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -910,13 +922,11 @@ function performDeletion(messageId, messageElement, deleteBtn, originalText, can
                 }, 300);
             }, 50);
         } else {
-            showNotification(data.error || 'Ошибка при удалении', 'error');
             resetDeleteButton(deleteBtn, originalText);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showNotification('Ошибка соединения с сервером', 'error');
         resetDeleteButton(deleteBtn, originalText);
     });
 }
@@ -954,48 +964,6 @@ function resetDeleteButton(button, originalText) {
     button.style.cursor = 'pointer';
     button.style.opacity = '';
 }
-
-function showNotification(text, type) {
-    const notification = document.createElement('div');
-    notification.textContent = text;
-    
-    let backgroundColor;
-    switch(type) {
-        case 'success':
-            backgroundColor = '#48bb78';
-            break;
-        case 'error':
-            backgroundColor = '#f56565';
-            break;
-        case 'info':
-            backgroundColor = '#4299e1';
-            break;
-        default:
-            backgroundColor = '#4299e1';
-    }
-    
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 12px 20px;
-        background: ${backgroundColor};
-        color: white;
-        border-radius: 6px;
-        z-index: 1000;
-        animation: slideIn 0.3s ease;
-        font-size: 14px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    `;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-}
-
 
 function showReplyForm(messageId, recipientEmail) {
     document.querySelectorAll('.reply_form').forEach(form => {

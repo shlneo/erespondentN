@@ -374,20 +374,6 @@ def report_area():
                            SentModal = True
                            )
 
-
-@views.route('/dont-show-welcome', methods=['POST'])
-@login_required
-def dont_show_welcome():
-    """Устанавливает флаг, чтобы больше не показывать приветствие"""
-    try:
-        session['first_time_report_area'] = False
-        session['never_show_welcome'] = True
-        return jsonify({'success': True})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-
-
 @views.route('/report-area/<string:report_type>/<int:id>', methods=['GET'])
 @profile_complete
 @login_required

@@ -144,41 +144,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 resetTimer();
                 
                 if (data.message) {
-                    showNotification(data.message, 'success');
                 }
             } else {
                 updateButtonState(true, 'Отправить ещё раз');
-                showNotification(data.message || 'Произошла ошибка при отправке кода', 'error');
             }
         } catch (error) {
             console.error('Ошибка при отправке кода:', error);
             updateButtonState(true, 'Отправить ещё раз');
         }
     });
-
-    function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px;
-            background: ${type === 'success' ? '#4caf50' : '#f44336'};
-            color: white;
-            border-radius: 4px;
-            z-index: 1000;
-            animation: slideIn 0.3s ease-out;
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
 
     document.addEventListener('visibilitychange', () => {
         if (!document.hidden && timerInterval) {

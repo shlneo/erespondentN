@@ -29,21 +29,20 @@ function updateCounter(textarea) {
     }
 }
 
+function scrollToTickets() {
+    const formElement = document.getElementById('ticket-area');
+    if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     var urladdComment_modal = new URLSearchParams(window.location.search);
-    if (urladdComment_modal.get('addCommentModal') === 'true') {
-        var addCommentModal = document.getElementById('addCommentModal');
-        if (addCommentModal) {
-            addCommentModal.style.display = 'block';
+    if (urladdComment_modal.get('tickets_cont') === 'true') {
+        if (document.getElementById('ticket-area')) {
+            scrollToTickets();
         }
     }
-
-    /* всплывающее окно с респондентом */
-    /* модальное окно показа комментариев */
-    /* модальное окно добавления комментария */
-    /* всплывающее окно с единицами измерения */
-    /* всплывающее окно с продуктами */
-    /* всплывающее окно с inf vers */
 
     function handleModal(modalElement, openLink, closeLink) {
         openLink.addEventListener('click', function(event) {
@@ -84,6 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+
 
     function initTableKeyboardNavigation() {
         let currentActiveIndex = -1;
@@ -268,13 +269,32 @@ document.addEventListener('DOMContentLoaded', function() {
         tableNav.clearSelection();
     }
 
-    if (document.querySelector('.message-field__textarea')) {
+    if (textareaAudit = document.querySelector('.message-field__textarea')) {
         updateCounter(textareaAudit);
     }
+
+    const menuItems = document.querySelectorAll('.functions_menu li');
+    const actionInputAuditReport = document.getElementById('action-input');
+    const statusForm = document.getElementById('change-status-form');
+    
+    menuItems.forEach(item => {
+        item.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            const action = this.dataset.action;
+
+            if (actionInputAuditReport) {
+                actionInputAuditReport.value = action;
+            }
+
+            if (statusForm) {
+                statusForm.submit();
+            }
+        });
+    });
 });
 
 document.getElementById('export-table-btn').addEventListener('click', function() {
     document.getElementById('export-table-form').submit();
 });
-
 

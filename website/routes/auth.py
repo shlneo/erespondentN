@@ -1101,7 +1101,7 @@ def change_category_report():
             user = User.query.filter_by(email=current_version.email).first()
             if not current_version.hasNot and action != 'to_download':
                 flash('Необходимо уточнить о каких ошибках идет речь.', 'error')
-                return redirect(url_for('views.audit_report', id=current_version.id, modal='addCommentModal'))
+                return redirect(url_for('views.audit_report', id=current_version.id, tickets_cont='true'))
             if action == 'not_viewed':
                 status_itog = 'Отправлен'
             elif action == 'remarks':
@@ -1135,7 +1135,7 @@ def change_category_report():
     
             send_email(status_itog, user.email, 'status')
 
-            flash(f'Статус вашего отчета №{current_version.id} был изменен.', 'success')
+            flash(f'Статус отчета был изменен.', 'success')
             return redirect(request.referrer) 
         else:
             flash('Отчет не найден.', 'error')
@@ -1156,7 +1156,7 @@ def rollbackreport(id):
                     audit_time = datetime.combine(current_version.audit_time, datetime.min.time())
 
                 if audit_time + timedelta(days=30) <= current_utc_time():
-                    flash('Прошло больше 30-го дня, статус отчета изменить нельзя.', 'error')
+                    flash('Прошло больше 30-ти дней, статус отчета изменить нельзя.', 'error')
                 else: 
                     current_version.status = "Отправлен"
                     current_version.hasNot = False
@@ -1198,7 +1198,8 @@ def send_comment():
         
         cleaned_text = ' '.join(text.split())
         current_version = Version_report.query.filter_by(id=version_id).first()
-
+        current_report = Report.query.get_or_404(version_id)
+        
         if current_version:
             new_comment = Ticket(
                 note = cleaned_text,
@@ -1207,11 +1208,27 @@ def send_comment():
             db.session.add(new_comment)
             current_version.hasNot = True
             db.session.commit()
-            flash('Комментарий создан.', 'success')
+            flash('Сообщение отправлено, теперь можно сменить статус.', 'success')
+        
+            status_mapping = {
+                'Отправлен': 'not_viewed',
+                'Есть замечания': 'remarks',
+                'Одобрен': 'to_download',
+                'Готов к удалению': 'to_delete'
+            }
+
+            current_status = current_version.status
+            url_status = status_mapping.get(current_status, 'all_reports')
+
+            return redirect(url_for('views.audit_area', 
+                                status=url_status,
+                                year=current_report.year,
+                                quarter=current_report.quarter))
         else:
-            flash('Отчет не найден.', 'error')
-        return redirect(url_for('views.audit_report', id = version_id))
-    
+            flash('Отчет не найден.', 'error') 
+            return redirect(request.referrer)
+
+            
 @auth.route('/export-table', methods=['POST'])
 @login_required 
 @session_required
