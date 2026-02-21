@@ -145,7 +145,25 @@ function filterSentedReports() {
     var year = document.getElementById('selected-year-audit').value;
     var quarter = document.getElementById('selected-quarter-audit').value;
     var status = document.getElementById('status-audit').value;
+    var infoSelector = document.getElementById('selector-info-audit');
     
+    if (!quarter) {
+        infoSelector.textContent = "Пожалуйста, выберите квартал";
+        infoSelector.style.color = "#ef4444";
+        infoSelector.style.fontSize = "14px";
+        infoSelector.style.marginTop = "5px";
+        
+        var quarterGrid = document.getElementById('quarter-grid-not-full');
+        if (quarterGrid) {
+            quarterGrid.classList.add('pulse-animation');
+            setTimeout(function() {
+                quarterGrid.classList.remove('pulse-animation');
+            }, 1500);
+        }
+
+        return;
+    }
+
     var url = `/audit-area/${status}?year=${year}&quarter=${quarter}`;
     window.location.href = url;
 }

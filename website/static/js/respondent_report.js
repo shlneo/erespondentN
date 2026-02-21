@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function selectRow(row, index) {
         selectedfuelId = row.dataset.id;
+        
+        var productCodeInput = row.querySelector('.product-cod_fuel');
+        var productCode = productCodeInput ? productCodeInput.value : '';
+        
         if (row.classList.contains('active-report')) {
             row.classList.remove('active-report');
             row.querySelectorAll('input').forEach(function(input) {
@@ -48,18 +52,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     input.classList.remove('active-input');
                 });
             }
+            
             row.classList.add('active-report');
             row.querySelectorAll('input').forEach(function(input) {
                 input.classList.add('active-input');
             });
             previousfuelRow = row;
-            if (index === section_row.length - 2) {
+            
+            if (productCode === '9010') {
                 remove_section.disabled = true;
                 link_changefuel_modal.disabled = false;
-            } else if (index === section_row.length - 1 || index === section_row.length - 3) {
+            } 
+            else if (productCode === '9100' || productCode === '9001') {
                 remove_section.disabled = true;
                 link_changefuel_modal.disabled = true;
-            } else {
+            }
+            else {
                 remove_section.disabled = false;
                 link_changefuel_modal.disabled = false;
             }
@@ -101,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (section_id) {
                 var deleteForm = document.getElementById('remove_section_form');
                 deleteForm.action = '/remove_section/' + section_id;
-                addCsrfTokenToForm(deleteForm);  // Добавляем CSRF-токен
+                addCsrfTokenToForm(deleteForm);
             }
         } else {
             alert('Выберите продукцию для удаления');

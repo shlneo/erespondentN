@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Аудит - ErespondentN{% endblock %}
+{% block title %}Проверка отчетов - ErespondentN{% endblock %}
 {% block content %}
 
 <div class="audit-area_page">
@@ -155,7 +155,8 @@
         </div>
     </div>
     <div class="report-list">
-        <div class="report-area" >
+        <div class="report-area">
+            {%if reports%}
             <table class="table-report-area">
                 <thead class="table-title">
                     <tr>
@@ -171,102 +172,100 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {%if reports%}
-                        {% for row in reports %}
-                            {% for version in row.versions %}
-                                <tr class="report_row {% if version.hasNot %} hascomment-row {% endif %}" data-id="{{ row.id }}" draggable="true">
-                                    <td></td>
-                                    <td style = "padding: 4px;">
-                                        <button class="open-report-btn" onclick="window.location.href='/audit-area/report/{{row.versions[0].id}}'">   
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            <span>Просмотр</span>
-                                        </button>
+                    {% for row in reports %}
+                        {% for version in row.versions %}
+                            <tr class="report_row {% if version.hasNot %} hascomment-row {% endif %}" data-id="{{ row.id }}" draggable="true">
+                                <td></td>
+                                <td style = "padding: 4px;">
+                                    <button class="open-report-btn" onclick="window.location.href='/audit-area/report/{{row.versions[0].id}}'">   
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        <span>Просмотр</span>
+                                    </button>
 
-                                    </td>
-                                    <td style="display: none;">
-                                        <input type="text" id="report_id" value="{{ row.id }}" readonly>
-                                    </td>
+                                </td>
+                                <td style="display: none;">
+                                    <input type="text" id="report_id" value="{{ row.id }}" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="report_organization_name" value="{{ row.organization.full_name }}" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="report_okpo" value="{{ row.okpo }}" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="report_year" value="{{ row.year }}" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="report_quarter" value="{{ row.quarter }}" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" value="{{ version.sent_time }}" readonly>
+                                </td>
+                                
+                                {% set version = row.versions[0] if row.versions else None %}
+                
+                                {% if version %}
                                     <td>
-                                        <input type="text" id="report_organization_name" value="{{ row.organization.full_name }}" readonly>
+                                        {% if version.status == 'Одобрен' %}
+                                            <span class="status-badge status-approved">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>Одобрен</span>
+                                            </span>      
+                                            
+                                            
+                                        {% elif version.status == 'Отправлен' %}
+                                            <span class="status-badge status-pending">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>Непросмотренный</span>
+                                            </span>
+                                            
+                                        {% elif version.status == 'Есть замечания' %}
+                                            <span class="status-badge status-warning">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                                </svg>
+                                                <span>Есть замечания</span>
+                                            </span>
+                                            
+                                        {% elif version.status == 'Готов к удалению' %}
+                                            <span class="status-badge status-delete">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                                </svg>
+                                                <span>Готов к удалению</span>
+                                            </span>
+                                            
+                                        {% else %}
+                                            <span class="status-badge status-default">
+                                                <span>{{ version.status }}</span>
+                                            </span>
+                                        {% endif %}
                                     </td>
-                                    <td>
-                                        <input type="text" id="report_okpo" value="{{ row.okpo }}" readonly>
-                                    </td>
-                                    <td>
-                                        <input type="text" id="report_year" value="{{ row.year }}" readonly>
-                                    </td>
-                                    <td>
-                                        <input type="text" id="report_quarter" value="{{ row.quarter }}" readonly>
-                                    </td>
-                                    <td>
-                                        <input type="text" value="{{ version.sent_time }}" readonly>
-                                    </td>
-                                    
-                                    {% set version = row.versions[0] if row.versions else None %}
-                    
-                                    {% if version %}
-                                        <td>
-                                            {% if version.status == 'Одобрен' %}
-                                                <span class="status-badge status-approved">
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                    <span>Одобрен</span>
-                                                </span>      
-                                                
-                                                
-                                            {% elif version.status == 'Отправлен' %}
-                                                <span class="status-badge status-pending">
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                    <span>Непросмотренный</span>
-                                                </span>
-                                                
-                                            {% elif version.status == 'Есть замечания' %}
-                                                <span class="status-badge status-warning">
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                                                    </svg>
-                                                    <span>Есть замечания</span>
-                                                </span>
-                                                
-                                            {% elif version.status == 'Готов к удалению' %}
-                                                <span class="status-badge status-delete">
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                                    </svg>
-                                                    <span>Готов к удалению</span>
-                                                </span>
-                                                
-                                            {% else %}
-                                                <span class="status-badge status-default">
-                                                    <span>{{ version.status }}</span>
-                                                </span>
-                                            {% endif %}
-                                        </td>
-                                    {% else %}
-                                        <td></td>
-                                    {% endif %}
+                                {% else %}
                                     <td></td>
-                                </tr>
-                            {% endfor %}
+                                {% endif %}
+                                <td></td>
+                            </tr>
                         {% endfor %}
-                    </tr>
-                    {%else%}
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td style = "height: 24px;" colspan="8">
-                                <input type = "text"  value = "Отчеты отсутствуют" readonly>
-                            </td>
-                        </tr>
-                    {%endif%}
+                    {% endfor %}
                 </tbody>
             </table>
+            {%else%}
+                <div class="empty-state">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg>
+                    <h3>Нет доступных отчетов</h3>
+                    <p>За выбранный период отчеты не найдены. Попробуйте изменить параметры фильтрации.</p>
+                </div>
+            {%endif%}
         </div>
     </div>
 </div>

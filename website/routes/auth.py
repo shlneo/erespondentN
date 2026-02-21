@@ -397,15 +397,15 @@ def create_new_report():
             if not sections:
                 id = new_version_report.id
                 sections_data = [
-                    (id, 332, 9100, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
+                    # (id, 332, 9100, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
                     (id, 329, 9010, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
                     (id, 326, 9001, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
       
-                    (id, 334, 9100, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
+                    #(id, 334, 9100, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
                     (id, 331, 9010, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
                     (id, 328, 9001, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
                 
-                    (id, 333, 9100, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
+                    #(id, 333, 9100, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
                     (id, 330, 9010, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
                     (id, 327, 9001, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
         
@@ -427,7 +427,7 @@ def create_new_report():
                     )
                     db.session.add(section)
                 db.session.commit()
-            flash('Добавлен новый отчет.', 'success')
+            flash('Отчет успешно создан.', 'success')
         else:
             flash(f'Отчет {year} года {quarter} квартала уже существует.', 'error')
     return redirect(url_for('views.report_area'))
@@ -529,15 +529,14 @@ def copy_full_report():
             new_version = Version_report(
                 begin_time=current_utc_time(),
                 status="Заполнение",
-                fio=current_user.fio,
-                telephone=current_user.telephone,
-                email=current_user.email,
                 report_id=new_report.id
             )
             db.session.add(new_version)
             db.session.flush()
             
             for section in original_sections:
+                if section.code_product == '9100':
+                    continue
                 new_section = Sections(
                     id_version=new_version.id,
                     id_product=section.id_product,
@@ -618,15 +617,14 @@ def copy_structure_report():
             new_version = Version_report(
                 begin_time=current_utc_time(),
                 status="Заполнение",
-                fio=current_user.fio,
-                telephone=current_user.telephone,
-                email=current_user.email,
                 report_id=new_report.id
             )
             db.session.add(new_version)
             db.session.flush()
             
             for section in original_sections:
+                if section.code_product == '9100':
+                    continue
                 new_section = Sections(
                     id_version=new_version.id,
                     id_product=section.id_product,
@@ -1076,7 +1074,7 @@ def sent_version(id):
             current_version.sent_time = current_utc_time()
         db.session.commit()
 
-        flash('Отчет отправлен.', 'successful')
+        flash('Сертификат валидный, отчет отправлен на проверку.', 'successful')
         return redirect(request.referrer)
 
 @auth.route('/cancel-sent-version/<id>', methods=['POST'])
@@ -1135,7 +1133,7 @@ def change_category_report():
     
             send_email(status_itog, user.email, 'status')
 
-            flash(f'Статус отчета был изменен.', 'success')
+            flash(f'Статус отчета был изменен на «{status_itog}».', 'success')
             return redirect(request.referrer) 
         else:
             flash('Отчет не найден.', 'error')
@@ -1162,7 +1160,7 @@ def rollbackreport(id):
                     current_version.hasNot = False
                  
                     user_message = Message(
-                        text = f"Статус отчета был изменен.",
+                        text = f"Статус отчета был изменен аудитором на «Отправлен».",
                         sender_id = recipient_user.id,    
                         recipient_id = recipient_user.id      
                     )
