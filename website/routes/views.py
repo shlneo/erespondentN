@@ -371,7 +371,8 @@ def report_area():
                            user=current_user,
                            organization=organization,
                            version=version,
-                           SentModal = True
+                           SentModal = True,
+                           reportAreaInfoModal = True
                            )
 
 @views.route('/report-area/<string:report_type>/<int:id>', methods=['GET'])

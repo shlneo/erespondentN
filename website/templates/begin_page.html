@@ -71,9 +71,9 @@
                 <div class="item_news">  
                     <a class = "news_name" href = "/news" >Новости</a>
                     <a href="/news/{{latest_news.id}}"  style = "color: black;">
-                        <p id = "toadmin"  class = "first_p">{{ latest_news.title[:70] }}{% if latest_news.title|length > 70 %}...{% endif %}</p>
+                        <p id = "toadmin"  class = "title-news">{{ latest_news.title[:70] }}{% if latest_news.title|length > 70 %}...{% endif %}</p>
                     </a>
-                    <p class = "second_p">{{ latest_news.text[:180] }}{% if latest_news.text|length > 180 %}...{% endif %}</p>
+                    <p class = "text-news">{{ latest_news.text[:500] }}{% if latest_news.text|length > 500 %}...{% endif %}</p>
                 </div>
             </div>
             <div class = "news-row-right">                     

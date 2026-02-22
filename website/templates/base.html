@@ -162,6 +162,7 @@
           </div>
       </div>
     {% endif %}
+
     <main> 
       {% with messages = get_flashed_messages(with_categories=true) %} 
         {% if messages %}
@@ -188,6 +189,85 @@
     {% endblock %}
 
     </main>
+    {% if reportAreaInfoModal %}
+    <div id="system-update-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <img src="{{ url_for('static', filename='img/Close.svg')}}" class="close" alt="Закрыть">
+            <div class="info-modal-content">
+                <div class="modal-slides-container">
+                    <div class="modal-slide active">
+                        <div class="slide-layout">
+                            <div class="slide-info">
+                                <div class="slide-counter">1/3</div>
+                                <h3>Создавать отчеты теперь удобнее</h3>
+                                <p>Найти нужный ресурс в списке было не просто. Теперь при нажатии на кнопку «Просмотр» откроется страница для заполнения отчета.</p>
+                            </div>
+                            <div class="slide-image">
+                                <div class="image-placeholder">
+                                    <img src="{{ url_for('static', filename='img/info-news/info-modal-new1.jpg')}}" alt="Новые функции">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-slide">
+                        <div class="slide-layout">
+                            <div class="slide-info">
+                                <div class="slide-counter">2/3</div>
+                                <h3>Как пользоваться обновлением</h3>
+                                <p>Следуйте простой инструкции:</p>
+                                <ol>
+                                    <li>Нажмите на кнопку меню</li>
+                                    <li>Выберите нужный раздел</li>
+                                    <li>Используйте новые функции</li>
+                                </ol>
+                            </div>
+                            <div class="slide-image">
+                                <div class="image-placeholder">
+                                    <!-- Здесь будет ваша картинка для слайда 2 -->
+                                    <img src="{{ url_for('static', filename='img/update-instruction.svg')}}" alt="Инструкция">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-slide">
+                        <div class="slide-layout">
+                            <div class="slide-info">
+                                <div class="slide-counter">3/3</div>
+                                <h3>Важные изменения</h3>
+                                <p>Обратите внимание на обновленные разделы:</p>
+                                <ul>
+                                    <li>Личный кабинет - новый дизайн</li>
+                                    <li>Отчеты - расширенная статистика</li>
+                                    <li>Настройки - дополнительные параметры</li>
+                                </ul>
+                            </div>
+                            <div class="slide-image">
+                                <div class="image-placeholder">
+                                    <!-- Здесь будет ваша картинка для слайда 3 -->
+                                    <img src="{{ url_for('static', filename='img/update-changes.svg')}}" alt="Важные изменения">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slides-navigation-vertical">
+              <button class="slide-prev-vertical" aria-label="Предыдущий слайд">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </button>
+              <button class="slide-next-vertical" aria-label="Следующий слайд">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </button>
+          </div>
+        </div>
+    </div>
+    {% endif %}
     <div id="cookie-consent-banner" class="cookie-banner" style="display: none;">
         <div class="cookie-banner-content">
             <div class="cookie-banner-text">
