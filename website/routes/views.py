@@ -412,7 +412,8 @@ def report_section(report_type, id):
         current_user=current_user, 
         current_report=current_report,
         current_version=current_version,
-        SentModal = True
+        SentModal = True,
+        reportAreaReportInfoModal = True
     )
 
 @views.route('/audit-area/<status>', methods=['GET'])

@@ -2,7 +2,21 @@
 window.initCookieBanner = function() {
     const COOKIE_NAME = 'eresespondentN_acces';
     const COOKIE_DAYS = 365;
-    const UPDATE_MODAL_COOKIE = 'system_update_shown_eres';
+    
+    const MODAL_CONFIG = {
+        'system-update-modal': {
+            cookieName: 'system_update_shown_eres',
+            pages: ['/report-area', '/'],
+            hasSlides: true,
+            delay: 500
+        },
+        'system_update_shown_report': { 
+            cookieName: 'fuel_modal_shown_eres',
+            pages: ['/report-area/fuel/', '/report-area/heat/', '/report-area/electro/'],
+            hasSlides: true,
+            delay: 300
+        }
+    };
     
     function setCookie(name, value, days) {
         let expires = '';
@@ -25,65 +39,86 @@ window.initCookieBanner = function() {
         return null;
     }
 
-    function initUpdateModal() {
-        const modal = document.getElementById('system-update-modal');
-        if (!modal) return;
-        
-        const shouldShowOnPage = checkPageForUpdateModal();
-        
-        if (shouldShowOnPage && !getCookie(UPDATE_MODAL_COOKIE)) {
-            setTimeout(() => {
-                modal.style.display = 'flex';
-                setTimeout(() => {
-                    modal.classList.add('active');
-                    initSlides();
-                }, 10);
-            }, 500);
-            
-            const closeBtn = modal.querySelector('.close');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', function() {
-                    closeUpdateModal(modal);
-                });
-            }
-            
-            const dontShowBtn = modal.querySelector('.close');
-            if (dontShowBtn) {
-                dontShowBtn.addEventListener('click', function() {
-                    setCookie(UPDATE_MODAL_COOKIE, 'shown', COOKIE_DAYS);
-                    closeUpdateModal(modal);
-                });
-            }
-        }
-    }
-    
-    function closeUpdateModal(modal) {
-        modal.classList.remove('show');
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 400);
-    }
-
-    function checkPageForUpdateModal() {
-        const updatePages = [
-            '/report-area',
-            '/',
-        ];
-        
+    function checkCurrentPage(pages) {
         const currentPath = window.location.pathname;
-        
-        return updatePages.some(page => {
+        return pages.some(page => {
             if (page === '/') {
                 return currentPath === '/' || currentPath === '';
             }
             return currentPath.startsWith(page);
         });
     }
+
+    function initModal(modalId, config) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
+        
+        const shouldShowOnPage = checkCurrentPage(config.pages);
+        
+        if (shouldShowOnPage && !getCookie(config.cookieName)) {
+            setTimeout(() => {
+                modal.style.display = 'flex';
+                setTimeout(() => {
+                    modal.classList.add('active');
+                    
+                    if (config.hasSlides) {
+                        initSlides();
+                    }
+                    
+                    // if (modalId === 'fuel-modal') {
+                    //     initFuelModal(modal);
+                    // }
+                    
+                }, 10);
+            }, config.delay || 500);
+            
+            const closeBtn = modal.querySelector('.circle-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    closeModal(modal);
+                });
+            }
+            
+            
+
+            const dontShowAgainBtn = modal.querySelector('.circle-close');
+            if (dontShowAgainBtn) {
+                dontShowAgainBtn.addEventListener('click', function() {
+                    setCookie(config.cookieName, 'shown', COOKIE_DAYS);
+                    closeModal(modal);
+                });
+            }
+        }
+    }
     
-    function initSlides() {
-        const slides = document.querySelectorAll('.modal-slide');
-        const prevBtn = document.querySelector('.slide-prev-vertical');
-        const nextBtn = document.querySelector('.slide-next-vertical');
+    function closeModal(modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 400);
+    }
+    
+    // Специальная функция для топливного модального окна
+    function initFuelModal(modal) {
+        console.log('Fuel modal initialized');
+        
+        // Здесь можно добавить специфическую логику для топливного окна
+        // Например, загрузка данных о топливе, инициализация графиков и т.д.
+        
+        // Пример: обновление контента
+        const fuelDataElement = modal.querySelector('.fuel-data');
+        if (fuelDataElement) {
+            // Загрузить актуальные данные о топливе
+            fuelDataElement.textContent = 'Данные загружены: ' + new Date().toLocaleString();
+        }
+    }
+
+    // Инициализация слайдов (обновленная для работы с конкретным модальным окном)
+    function initSlides(modalId = null) {
+        const container = modalId ? document.getElementById(modalId) : document;
+        const slides = container.querySelectorAll('.modal-slide');
+        const prevBtn = container.querySelector('.slide-prev-vertical');
+        const nextBtn = container.querySelector('.slide-next-vertical');
         
         if (!slides.length) return;
         
@@ -129,6 +164,7 @@ window.initCookieBanner = function() {
         showSlide(0);
     }
     
+    // Инициализация баннера cookies
     if (!getCookie(COOKIE_NAME)) {
         const banner = document.getElementById('cookie-consent-banner');
         if (banner) {
@@ -162,7 +198,11 @@ window.initCookieBanner = function() {
             }
         }
     }
-    initUpdateModal();
+    
+    // Инициализация всех модальных окон из конфигурации
+    for (const [modalId, config] of Object.entries(MODAL_CONFIG)) {
+        initModal(modalId, config);
+    }
 };
 
 document.addEventListener('DOMContentLoaded', function() {
