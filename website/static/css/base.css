@@ -2237,12 +2237,13 @@ main {
     display: flex;
     flex-direction: row;
     justify-content: left;
-    overflow-y: auto;
+    overflow-y: hidden;
     margin: 70px 0 70px 82px;
     white-space: nowrap;
     padding-bottom: 10px;
     padding-top: 5px;
     align-items: center;
+    width: 100%;
 }
 
 .rotation-fromareas_info span {
@@ -3539,6 +3540,13 @@ main {
     color: #94a3b8;
 }
 
+.report_row {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation; 
+}
+
 .report-area {
     display: flex;
     flex-direction: row;
@@ -4001,7 +4009,7 @@ th .resizer {
     z-index: 2;
 }
 
-.slide-info a {
+.instruction-link {
     color: #007bff;
     text-decoration: none; 
     font-weight: 500;
@@ -4010,13 +4018,13 @@ th .resizer {
     cursor: pointer;
 }
 
-.slide-info a:hover {
+.instruction-link:hover {
     color: #0056b3;
     border-bottom-color: currentColor; 
     text-decoration: none;
 }
 
-.slide-info a:active {
+.instruction-link:active {
     color: #004085;
     transform: translateY(1px);
 }
@@ -4081,7 +4089,7 @@ th .resizer {
 .image-placeholder img {
     width: 100%;
     height: auto;
-    transform: scale(1.3);
+    transform: scale(1.6);
     transform-origin: left;
     object-fit: cover;
     box-sizing: border-box;
@@ -5842,20 +5850,6 @@ th .resizer {
     font-weight: 600;
     margin: 0 0 12px 0;
     padding: 0;
-}
-
-.instruction-link {
-    color: #0056b3; 
-    text-decoration: underline;
-    cursor: pointer;
-    transition: color 0.3s ease;
-    font-weight: 600;
-}
-
-.instruction-link:hover,
-.instruction-link:focus {
-    color: #003b7a; 
-    outline: none; 
 }
 
 .disabled {
@@ -8350,7 +8344,7 @@ th .resizer {
 
 
     .rotation-fromareas_info {
-        margin: 50px 25px;  
+        /* margin: 50px 25px 50px 0;   */
     }
 
     .profile_page .personal-info_area{

@@ -190,7 +190,7 @@
 
     </main>
     {% if reportAreaInfoModal %}
-    <div id="system-update-modal" class="modal" style="display: none;">
+    <div id="system-update-modal-reportArea" class="modal" style="display: none;">
         <div class="info-modal-content">
             <svg class="circle-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 8L16 16M8 16L16 8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
@@ -248,7 +248,7 @@
     </div>
     {% endif %}
     {% if reportAreaReportInfoModal %}
-    <div id="system_update_shown_report" class="modal" style="display: none;">
+    <div id="system-update-modal-reportArea-report" class="modal" style="display: none;">
         <div class="info-modal-content">
             <svg class="circle-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 8L16 16M8 16L16 8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
@@ -281,13 +281,126 @@
                         <div class="slide-layout">
                             <div class="slide-info">
                                 <h3>Обновленная документация</h3>
-                                <p>В обновленной <a href="/FAQ#faq8">инструкции</a> детально рассмотрены все аспекты заполнения таблиц, а материал изложен в понятной для пользователей форме.</p>
+                                <p>В обновленной <a class = "instruction-link" href="/FAQ#faq8">документации</a> детально рассмотрены все аспекты заполнения таблиц, а материал изложен в понятной для пользователей форме.</p>
                             </div>
                             <div class="slide-image">
                                 <div class="image-placeholder">
                                    <a href="/FAQ#faq8">
                                         <img src="{{ url_for('static', filename='img/info-news/info-report-2.png') }}" alt="Новые функции">
                                     </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slides-navigation-vertical">
+              <button class="slide-prev-vertical" aria-label="Предыдущий слайд">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </button>
+              <button class="slide-next-vertical" aria-label="Следующий слайд">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </button>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if auditAreaInfoModal %}
+    <div id="system-update-modal-auditArea" class="modal" style="display: none;">
+        <div class="info-modal-content">
+            <svg class="circle-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 8L16 16M8 16L16 8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="info-modal-content">
+                <div class="modal-slides-container">
+                    <div class="modal-slide active">
+                        <div class="slide-counter">1/2</div>
+                        <div class="slide-layout">
+                            <div class="slide-info">
+                                <h3>Работать с отчетами теперь удобнее</h3>
+                                <p>Найти нужный отчет в списке было не просто. Теперь при нажатии на кнопку «Просмотр» откроется страница для заполнения отчета.</p>
+                            </div>
+                            <div class="slide-image">
+                                <div class="image-placeholder">
+                                    <img src="{{ url_for('static', filename='img/info-news/audit-area-1.png')}}" alt="Новые функции">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-slide">
+                        <div class="slide-counter">2/2</div>
+                        <div class="slide-layout">
+                            <div class="slide-info">
+                                <h3>Новые возможности</h3>
+                                <p>Мы обновили <a class = "instruction-link" href = '/FAQ#faq10'>документацию</a>, чтобы вы быстрее освоились в программе, подробно разобрали каждый этап работы, добавили наглядные примеры и пояснения, которые помогут вам уверенно пользоваться всеми функциями.</p>
+                            </div>
+                            <div class="slide-image">
+                                <div class="image-placeholder">
+                                    <img src="{{ url_for('static', filename='img/info-news/audit-area-2.png')}}" alt="Новые функции">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slides-navigation-vertical">
+              <button class="slide-prev-vertical" aria-label="Предыдущий слайд">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </button>
+              <button class="slide-next-vertical" aria-label="Следующий слайд">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </button>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if auditAreaReportInfoModal %}
+    <div id="system-update-modal-auditArea-report" class="modal" style="display: none;">
+        <div class="info-modal-content">
+            <svg class="circle-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 8L16 16M8 16L16 8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="info-modal-content">
+                <div class="modal-slides-container">
+                    <div class="modal-slide active">
+                        <div class="slide-counter">1/2</div>
+                        <div class="slide-layout">
+                            <div class="slide-info">
+                                <h3>Новая форма</h3>
+                                <p>С 1-го квартала 2026 года вводится в действие обновленная форма «Сведения о нормах расхода и (или) предельных уровнях потребления топливно-энергетических ресурсов».</p>
+                                <p>Что изменилось:</p>
+                                
+                                <ul>
+                                    <li>Удален код строки 9100 «Всего потребление (сумма строк 9001, 9010)»;</ol>
+                                    <li>Добавлен расширенный перечень видов продукции.</ol>
+                                
+                                </ul>
+                            </div>
+                            <div class="slide-image">
+                                <div class="image-placeholder">
+                                    <img src="{{ url_for('static', filename='img/info-news/info-modal-new3.png')}}" alt="Новые функции">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-slide">
+                        <div class="slide-counter">2/2</div>
+                        <div class="slide-layout">
+                            <div class="slide-info">
+                                <h3>Обновленная работа с квитанциями</h3>
+                                <p>Улучшенная навигация: квитанции перенесены вниз отчета, а сводка по отчету вынесена в отдельный информационный блок.</p>   
+                            </div>
+                            <div class="slide-image">
+                                <div class="image-placeholder">
+                                    <img src="{{ url_for('static', filename='img/info-news/audit-report-area-2.png')}}" alt="Новые функции">
                                 </div>
                             </div>
                         </div>

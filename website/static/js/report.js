@@ -4,9 +4,43 @@ document.addEventListener('DOMContentLoaded', function() {
     var selectedfuelId = null;
     var contextMenu_report = document.getElementById('contextMenu_report');
     var remove_section = document.getElementById('remove_section');
+    var longPressTimer = null;
+    var LONG_PRESS_DELAY = 500;
+    var isLongPress = false;
+
+    function showContextMenu(event, row, index) {
+        event.preventDefault();
+        if (row.dataset.id) {
+            if (!row.classList.contains('active-report')) {
+                selectRow(row, index);
+            }
+            
+            var pageX, pageY;
+            if (event.touches) {
+                pageX = event.touches[0].pageX;
+                pageY = event.touches[0].pageY;
+            } else {
+                pageX = event.pageX;
+                pageY = event.pageY;
+            }
+            
+            contextMenu_report.style.top = pageY + 'px';
+            contextMenu_report.style.left = pageX + 'px';
+            contextMenu_report.style.display = 'flex';
+            
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+    }
 
     section_row.forEach(function(row, index) {
         row.addEventListener('click', function(event) {
+            if (isLongPress) {
+                isLongPress = false;
+                return;
+            }
+            
             if (event.button === 0 && this.dataset.id) {
                 selectRow(this, index);
             }
@@ -14,18 +48,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
         row.addEventListener('contextmenu', function(event) {
             event.preventDefault();
-            if (this.dataset.id) {
-                if (!this.classList.contains('active-report')) {
-                    selectRow(this, index);
-                }
-                contextMenu_report.style.top = event.pageY + 'px';
-                contextMenu_report.style.left = event.pageX + 'px';
-                contextMenu_report.style.display = 'flex';
-            }
+            showContextMenu(event, this, index);
+        });
+        
+        row.addEventListener('touchstart', function(event) {
+            isLongPress = false;
+            longPressTimer = setTimeout(() => {
+                isLongPress = true;
+                showContextMenu(event, this, index);
+            }, LONG_PRESS_DELAY);
+        });
+        
+        row.addEventListener('touchmove', function(event) {
+            clearTimeout(longPressTimer);
+        });
+        
+        row.addEventListener('touchend', function(event) {
+            clearTimeout(longPressTimer);
+        });
+        
+        row.addEventListener('touchcancel', function(event) {
+            clearTimeout(longPressTimer);
         });
     });
 
     document.addEventListener('click', function(event) {
+        if (!contextMenu_report.contains(event.target)) {
+            contextMenu_report.style.display = 'none';
+        }
+    });
+
+    document.addEventListener('touchstart', function(event) {
         if (!contextMenu_report.contains(event.target)) {
             contextMenu_report.style.display = 'none';
         }

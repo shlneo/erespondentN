@@ -74,9 +74,11 @@ def create_app():
     
     from .routes.views import views
     from .routes.auth import auth
+    from .routes.dbs import dbs
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+    app.register_blueprint(dbs, url_prefix='/')
 
     with app.app_context():
         create_database(app, db)

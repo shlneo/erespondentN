@@ -28,7 +28,7 @@ class MyMainView(AdminIndexView):
             return redirect(url_for('auth.login')) 
 
         if not self.is_accessible():
-            return redirect(url_for('views.catalog'))
+            return redirect(url_for('views.catalog'))        
 
         try:
             user_data = User.query.count()

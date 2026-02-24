@@ -23,7 +23,6 @@ window.addEventListener('scroll', function() {
 });
 
 
-
 document.addEventListener('DOMContentLoaded', function () {
     var reportRows = document.querySelectorAll('.report_row');
     var navigationItems = document.querySelectorAll('.menu_audit li');
@@ -104,8 +103,47 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    var longPressTimer = null;
+    var LONG_PRESS_DELAY = 500;
+    var isLongPress = false;
+
+    function showContextMenu(event, row) {
+        event.preventDefault();
+        if (row.dataset.id) {
+            selectedReportId = row.dataset.id;
+
+            if (previousReportRow !== null) {
+                previousReportRow.classList.remove('active-report');
+            }
+            row.classList.add('active-report');
+            previousReportRow = row;
+
+            var pageX, pageY;
+            if (event.touches) {
+                pageX = event.touches[0].pageX;
+                pageY = event.touches[0].pageY;
+            } else {
+                pageX = event.pageX;
+                pageY = event.pageY;
+            }
+
+            contextMenuReport.style.top = pageY + 'px';
+            contextMenuReport.style.left = pageX + 'px';
+            contextMenuReport.style.display = 'flex';
+            
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+    }
+
     reportRows.forEach(function(row) {
-        row.addEventListener('click', function() {
+        row.addEventListener('click', function(event) {
+            if (isLongPress) {
+                isLongPress = false;
+                return;
+            }
+            
             if (this.dataset.id) {
                 selectedReportId = this.dataset.id;
                 if (this.classList.contains('active-report')) {
@@ -124,21 +162,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
         row.addEventListener('contextmenu', function(event) {
             event.preventDefault();
-            if (this.dataset.id) {
-                selectedReportId = this.dataset.id;
-        
-                if (previousReportRow !== null) {
-                    previousReportRow.classList.remove('active-report');
-                }
-                this.classList.add('active-report');
-                previousReportRow = this;
-        
-                contextMenuReport.style.top = event.pageY + 'px'; 
-                contextMenuReport.style.left = event.pageX + 'px';
-                contextMenuReport.style.display = 'flex';
-            }
+            showContextMenu(event, this);
         });
         
+        row.addEventListener('touchstart', function(event) {
+            isLongPress = false;
+            longPressTimer = setTimeout(() => {
+                isLongPress = true;
+                showContextMenu(event, this);
+            }, LONG_PRESS_DELAY);
+        });
+        
+        row.addEventListener('touchmove', function(event) {
+            clearTimeout(longPressTimer);
+        });
+        
+        row.addEventListener('touchend', function(event) {
+            clearTimeout(longPressTimer);
+        });
+        
+        row.addEventListener('touchcancel', function(event) {
+            clearTimeout(longPressTimer);
+        });
 
         row.addEventListener('dragstart', function(event) {
             var reportId = this.dataset.id; 
@@ -160,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             this.classList.add('active-report');
             previousReportRow = this;
-          
+        
         });
         
         row.addEventListener('dragend', function(event) {
@@ -168,13 +213,18 @@ document.addEventListener('DOMContentLoaded', function () {
             setDraggingState(false);
             setDraggingStatetoNonread(false);
         });
+    });
 
-        row.addEventListener('dblclick', function() {
-            var reportId = this.dataset.id;
-            var url = "/audit-area/report/" + reportId;
-            window.location.href = url;
+    document.addEventListener('click', function(event) {
+        if (!contextMenuReport.contains(event.target)) {
+            contextMenuReport.style.display = 'none';
+        }
+    });
 
-        });
+    document.addEventListener('touchstart', function(event) {
+        if (!contextMenuReport.contains(event.target)) {
+            contextMenuReport.style.display = 'none';
+        }
     });
 
     navigationItems.forEach(function(item) {

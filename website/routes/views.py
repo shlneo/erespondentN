@@ -396,10 +396,10 @@ def report_section(report_type, id):
     section_number = config['section_number']
     product_filter = config['product_filter']
 
-    dirUnit = DirUnit.query.all()
     dirProduct = DirProduct.query.filter(
         product_filter == True,
-        ~DirProduct.CodeProduct.in_(['9001', '9010', '9100'])
+        ~DirProduct.CodeProduct.in_(['9001', '9010', '9100']),
+        DirProduct.DateEnd.is_(None)
     ).order_by(asc(DirProduct.CodeProduct)).all()
 
     sections = Sections.query.filter_by(id_version=current_version.id, section_number=section_number).order_by(asc(Sections.code_product)).all()
@@ -407,7 +407,6 @@ def report_section(report_type, id):
         id_report = id,
         section_number=section_number,
         sections=sections,              
-        dirUnit=dirUnit,
         dirProduct=dirProduct,
         current_user=current_user, 
         current_report=current_report,
@@ -445,7 +444,8 @@ def audit_area(status):
                            approved_count=approved_count,
                            delete_count=delete_count,
                            total_count=total_count,
-                           status_reports=status
+                           status_reports=status,
+                           auditAreaInfoModal = True
                            )
 
 @views.route('/audit-area/report/<int:id>', methods=['GET'])
@@ -473,7 +473,8 @@ def audit_report(id):
         current_user=current_user, 
         current_report=current_report,
         current_version=current_version,
-        tickets=tickets
+        tickets=tickets,
+        auditAreaReportInfoModal = True
     )
 
 

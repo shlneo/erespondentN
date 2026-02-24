@@ -1,18 +1,30 @@
 // cookie.js
 window.initCookieBanner = function() {
-    const COOKIE_NAME = 'eresespondentN_acces';
+    const COOKIE_NAME = 'eresespondentN-access';
     const COOKIE_DAYS = 365;
     
     const MODAL_CONFIG = {
-        'system-update-modal': {
-            cookieName: 'system_update_shown_eres',
-            pages: ['/report-area', '/'],
+        'system-update-modal-reportArea': {
+            cookieName: 'update-reportArea',
+            pages: ['/report-area'],
             hasSlides: true,
             delay: 500
         },
-        'system_update_shown_report': { 
-            cookieName: 'fuel_modal_shown_eres',
+        'system-update-modal-reportArea-report': { 
+            cookieName: 'update-reportArea-report',
             pages: ['/report-area/fuel/', '/report-area/heat/', '/report-area/electro/'],
+            hasSlides: true,
+            delay: 300
+        },
+        'system-update-modal-auditArea': {
+            cookieName: 'update-auditArea',
+            pages: ['/audit-area'],
+            hasSlides: true,
+            delay: 500
+        },
+        'system-update-modal-auditArea-report': { 
+            cookieName: 'update-auditArea-report',
+            pages: ['/audit-area/report/'],
             hasSlides: true,
             delay: 300
         }

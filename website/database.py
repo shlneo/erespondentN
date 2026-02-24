@@ -520,22 +520,16 @@ def add_data_in_db(db):
                 (317, '5024', 'Прием, перекачка воды в ЦТП', False, False, True, 10, None, None),
                 (318, '5026', 'Услуги бани', True, True, True, 59, None, None),
                 (319, '5027', 'Прессование отходов, вторсырья и ТБО', True, True, True, 3, None, None),
-                
-                
                 (320, '2310', 'Стекло и изделия из него', True, True, True, 14, None, None),
                 (321, '2310', 'Стекло и изделия из него', True, True, True, 11, None, None),
-
                 (324, '3310', 'Горячее водоснабжение', True, True, True, 58, None, None),
                 (325, '4701', 'Бытовое обслуживание', True, True, True, 11, None, None),
-
                 (326, '9001', 'Всего по нормированному потреблению', True, False, False, 53, None, None),
                 (327, '9001', 'Всего по нормированному потреблению', False, False, True, 2, None, None),
                 (328, '9001', 'Всего по нормированному потреблению', False, True, False, 1, None, None),
-
                 (329, '9010', 'Прочее потребление', True, False, False, 53, None, None),
                 (330, '9010', 'Прочее потребление', False, False, True, 2, None, None),
                 (331, '9010', 'Прочее потребление', False, True, False, 1, None, None),
-
                 (332, '9100', 'Всего потребление (сумма строк 9001, 9010)', True, False, False, 53, None, None),
                 (333, '9100', 'Всего потребление (сумма строк 9001, 9010)', False, False, True, 2, None, None),
                 (334, '9100', 'Всего потребление (сумма строк 9001, 9010)', False, True, False, 1, None, None),
