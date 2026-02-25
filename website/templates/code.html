@@ -7,7 +7,7 @@
         <div class="log_reg_img"></div>
     
         <div class="log_reg_form"> 
-            <form action="/kod" method="POST">
+            <form action="/code" method="POST">
                 <div class="link_cont" style = "margin-bottom: 25px;">
                     <a onclick="window.location.href='/login'" class = "active" style="margin-right: 19px;">Введите код для активации</a>
                 </div>
@@ -39,7 +39,7 @@
             </form>
         
             <div class = "forgot_cont">
-                <button class = 'relod_button' id = "relod_button_kod" type="button">
+                <button class = 'relod_button' id = "relod_button_code" type="button">
                     <!-- Текст будет заменен JavaScript -->
                     Отправить ещё раз
                 </button>
@@ -50,14 +50,14 @@
 </div>
 
 <style>
-    #relod_button_kod:disabled {
+    #relod_button_code:disabled {
         opacity: 0.6;
         cursor: not-allowed;
         background-color: #f0f0f0;
         color: #666;
     }
     
-    #relod_button_kod {
+    #relod_button_code {
         transition: all 0.3s ease;
         background: none;
         border: none;
@@ -68,15 +68,15 @@
         font-family: inherit;
     }
     
-    #relod_button_kod:hover:not(:disabled) {
+    #relod_button_code:hover:not(:disabled) {
         color: #0056b3;
         text-decoration: underline;
     }
     
-    #relod_button_kod:focus {
+    #relod_button_code:focus {
         outline: none;
     }
 </style>
 
-<script src="{{ url_for('static', filename='js/kod.js') }}"></script>
+<script src="{{ url_for('static', filename='js/code.js') }}"></script>
 {% endblock %}

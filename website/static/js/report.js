@@ -177,13 +177,17 @@ document.addEventListener('DOMContentLoaded', function() {
             var productCode = activeRow.querySelector('.product-cod_fuel').value;
             var productName = activeRow.querySelector('.product-name_fuel').value;
 
+            function replaceDotsWithCommas(value) {
+                return (value || '').replace(/\./g, ',');
+            }
+
             document.getElementById('modal_product_name').value = productName;
             document.getElementById('modal_oked').value = activeRow.querySelector('input[name="Oked_fuel"]').value;
-            document.getElementById('modal_produced').value = activeRow.querySelector('input[name="produced_fuel"]').value;
-            document.getElementById('modal_Consumed_Quota').value = activeRow.querySelector('input[name="Consumed_Quota_fuel"]').value;
-            document.getElementById('modal_Consumed_Fact').value = activeRow.querySelector('input[name="Consumed_Fact_fuel"]').value;
-            document.getElementById('modal_Consumed_Total_Quota').value = activeRow.querySelector('input[name="Consumed_Total_Quota_fuel"]').value;
-            document.getElementById('modal_Consumed_Total_Fact').value = activeRow.querySelector('input[name="Consumed_Total_Fact_fuel"]').value;
+            document.getElementById('modal_produced').value = replaceDotsWithCommas(activeRow.querySelector('input[name="produced_fuel"]').value);
+            document.getElementById('modal_Consumed_Quota').value = replaceDotsWithCommas(activeRow.querySelector('input[name="Consumed_Quota_fuel"]').value);
+            document.getElementById('modal_Consumed_Fact').value = replaceDotsWithCommas(activeRow.querySelector('input[name="Consumed_Fact_fuel"]').value);
+            document.getElementById('modal_Consumed_Total_Quota').value = replaceDotsWithCommas(activeRow.querySelector('input[name="Consumed_Total_Quota_fuel"]').value);
+            document.getElementById('modal_Consumed_Total_Fact').value = replaceDotsWithCommas(activeRow.querySelector('input[name="Consumed_Total_Fact_fuel"]').value);
             document.getElementById('modal_note').value = activeRow.querySelector('input[name="note_fuel"]').value;
             document.getElementById('modal_id').value = selectedfuelId;
     
@@ -295,7 +299,7 @@ document.querySelector('#chooseProdTableBody').addEventListener('click', functio
                 input.readOnly = true;
                 if (inputName !== 'name_of_product'){
                     input.style.color = "rgb(132, 132, 132)";
-                    input.value = '0.00';
+                    input.value = '0,00';
                 }
             } else {
                 input.readOnly = false;
@@ -311,7 +315,7 @@ document.querySelector('#chooseProdTableBody').addEventListener('click', functio
                 input.readOnly = true;
                 if (inputName !== 'name_of_product' && inputName !== 'oked_add'){
                     input.style.color = "rgb(132, 132, 132)";
-                    input.value = '0.00';     
+                    input.value = '0,00';     
                 }
                 else if(inputName === 'oked_add'){
                     input.readOnly = true;  
@@ -332,7 +336,7 @@ document.querySelector('#chooseProdTableBody').addEventListener('click', functio
                 input.readOnly = true;
                 if (inputName !== 'name_of_product'){
                     input.style.color = "rgb(132, 132, 132)";
-                    input.value = '0.00';
+                    input.value = '0,00';
                 }
             } else {
                 input.readOnly = false;

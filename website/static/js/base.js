@@ -205,7 +205,9 @@ numeric_dotInputs.forEach(function(input) {
         var selectionStart = this.selectionStart;
         var selectionEnd = this.selectionEnd;
         
-        var value = oldValue.replace(/[^\d.]/g, '');
+        // Замена запятой на точку для обработки, затем замена точки на запятую в результате
+        var processedValue = oldValue.replace(/,/g, '.'); // временно заменяем запятые на точки для обработки
+        var value = processedValue.replace(/[^\d.]/g, '');
         var parts = value.split('.');
         if (parts.length > 1) {
             value = parts[0] + '.' + parts[1].slice(0, 2);
@@ -218,16 +220,20 @@ numeric_dotInputs.forEach(function(input) {
         if (!value.includes('.')) {
             value += '.00';
         }
+        
+        // Заменяем точку на запятую в итоговом значении
+        value = value.replace('.', ',');
 
-        var oldDotIndex = oldValue.indexOf('.');
-        var newDotIndex = value.indexOf('.');
+        // Корректируем позиции для работы с запятой
+        var oldCommaIndex = oldValue.indexOf(',');
+        var newCommaIndex = value.indexOf(',');
 
         this.value = value;
 
         if (selectionEnd - selectionStart > 1) {
             this.setSelectionRange(selectionEnd, selectionEnd);
-        } else if (selectionStart <= oldDotIndex) {
-            var cursorPos = selectionStart + (newDotIndex - oldDotIndex);
+        } else if (selectionStart <= oldCommaIndex) {
+            var cursorPos = selectionStart + (newCommaIndex - oldCommaIndex);
             this.setSelectionRange(cursorPos, cursorPos);
         } else {
             this.setSelectionRange(selectionStart, selectionStart);
@@ -236,12 +242,12 @@ numeric_dotInputs.forEach(function(input) {
 
     input.addEventListener('focus', function(event) {
         if (this.value === '') {
-            this.value = '0.00';
+            this.value = '0,00'; // заменяем точку на запятую
         }
 
-        var dotIndex = this.value.indexOf('.');
-        if (dotIndex !== -1) {
-            this.setSelectionRange(dotIndex, dotIndex);
+        var commaIndex = this.value.indexOf(',');
+        if (commaIndex !== -1) {
+            this.setSelectionRange(commaIndex, commaIndex);
         }
     });
 
@@ -837,39 +843,63 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 /* sort table by tt dif */
 let sortOrder = 'asc';
+
 function sortTable() {
     var table, rows, switching, i, x, y, shouldSwitch;
     table = document.querySelector(".table-report-area tbody");
+    
+    if (!table) return;
+
+    var has9100 = Array.from(table.rows).some(row => {
+        var input = row.querySelector('input[name="product-cod_fuel"]');
+        return input && input.value === "9100";
+    });
+
+    var rowsToSkip = has9100 ? 3 : 2;
+    var maxSortIndex = table.rows.length - rowsToSkip;
+    
     switching = true;
+    
     while (switching) {
         switching = false;
         rows = table.rows;
-        for (i = 0; i < (rows.length - 3 - 1); i++) {
-            shouldSwitch = false;
+        
+        for (i = 0; i < maxSortIndex - 1; i++) {
             var input1 = rows[i].querySelector('input[name="product-cod_fuel"]');
             var input2 = rows[i + 1].querySelector('input[name="product-cod_fuel"]');
-            if (input1 && input2) {
-                x = input1.value;
-                y = input2.value;
-                if (sortOrder === 'asc') {
-                    if (parseFloat(x) > parseFloat(y)) {
-                        shouldSwitch = true;
-                        break;
-                    }
-                } else {
-                    if (parseFloat(x) < parseFloat(y)) {
-                        shouldSwitch = true;
-                        break;
-                    }
+            
+            if (!input1 || !input2) continue;
+            
+            x = input1.value;
+            y = input2.value;
+
+            if (x === "9100" || y === "9100") {
+                continue;
+            }
+
+            var numX = parseFloat(x) || 0;
+            var numY = parseFloat(y) || 0;
+            
+            shouldSwitch = false;
+            
+            if (sortOrder === 'asc') {
+                if (numX > numY) {
+                    shouldSwitch = true;
                 }
             } else {
-
+                if (numX < numY) {
+                    shouldSwitch = true;
+                }
+            }
+            
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                break;
             }
         }
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-        } else {
+
+        if (!switching) {
             sortOrder = (sortOrder === 'asc') ? 'desc' : 'asc';
         }
     }

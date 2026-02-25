@@ -49,9 +49,24 @@ class Organization(db.Model):
     full_name = db.Column(db.String())
     okpo = db.Column(db.String, unique=True)
     ynp = db.Column(db.String(), nullable=True)
+    # ministry_id = db.Column(db.Integer, db.ForeignKey('ministry.id'), nullable=True)
     ministry = db.Column(db.String()) 
     is_active = db.Column(db.Boolean, default=True)
     reports = db.relationship('Report', backref='organization', lazy=True)
+
+    # @property
+    # def ministry(self):
+    #     return self.ministry_rel.name if self.ministry_rel else None
+
+
+# class Ministry(db.Model):
+#     __tablename__ = 'ministry'
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(200), nullable=False, unique=True)
+#     code = db.Column(db.String(50), nullable=True)
+    
+#     # Связь с организациями
+#     organizations = db.relationship('Organization', backref='ministry_rel', lazy=True)
 
 class Report(db.Model):
     __tablename__ = 'report'

@@ -422,6 +422,94 @@
         </div>
     </div>
     {% endif %}
+    {% if accwelcomeModal %}
+    <div id="system-welcome-modal-acc" class="modal" style="display: none;">
+        <div class="info-modal-content">
+            <svg class="circle-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 8L16 16M8 16L16 8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="info-modal-content">
+                <div class="modal-slides-container">
+                    <div class="modal-slide active">
+                        <div class="slide-counter">1/2</div>
+                        <div class="slide-layout">
+                            <div class="slide-info">
+                                <h3>Добро пожаловать</h3>
+                                <p>Для доступа к заполнению отчетов, пожалуйста, заполните свой профиль: укажите персональные данные и выберите организацию. Для этого нажмите кнопку «Параметры профиля».</p>
+                            </div>
+                            <div class="slide-image">
+                                <div class="image-placeholder">
+                                    <img src="{{ url_for('static', filename='img/info-news/welcome-slide.png')}}" alt="welcome">
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if profileAddModal %}
+    <div id="system-modal-profile" class="modal" style="display: none;">
+        <div class="info-modal-content">
+            <svg class="circle-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 8L16 16M8 16L16 8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="info-modal-content">
+                <div class="modal-slides-container">
+                    <div class="modal-slide active">
+                        <div class="slide-counter">1/2</div>
+                        <div class="slide-layout">
+                            <div class="slide-info">
+                                <h3>Заполните свой профиль</h3>
+                                <p>Укажите персональные данные заполняющего отчеты: </p> 
+                                <ul>
+                                    <li>Фамилию</li>
+                                    <li>Имя</li>
+                                    <li>Отчество</li>
+                                    <li>Номер телефона</li>
+                                    <li>Ваша организация</li>
+                                </ul>
+                                <p>Для сохранения изменений нажмите на «Применить изменения».</p>
+                            </div>
+                            <div class="slide-image">
+                                <div class="image-placeholder">
+                                    <img src="{{ url_for('static', filename='img/info-news/profile-slide-1.png')}}" alt="welcome">
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                    <div class="modal-slide">
+                        <div class="slide-counter">2/2</div>
+                        <div class="slide-layout">
+                            <div class="slide-info">
+                                <h3>Выберите организацию</h3>
+                                <p>Нажмите на иконку 🔎, в открывшемся окне найдите свою организацию через поиск и кликните по ней. Затем не забудьте сохранить выбор путем клика по «Применить изменения»..</p> 
+                            </div>
+                            <div class="slide-image">
+                                <div class="image-placeholder">
+                                    <img src="{{ url_for('static', filename='img/info-news/profile-slide-2.png')}}" alt="welcome">
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+            <div class="slides-navigation-vertical">
+              <button class="slide-prev-vertical" aria-label="Предыдущий слайд">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </button>
+              <button class="slide-next-vertical" aria-label="Следующий слайд">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </button>
+          </div>
+        </div>
+    </div>
+    {% endif %}
     <div id="cookie-consent-banner" class="cookie-banner" style="display: none;">
         <div class="cookie-banner-content">
             <div class="cookie-banner-text">

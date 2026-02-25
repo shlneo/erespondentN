@@ -252,7 +252,7 @@
                                     readonly
                                 >
                             </td>
-                            {% if row.total_differents is not none and (row.total_differents < 0.0 or row.total_differents == 0.00) %}
+                            {% if row.total_differents is not none and (row.total_differents < 0.0 or row.total_differents == 0,00) %}
                                 <td style="background-color: #a2ff77;">
                                     <input 
                                         style="background-color: #a2ff77; color: black;" 
@@ -411,7 +411,7 @@
                                     readonly
                                 >
                             </td>
-                            {% if row.total_differents is not none and (row.total_differents < 0.0 or row.total_differents == 0.00) %}
+                            {% if row.total_differents is not none and (row.total_differents < 0.0 or row.total_differents == 0,00) %}
                                 <td style="background-color: #a2ff77;">
                                     <input type = "text"
                                         style="background-color: #a2ff77; color: black;" 
@@ -523,7 +523,7 @@
                             <td>     
                                 <input type = "text" name = "Consumed_Total_Fact_fuel" value = "{{ row.Consumed_Total_Fact }}" readonly>
                             </td>
-                            {% if row.total_differents is not none and (row.total_differents < 0.0 or row.total_differents == 0.00) %}
+                            {% if row.total_differents is not none and (row.total_differents < 0.0 or row.total_differents == 0,00) %}
                                 <td style="background-color: #a2ff77;">
                                     <input type = "text" style="background-color: #a2ff77; color: black;" name="row_total_differents"  value="{{ row.total_differents }}" readonly>
                                 </td>
@@ -626,7 +626,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
                 <div class="detail-content">
-                    <div class="detail-label">Время отправки</div>
+                    <div class="detail-label">Дата отправки</div>
                     <div class="detail-value">
                         {% if current_version.sent_time %}
                             {{ current_version.sent_time.strftime('%d.%m.%Y') }}
@@ -640,7 +640,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div class="detail-content">
-                    <div class="detail-label">Время проверки</div>
+                    <div class="detail-label">Дата проверки</div>
                     <div class="detail-value">
                         {% if current_version.audit_time %}
                             {{ current_version.audit_time.strftime('%d.%m.%Y') }}

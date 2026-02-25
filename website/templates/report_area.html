@@ -337,8 +337,8 @@
         <div class="answer-highlight-second" style="max-width: 550px;">
             <div class="highlight-icon">💡</div>
             <p>
-                <strong>Обычное копирование</strong> — создает точную копию отчета со всеми данными.<br>
-                <strong>Неполное копирование</strong> — копирует только виды продукции без заполненных данных.
+                {#<strong>Обычное копирование</strong> — создает точную копию отчета без заполненных данных.<br>#}
+                <strong>Неполное копирование</strong> — копирует все виды продукции без заполненных данных.
             </p>
         </div>
         
@@ -382,13 +382,13 @@
             <div id="selector-info-copy" class="period-info"></div>
 
             <div class="model_but_area">
-                <button type="submit" formaction="/copy-full-report" class="blue_btn">
+                <button type="submit" formaction="/copy-structure-report" class="blue_btn">
                     <img src="/static/img/Copy.svg" alt="" class="button-icon">
-                    <span>Обычная копия</span>
-                </button>
-                <button type="submit" formaction="/copy-structure-report" class="invisible-btn">
                     <span>Неполное копирование</span>
                 </button>
+                {#<button type="submit" formaction="/copy-full-report" class="invisible-btn">
+                    <span>Обычная копия</span>
+                </button>#}
             </div>
         </form> 
     </div>

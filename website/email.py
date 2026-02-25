@@ -15,7 +15,7 @@ EMAILS_PER_MINUTE = 10
 DAILY_LIMIT = 200
 
 PRIORITY = {
-    "activation_kod": 3,
+    "activation_code": 3,
     "new_pass": 3,
     "to_admin": 1,
     "to_recipient": 1,
@@ -162,7 +162,7 @@ def build_html(message_body, email_type):
                 <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; margin-top: 20px; overflow: hidden; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);">
                     <div style="padding: 20px; color: #333333;">
         """
-    if email_type == "kod":
+    if email_type == "code":
         html_template += f"""
                 <p style="margin: 0 0 16px 0; font-size: 16px; color: #2c3e50;">Здравствуйте!</p>
                 <p style="margin: 0 0 20px 0; font-size: 16px; color: #2c3e50;">Кто-то пытается войти в ErespondentN используя вашу электронную почту.</p>
@@ -235,7 +235,7 @@ def get_email_queue():
 
 def send_email(message, recipient_email, email_type="default"):
     subject_map = {
-        "activation_kod": "Код подтверждения",
+        "activation_code": "Код подтверждения",
         "new_pass": "Новый пароль",
         "to_admin": "Сообщение администратору",
         "to_recipient": "Сообщение",

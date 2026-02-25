@@ -519,7 +519,7 @@ def add_data_in_db(db):
                 (316, '5022', 'Услуги гостиниц, санаторно-курортных и лечебных учреждений', True, True, True, 57, None, None),
                 (317, '5024', 'Прием, перекачка воды в ЦТП', False, False, True, 10, None, None),
                 (318, '5026', 'Услуги бани', True, True, True, 59, None, None),
-                (319, '5027', 'Прессование отходов, вторсырья и ТБО', True, True, True, 3, None, None),
+                (319, '2310', 'Прессование отходов, вторсырья и ТБО', True, True, True, 3, None, None),
                 (320, '2310', 'Стекло и изделия из него', True, True, True, 14, None, None),
                 (321, '2310', 'Стекло и изделия из него', True, True, True, 11, None, None),
                 (324, '3310', 'Горячее водоснабжение', True, True, True, 58, None, None),
@@ -559,4 +559,4 @@ def add_data_in_db(db):
                             img_name=i[2]) 
                 db.session.add(news)   
             db.session.commit()
-            print('The filling is finished!')
+        print('The filling is finished!')

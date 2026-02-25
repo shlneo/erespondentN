@@ -73,7 +73,7 @@
                     <a href="/news/{{latest_news.id}}"  style = "color: black;">
                         <p id = "toadmin"  class = "title-news">{{ latest_news.title[:70] }}{% if latest_news.title|length > 70 %}...{% endif %}</p>
                     </a>
-                    <p class = "text-news">{{ latest_news.text[:500] }}{% if latest_news.text|length > 500 %}...{% endif %}</p>
+                    <p class = "text-news">{{ latest_news.text[:300] }}{% if latest_news.text|length > 300 %}...{% endif %}</p>
                 </div>
             </div>
             <div class = "news-row-right">                     

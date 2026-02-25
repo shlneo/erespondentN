@@ -36,6 +36,7 @@ function scrollToTickets() {
     }
 }
 
+
 document.addEventListener('DOMContentLoaded', function() {
     var urladdComment_modal = new URLSearchParams(window.location.search);
     if (urladdComment_modal.get('tickets_cont') === 'true') {

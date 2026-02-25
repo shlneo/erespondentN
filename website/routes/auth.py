@@ -103,7 +103,7 @@ def get_location_info(user_agent_string):
 def send_activation_email(email):
     message = gener_password()
     session['activation_code'] = message
-    send_email(message, email, 'kod')
+    send_email(message, email, 'code')
 
 def gener_password():
     length=5
@@ -178,13 +178,13 @@ def sign():
                 session.permanent = True
                 send_activation_email(email) 
                 flash('Проверьте свою почту для активации аккаунта.', 'success')
-                return redirect(url_for('views.kod'))
+                return redirect(url_for('views.code'))
         else:
             flash('Введите данные для регистрации.', 'error')    
     return redirect(url_for('views.sign'))
 
-@auth.route('/kod', methods=['POST'])
-def kod():
+@auth.route('/code', methods=['POST'])
+def code():
     if request.method == 'POST':
         input_code = ''.join([
             request.form.get(f'activation_code_{i}', '') for i in range(5)
@@ -209,7 +209,7 @@ def kod():
             # return redirect(url_for('views.login'))
         else:
             flash('Некорректный код активации.', 'error')
-    return redirect(url_for('views.kod'))
+    return redirect(url_for('views.code'))
 
 @auth.route('/resend-code', methods=['POST'])
 def resend_code():
@@ -217,7 +217,7 @@ def resend_code():
     if email:
         new_activation_code = gener_password()
         session['activation_code'] = new_activation_code
-        send_email(new_activation_code, email, 'kod')
+        send_email(new_activation_code, email, 'code')
         return jsonify({'status': 'success'})
     else:
         return jsonify({'status': 'error', 'message': 'Не удалось отправить код повторно.'}), 400
@@ -396,38 +396,42 @@ def create_new_report():
             sections = Sections.query.filter_by(id_version=new_version_report.id).all()
             if not sections:
                 id = new_version_report.id
-                sections_data = [
-                    # (id, 332, 9100, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-                    (id, 329, 9010, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-                    (id, 326, 9001, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-      
-                    #(id, 334, 9100, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-                    (id, 331, 9010, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-                    (id, 328, 9001, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
+                is9010productFuel = DirProduct.query.filter_by(CodeProduct='9010', IsFuel = True, DateEnd = None).first()
+                is9010productHeat = DirProduct.query.filter_by(CodeProduct='9010', IsHeat = True, DateEnd = None).first()
+                is9010productElectro = DirProduct.query.filter_by(CodeProduct='9010', IsElectro = True, DateEnd = None).first()
+                is9001productFuel = DirProduct.query.filter_by(CodeProduct='9001', IsFuel = True, DateEnd = None).first()
+                is9001productHeat = DirProduct.query.filter_by(CodeProduct='9001', IsHeat = True, DateEnd = None).first()
+                is9001productElectro = DirProduct.query.filter_by(CodeProduct='9001', IsElectro = True, DateEnd = None).first()
                 
-                    #(id, 333, 9100, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-                    (id, 330, 9010, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-                    (id, 327, 9001, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-        
+                sections_data = [
+                    (is9010productFuel.id, is9010productFuel.CodeProduct, 1),
+                    (is9001productFuel.id, is9001productFuel.CodeProduct, 1),
+                    
+                    (is9010productElectro.id, is9010productElectro.CodeProduct, 2),
+                    (is9001productElectro.id, is9001productElectro.CodeProduct, 2),
+                    
+                    (is9010productHeat.id, is9010productHeat.CodeProduct, 3),
+                    (is9001productHeat.id, is9001productHeat.CodeProduct, 3),
+                
                 ]
                 for data in sections_data:
                     section = Sections(
-                        id_version=data[0],
-                        id_product=data[1],
-                        code_product=data[2],
-                        section_number=data[3],
-                        Oked=data[4],
-                        produced=data[5],
-                        Consumed_Quota=data[6],
-                        Consumed_Fact=data[7],
-                        Consumed_Total_Quota=data[8],
-                        Consumed_Total_Fact=data[9],
-                        total_differents=data[10],
-                        note=data[11]
+                        id_version=id,
+                        id_product=data[0],
+                        code_product=data[1],
+                        section_number=data[2],
+                        produced=Decimal('0.00'),
+                        Consumed_Quota=Decimal('0.00'),
+                        Consumed_Fact=Decimal('0.00'),
+                        Consumed_Total_Quota=Decimal('0.00'),
+                        Consumed_Total_Fact=Decimal('0.00'),
+                        total_differents=Decimal('0.00'),
+                        Oked='',
+                        note=''
                     )
                     db.session.add(section)
                 db.session.commit()
-            flash('Отчет успешно создан.', 'success')
+            flash(f'Отчет {year}/{quarter} успешно создан.', 'success')
         else:
             flash(f'Отчет {year} года {quarter} квартала уже существует.', 'error')
     return redirect(url_for('views.report_area'))
@@ -474,93 +478,102 @@ def change_period_report():
 
         return redirect(url_for('views.report_area'))
   
-@auth.route('/copy-full-report', methods=['POST'])
-@login_required 
-@session_required
-def copy_full_report():
-    if request.method == 'POST':
-        try:
-            copy_report_id = parse_int(request.form.get('modal_copy_report_id'))
-            new_year = parse_int(request.form.get('modal_copy_report_year'))
-            new_quarter = parse_int(request.form.get('modal_copy_report_quarter'))
+# @auth.route('/copy-full-report', methods=['POST'])
+# @login_required 
+# @session_required
+# def copy_full_report():
+#     if request.method == 'POST':
+#         try:
+#             copy_report_id = parse_int(request.form.get('modal_copy_report_id'))
+#             new_year = parse_int(request.form.get('modal_copy_report_year'))
+#             new_quarter = parse_int(request.form.get('modal_copy_report_quarter'))
             
-            if not all([copy_report_id, new_year, new_quarter]):
-                flash('Не все данные заполнены', 'error')
-                return redirect(url_for('views.report_area'))
+#             if not all([copy_report_id, new_year, new_quarter]):
+#                 flash('Не все данные заполнены', 'error')
+#                 return redirect(url_for('views.report_area'))
             
-            original_report = Report.query.get(copy_report_id)
-            if not original_report:
-                flash('Исходный отчет не найден', 'error')
-                return redirect(url_for('views.report_area'))
+#             original_report = Report.query.get(copy_report_id)
+#             if not original_report:
+#                 flash('Исходный отчет не найден', 'error')
+#                 return redirect(url_for('views.report_area'))
 
-            existing_report = Report.query.filter_by(
-                org_id=current_user.organization.id,
-                year=new_year,
-                quarter=new_quarter,
-                user_id=current_user.id
-            ).first()
+#             existing_report = Report.query.filter_by(
+#                 org_id=current_user.organization.id,
+#                 year=new_year,
+#                 quarter=new_quarter,
+#                 user_id=current_user.id
+#             ).first()
             
-            if existing_report:
-                flash(f'Отчет {new_year} года {new_quarter} квартала уже существует.', 'error')
-                return redirect(url_for('views.report_area'))
+#             if existing_report:
+#                 flash(f'Отчет {new_year} года {new_quarter} квартала уже существует.', 'error')
+#                 return redirect(url_for('views.report_area'))
             
-            original_version = Version_report.query.filter_by(
-                report_id=copy_report_id
-            ).order_by(Version_report.begin_time.desc()).first()
+#             original_version = Version_report.query.filter_by(
+#                 report_id=copy_report_id
+#             ).order_by(Version_report.begin_time.desc()).first()
             
-            if not original_version:
-                flash('Версия исходного отчета не найдена', 'error')
-                return redirect(url_for('views.report_area'))
+#             if not original_version:
+#                 flash('Версия исходного отчета не найдена', 'error')
+#                 return redirect(url_for('views.report_area'))
             
-            original_sections = Sections.query.filter_by(
-                id_version=original_version.id
-            ).all()
+#             original_sections = Sections.query.filter_by(
+#                 id_version=original_version.id
+#             ).all()
             
-            new_report = Report(
-                okpo=current_user.organization.okpo,
-                org_id=current_user.organization.id,
-                year=new_year,
-                quarter=new_quarter,
-                user_id=current_user.id
-            )
-            db.session.add(new_report)
-            db.session.flush()
+#             new_report = Report(
+#                 okpo=current_user.organization.okpo,
+#                 org_id=current_user.organization.id,
+#                 year=new_year,
+#                 quarter=new_quarter,
+#                 user_id=current_user.id
+#             )
+#             db.session.add(new_report)
+#             db.session.flush()
             
-            new_version = Version_report(
-                begin_time=current_utc_time(),
-                status="Заполнение",
-                report_id=new_report.id
-            )
-            db.session.add(new_version)
-            db.session.flush()
+#             new_version = Version_report(
+#                 begin_time=current_utc_time(),
+#                 status="Заполнение",
+#                 fio = current_user.fio,
+#                 telephone = current_user.telephone,
+#                 email = current_user.email,
+#                 report_id=new_report.id,
+#             )
+#             db.session.add(new_version)
+#             db.session.flush()
             
-            for section in original_sections:
-                if section.code_product == '9100':
-                    continue
-                new_section = Sections(
-                    id_version=new_version.id,
-                    id_product=section.id_product,
-                    code_product=section.code_product,
-                    section_number=section.section_number,
-                    Oked=section.Oked,
-                    produced=section.produced,
-                    Consumed_Quota=section.Consumed_Quota,
-                    Consumed_Fact=section.Consumed_Fact,
-                    Consumed_Total_Quota=section.Consumed_Total_Quota,
-                    Consumed_Total_Fact=section.Consumed_Total_Fact,
-                    total_differents=section.total_differents,
-                    note=section.note
-                )
-                db.session.add(new_section)
+#             for section in original_sections:
+#                 if section.code_product == '9100':
+#                     continue
+#                 current_product = DirProduct.query.filter_by(CodeProduct=section.code_product, DateEnd = None).first()
+#                 if not current_product:
+#                     continue
+                
+#                 new_section = Sections(
+#                     id_version=new_version.id,
+                    
+#                     id_product=current_product.id,
+#                     code_product=current_product.CodeProduct,
+                    
+#                     section_number=section.section_number,
+#                     Oked=section.Oked,
+#                     produced=section.produced,
+#                     Consumed_Quota=section.Consumed_Quota,
+#                     Consumed_Fact=section.Consumed_Fact,
+#                     Consumed_Total_Quota=section.Consumed_Total_Quota,
+#                     Consumed_Total_Fact=section.Consumed_Total_Fact,
+#                     total_differents=section.total_differents,
+#                     note=section.note
+#                 )
+#                 db.session.add(new_section)
             
-            db.session.commit()
-            flash('Отчет успешно скопирован со всеми данными.', 'success')
+#             db.session.commit()
+#             flash('Отчет успешно скопирован.', 'success')
             
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Ошибка при копировании: {str(e)}', 'error')
+#         except Exception as e:
+#             db.session.rollback()
+#             flash(f'Ошибка при копировании: {str(e)}', 'error')
             
-        return redirect(url_for('views.report_area'))
+#         return redirect(url_for('views.report_area'))
 
 @auth.route('/copy-structure-report', methods=['POST'])
 @login_required 
@@ -617,6 +630,9 @@ def copy_structure_report():
             new_version = Version_report(
                 begin_time=current_utc_time(),
                 status="Заполнение",
+                fio = current_user.fio,
+                telephone = current_user.telephone,
+                email = current_user.email,
                 report_id=new_report.id
             )
             db.session.add(new_version)
@@ -625,10 +641,17 @@ def copy_structure_report():
             for section in original_sections:
                 if section.code_product == '9100':
                     continue
+                
+                current_product = DirProduct.query.filter_by(CodeProduct=section.code_product, DateEnd = None).first()
+                if not current_product:
+                    continue
+                
                 new_section = Sections(
                     id_version=new_version.id,
-                    id_product=section.id_product,
-                    code_product=section.code_product,
+                    
+                    id_product=current_product.id,
+                    code_product=current_product.CodeProduct,
+                    
                     section_number=section.section_number,
                     Oked=section.Oked,
                     produced=ZERO_DECIMAL,
@@ -642,7 +665,7 @@ def copy_structure_report():
                 db.session.add(new_section)
             
             db.session.commit()
-            flash('Отчет успешно скопирован (скопирована только структура).', 'success')
+            flash('Отчет успешно скопирован.', 'success')
             
         except Exception as e:
             db.session.rollback()
@@ -679,6 +702,12 @@ def delete_report(report_id):
             flash('Отчет удален.', 'success')
         return redirect(url_for('views.report_area'))
 
+def to_decimal(value):
+    if not value:
+        return Decimal(0)
+    return Decimal(value.replace(',', '.'))
+
+
 @auth.route('/add-section-param', methods=['POST'])
 @login_required 
 @session_required
@@ -695,11 +724,11 @@ def add_section_param():
         note = request.form.get('note_add')
         section_number = request.form.get('section_number')
         
-        produced = Decimal(produced) if produced else Decimal(0)
-        Consumed_Quota = Decimal(Consumed_Quota) if Consumed_Quota else Decimal(0)
-        Consumed_Fact = Decimal(Consumed_Fact) if Consumed_Fact else Decimal(0)
-        Consumed_Total_Quota = Decimal(Consumed_Total_Quota) if Consumed_Total_Quota else Decimal(0)
-        Consumed_Total_Fact = Decimal(Consumed_Total_Fact) if Consumed_Total_Fact else Decimal(0)
+        produced = to_decimal(produced)
+        Consumed_Quota = to_decimal(Consumed_Quota)
+        Consumed_Fact = to_decimal(Consumed_Fact)
+        Consumed_Total_Quota = to_decimal(Consumed_Total_Quota)
+        Consumed_Total_Fact = to_decimal(Consumed_Total_Fact)
 
         current_product = DirProduct.query.filter_by(id=add_id_product).first()
         if not current_product:
@@ -799,11 +828,12 @@ def add_section_param():
                         section9100 = Sections.query.filter_by(
                             id_version=current_version_id, section_number=section_number, code_product='9100').first()
 
-                        if section9100 and section9001 and section9010:
+                        if section9100:
                             section9100.Consumed_Total_Quota = section9001.Consumed_Total_Quota + section9010.Consumed_Total_Quota
                             section9100.Consumed_Total_Fact = section9001.Consumed_Total_Fact + section9010.Consumed_Total_Fact
                             section9100.total_differents = section9001.total_differents + section9010.total_differents
                             db.session.commit()
+                    
 
                         if current_version:
                             current_version.change_time = current_utc_time()
@@ -833,18 +863,17 @@ def change_section():
         Consumed_Total_Fact = request.form.get('Consumed_Total_Fact_change')
         note = request.form.get('note_change')
 
-        produced = Decimal(produced) if produced else Decimal(0)
-        Consumed_Quota = Decimal(Consumed_Quota) if Consumed_Quota else Decimal(0)
-        Consumed_Fact = Decimal(Consumed_Fact) if Consumed_Fact else Decimal(0)
-        Consumed_Total_Quota = Decimal(Consumed_Total_Quota) if Consumed_Total_Quota else Decimal(0)
-        Consumed_Total_Fact = Decimal(Consumed_Total_Fact) if Consumed_Total_Fact else Decimal(0)
+        produced = to_decimal(produced)
+        Consumed_Quota = to_decimal(Consumed_Quota)
+        Consumed_Fact = to_decimal(Consumed_Fact)
+        Consumed_Total_Quota = to_decimal(Consumed_Total_Quota)
+        Consumed_Total_Fact = to_decimal(Consumed_Total_Fact)
 
         current_version = Version_report.query.filter_by(id=id_version).first() 
         current_section = Sections.query.filter_by(id=id_section).first()
         
         current_product = DirProduct.query.filter_by(id=current_section.id_product).first()
         product_unit = DirUnit.query.filter_by(IdUnit=current_product.IdUnit).first() if current_product else None
-        
 
         if current_version:
             if current_version.status != 'Отправлен' and current_version.status != 'Одобрен':
@@ -917,7 +946,7 @@ def change_section():
 
                     section9010 = Sections.query.filter_by(id_version=id_version, section_number=current_section.section_number, code_product='9010').first()
                     section9100 = Sections.query.filter_by(id_version=id_version, section_number=current_section.section_number, code_product='9100').first()
-                    if section9100 and section9001 and section9010:
+                    if section9100:
                         section9100.Consumed_Total_Quota = (section9001.Consumed_Total_Quota or 0) + (section9010.Consumed_Total_Quota or 0)
                         section9100.Consumed_Total_Fact = (section9001.Consumed_Total_Fact or 0) + (section9010.Consumed_Total_Fact or 0)
                         section9100.total_differents = (section9001.total_differents or 0) + (section9010.total_differents or 0)
@@ -956,9 +985,10 @@ def remove_section(id):
                     section9001.total_differents -= delete_section.total_differents
 
                     section9100 = Sections.query.filter_by(id_version=id_version, section_number = section_numberDELsection, code_product = '9100').first()
-                    section9100.Consumed_Total_Quota -= delete_section.Consumed_Total_Quota
-                    section9100.Consumed_Total_Fact -= delete_section.Consumed_Total_Fact
-                    section9100.total_differents -= delete_section.total_differents
+                    if section9100:
+                        section9100.Consumed_Total_Quota -= delete_section.Consumed_Total_Quota
+                        section9100.Consumed_Total_Fact -= delete_section.Consumed_Total_Fact
+                        section9100.total_differents -= delete_section.total_differents
 
                     db.session.delete(delete_section)
                     db.session.commit()

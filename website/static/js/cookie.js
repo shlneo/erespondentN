@@ -27,6 +27,18 @@ window.initCookieBanner = function() {
             pages: ['/audit-area/report/'],
             hasSlides: true,
             delay: 300
+        },
+        'system-welcome-modal-acc': { 
+            cookieName: 'welcome-modal-account',
+            pages: ['/account'],
+            hasSlides: true,
+            delay: 300
+        },
+        'system-modal-profile': { 
+            cookieName: 'system-modal-profile',
+            pages: ['/profile/common'],
+            hasSlides: true,
+            delay: 300
         }
     };
     

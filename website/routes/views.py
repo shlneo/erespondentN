@@ -5,7 +5,7 @@ from ..email import send_email
 from website.session_utils import session_required
 from ..models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News, UserSession
 from .. import db
-from sqlalchemy import asc, or_, desc
+from sqlalchemy import asc, case, or_, desc
 from functools import wraps
 from sqlalchemy.sql import func, or_
 from sqlalchemy.types import String
@@ -145,9 +145,9 @@ def login():
     return render_template('login.html', user=current_user
             )
 
-@views.route('/kod', methods=['GET'])
-def kod():
-    return render_template('kod.html', user=current_user
+@views.route('/code', methods=['GET'])
+def code():
+    return render_template('code.html', user=current_user
             )
 
 @views.route('/account', methods=['GET'])
@@ -159,12 +159,12 @@ def account():
                            previous_quarter = get_previous_quarter(),
                            previous_year=get_report_year(),
                            current_user=current_user, 
-                           messages=messages)
+                           messages=messages,
+                           accwelcomeModal = True)
 
 @views.route('/delete_message/<int:message_id>', methods=['DELETE'])
 @login_required
 def delete_message(message_id):
-    """Удаление сообщения текущего пользователя"""
     try:
         message = Message.query.filter_by(
             id=message_id, 
@@ -198,7 +198,6 @@ def delete_message(message_id):
 @views.route('/get_messages_count')
 @login_required
 def get_messages_count():
-    """Получить количество сообщений пользователя"""
     count = Message.query.filter_by(recipient_id=current_user.id).count()
     return jsonify({'count': count})
 
@@ -278,7 +277,8 @@ def profile_common():
     return render_template('profile_common.html', 
                         user=current_user, 
                         count_reports=count_reports,
-                        active_tab = 'common'
+                        active_tab = 'common',
+                        profileAddModal = True
                         )
 
 @views.route('/profile/session', methods=['GET'])
@@ -354,7 +354,10 @@ def profile_password():
 @login_required
 @session_required
 def report_area():
-    report = Report.query.filter_by(user_id=current_user.id).order_by(Report.year.asc(), Report.quarter.asc()).all()
+    report = Report.query.filter_by(user_id=current_user.id).order_by(
+        Report.year.desc(), 
+        Report.quarter.desc()
+    ).all()
     version = Version_report.query.all()
 
     for rep in report:
@@ -402,7 +405,16 @@ def report_section(report_type, id):
         DirProduct.DateEnd.is_(None)
     ).order_by(asc(DirProduct.CodeProduct)).all()
 
-    sections = Sections.query.filter_by(id_version=current_version.id, section_number=section_number).order_by(asc(Sections.code_product)).all()
+    sections = Sections.query.filter_by(
+        id_version=current_version.id, 
+        section_number=section_number
+    ).order_by(
+        case(
+            (Sections.code_product.in_(['9001', '9010', '9100']), 1),
+            else_=0
+        ).asc(),
+        desc(Sections.id)
+    ).all()
     return render_template('respondent_report.html', 
         id_report = id,
         section_number=section_number,

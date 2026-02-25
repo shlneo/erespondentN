@@ -141,6 +141,8 @@
                                 value="{{current_user.organization.ynp if current_user.organization.ynp else 'Нет данных'}}" readonly>
                             </td>
                         </tr>
+                        
+                        {%if current_user.type == 'Администратор'%}
                         <tr>
                             <td><span title = "Республиканский орган государственного управления">Министерство</span></td>
                             <td>    
@@ -150,7 +152,8 @@
                                     placeholder="Министерство предприятия" 
                                     value="{{current_user.organization.ministry if current_user.organization.ministry else 'Вышестоящая организация'}}" readonly>
                             </td>
-                        </tr>    
+                        </tr> 
+                        {%endif%}   
                     {%else%}
                     {%endif%}
                 </table>
