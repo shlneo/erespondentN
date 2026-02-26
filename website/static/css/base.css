@@ -3629,7 +3629,6 @@ th .resizer {
     cursor: col-resize;
     background-color: transparent;
     transition: background-color 0.2s;
-    z-index: 1;
 }
 
 .resizer:hover,
@@ -5678,6 +5677,173 @@ th .resizer {
     to { opacity: 1; }
 }
 
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.timestamps-list {
+    max-height: 100%;
+
+    scrollbar-width: thin;
+}
+
+.timestamps-container {
+    margin-top: 20px;
+    padding: 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #eef0f2;
+}
+
+.timestamps-title {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.timestamps-title::before {
+    content: '';
+    width: 3px;
+    height: 18px;
+    background: #2563eb;
+    border-radius: 3px;
+}
+
+.timestamps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 8px;
+}
+
+
+.timestamp-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.timestamp-item:hover {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    transform: translateX(4px);
+}
+
+.timestamp-item.active {
+    background: #eef2ff;
+    border-color: #2563eb;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
+}
+
+.timestamp-item.active .timestamp-time {
+    background: #2563eb;
+    color: white;
+}
+
+.timestamp-item.active .timestamp-description {
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.timestamp-time {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 13px;
+    color: #2563eb;
+    background: #e0e7ff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    min-width: 55px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.timestamp-item:hover .timestamp-time {
+    background: #2563eb;
+    color: white;
+}
+
+.timestamp-description {
+    font-size: 14px;
+    color: #334155;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.timestamp-item:hover .timestamp-description {
+    color: #0f172a;
+}
+
+.timestamps-container.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .timestamps-container {
+        margin-top: 16px;
+        padding: 12px;
+    }
+    
+    .timestamp-item {
+        padding: 8px 10px;
+    }
+    
+    .timestamp-time {
+        font-size: 12px;
+        min-width: 48px;
+        padding: 3px 6px;
+    }
+    
+    .timestamp-description {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .timestamps-list {
+        max-height: 250px;
+    }
+    
+    .timestamp-item {
+        gap: 8px;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.timestamp-item {
+    animation: slideIn 0.3s ease forwards;
+}
+
+.timestamp-item:nth-child(1) { animation-delay: 0.05s; }
+.timestamp-item:nth-child(2) { animation-delay: 0.1s; }
+.timestamp-item:nth-child(3) { animation-delay: 0.15s; }
+.timestamp-item:nth-child(4) { animation-delay: 0.2s; }
+.timestamp-item:nth-child(5) { animation-delay: 0.25s; }
+.timestamp-item:nth-child(6) { animation-delay: 0.3s; }
+.timestamp-item:nth-child(7) { animation-delay: 0.35s; }
 /*faq questions.css*/
 
 .begin-page{

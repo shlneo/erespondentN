@@ -17,3 +17,6 @@ logs/
 website/__pycache__
 website/static/files/ministerstvo
 website/static/files/organizations
+
+website/static/video/*.mp4
+*.mp4

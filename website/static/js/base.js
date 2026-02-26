@@ -204,9 +204,7 @@ numeric_dotInputs.forEach(function(input) {
         var oldValue = this.value;
         var selectionStart = this.selectionStart;
         var selectionEnd = this.selectionEnd;
-        
-        // Замена запятой на точку для обработки, затем замена точки на запятую в результате
-        var processedValue = oldValue.replace(/,/g, '.'); // временно заменяем запятые на точки для обработки
+        var processedValue = oldValue.replace(/,/g, '.'); 
         var value = processedValue.replace(/[^\d.]/g, '');
         var parts = value.split('.');
         if (parts.length > 1) {
@@ -221,10 +219,8 @@ numeric_dotInputs.forEach(function(input) {
             value += '.00';
         }
         
-        // Заменяем точку на запятую в итоговом значении
         value = value.replace('.', ',');
 
-        // Корректируем позиции для работы с запятой
         var oldCommaIndex = oldValue.indexOf(',');
         var newCommaIndex = value.indexOf(',');
 
@@ -242,7 +238,7 @@ numeric_dotInputs.forEach(function(input) {
 
     input.addEventListener('focus', function(event) {
         if (this.value === '') {
-            this.value = '0,00'; // заменяем точку на запятую
+            this.value = '0,00';
         }
 
         var commaIndex = this.value.indexOf(',');

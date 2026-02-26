@@ -21,7 +21,7 @@ class UserView(ModelView):
     export_types = ['csv']
     
     form_args = {
-        'fio': dict(label='fio', validators = [DataRequired()]),
+        # 'fio': dict(label='fio', validators = [DataRequired()]),
         'email': dict(label='email', validators = [Email()])
     }
     

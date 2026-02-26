@@ -571,7 +571,7 @@
                         <div class="media-showcase">
                             <div class="video-container">
                                 <div class="video-wrapper">
-                                    <div class="video-player" data-video-src="{{ url_for('static', filename='video/gaid.mp4') }}">
+                                    <div class="video-player">
                                         <div class="video-poster" style="background-image: url('{{ url_for('static', filename='img/post/gaid_poster.png') }}');">
                                             <div class="poster-content">
                                                 <div class="play-button">
@@ -580,13 +580,13 @@
                                                     </svg>
                                                 </div>
                                                 <div class="poster-text">
-                                                    <span class="video-duration">2:45</span>
+                                                    <span class="video-duration">4:43</span>
                                                 </div>
                                             </div>
                                         </div>
                                         
                                         <video class="media-video" preload="metadata" playsinline>
-                                            <source src="{{ url_for('static', filename='video/gaid.mp4') }}" type="video/mp4">
+                                            <source src="{{ url_for('static', filename='video/erespondentN.mp4') }}" type="video/mp4">
                                             Ваш браузер не поддерживает видео.
                                         </video>
                                         
@@ -604,7 +604,7 @@
                                                         <svg class="play-icon" width="20" height="20" viewBox="0 0 24 24">
                                                             <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
                                                         </svg>
-                                                        <svg class="pause-icon" width="20" height="20" viewBox="0 0 24 24" style="display: none;">
+                                                        <svg class="pause-icon" width="20" height="20" viewBox="0 0 24 24">
                                                             <path d="M6 19H10V5H6V19ZM14 5V19H18V5H14Z" fill="currentColor"/>
                                                         </svg>
                                                     </button>
@@ -617,11 +617,7 @@
                                                 </div>
                                                 
                                                 <div class="controls-right">
-                                                    <button class="control-btn volume-btn">
-                                                        <svg class="volume-icon" width="20" height="20" viewBox="0 0 24 24">
-                                                            <path d="M3 9V15H7L12 20V4L7 9H3Z" fill="currentColor"/>
-                                                        </svg>
-                                                    </button>
+                              
                                                     
                                                     <button class="control-btn fullscreen-btn">
                                                         <svg width="18" height="18" viewBox="0 0 24 24">
@@ -637,7 +633,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="video-caption">
                                     <p class="caption-text">Интрукция по использованию платформы (без звука)</p>
                                     <div class="caption-meta">
@@ -646,7 +642,7 @@
                                                 <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" fill="#666"/>
                                                 <path d="M12.5 7H11V13L16.2 16.2L17 14.9L12.5 12.2V7Z" fill="#666"/>
                                             </svg>
-                                            2:45
+                                            4:43
                                         </span>
                                         <span class="meta-item">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -654,6 +650,31 @@
                                             </svg>
                                             MP4
                                         </span>
+                                    </div>
+                                    <div class="timestamps-container">
+                                        <h4 class="timestamps-title">Содержание видео:</h4>
+                                        <div class="timestamps-list">
+                                            <div class="timestamp-item" data-time="0">
+                                                <span class="timestamp-time">0:00</span>
+                                                <span class="timestamp-description">Заполнение профиля</span>
+                                            </div>
+                                            <div class="timestamp-item" data-time="71">
+                                                <span class="timestamp-time">1:11</span>
+                                                <span class="timestamp-description">Работа с отчетами</span>
+                                            </div>
+                                            <div class="timestamp-item" data-time="206">
+                                                <span class="timestamp-time">3:27</span>
+                                                <span class="timestamp-description">Изменение статуса</span>
+                                            </div>
+                                            <div class="timestamp-item" data-time="245">
+                                                <span class="timestamp-time">4:05</span>
+                                                <span class="timestamp-description">Отправка на проверку</span>
+                                            </div>
+                                            <div class="timestamp-item" data-time="269">
+                                                <span class="timestamp-time">4:29</span>
+                                                <span class="timestamp-description">Квитанции</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1415,187 +1436,5 @@
         </div>
     </div>
 </div>
-<script>
-class VideoPlayer {
-    constructor(playerElement) {
-        this.player = playerElement;
-        this.video = playerElement.querySelector('.media-video');
-        this.poster = playerElement.querySelector('.video-poster');
-        this.controls = playerElement.querySelector('.video-controls');
-        this.playBtn = playerElement.querySelector('.play-pause');
-        this.progressBar = playerElement.querySelector('.progress-bar');
-        this.progressFill = playerElement.querySelector('.progress-fill');
-        this.progressThumb = playerElement.querySelector('.progress-thumb');
-        this.currentTimeEl = playerElement.querySelector('.current-time');
-        this.durationEl = playerElement.querySelector('.duration');
-        this.fullscreenBtn = playerElement.querySelector('.fullscreen-btn');
-        this.loadingIndicator = playerElement.querySelector('.loading-indicator');
-        
-        this.init();
-    }
-    
-    init() {
-        this.video.controls = false;
-        
-        this.video.addEventListener('loadedmetadata', () => {
-            this.durationEl.textContent = this.formatTime(this.video.duration);
-        });
-        
-        this.video.addEventListener('timeupdate', () => {
-            this.updateProgress();
-            this.currentTimeEl.textContent = this.formatTime(this.video.currentTime);
-        });
-        
-        this.video.addEventListener('play', () => {
-            this.player.classList.add('playing');
-            this.poster.style.opacity = '0';
-            this.poster.style.pointerEvents = 'none';
-        });
-        
-        this.video.addEventListener('pause', () => {
-            this.player.classList.remove('playing');
-        });
-        
-        this.video.addEventListener('waiting', () => {
-            this.loadingIndicator.classList.add('active');
-        });
-        
-        this.video.addEventListener('playing', () => {
-            this.loadingIndicator.classList.remove('active');
-        });
-        
-        this.poster.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.togglePlay();
-        });
-        
-        this.playBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.togglePlay();
-        });
-        
-        this.setupProgressBar();
-        
-        this.fullscreenBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.toggleFullscreen();
-        });
-        
-        this.setupControlsVisibility();
-    }
-    
-    setupProgressBar() {
-        const progressClick = (e) => {
-            e.stopPropagation();
-            const rect = this.progressBar.getBoundingClientRect();
-            const percent = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
-            this.video.currentTime = percent * this.video.duration;
-            this.updateProgress();
-        };
-        
-        this.progressBar.addEventListener('click', progressClick);
-        
-        let isDragging = false;
-        
-        const startDrag = (e) => {
-            e.stopPropagation();
-            isDragging = true;
-            progressClick(e);
-            document.addEventListener('mousemove', duringDrag);
-            document.addEventListener('mouseup', stopDrag);
-        };
-        
-        const duringDrag = (e) => {
-            if (!isDragging) return;
-            progressClick(e);
-        };
-        
-        const stopDrag = () => {
-            isDragging = false;
-            document.removeEventListener('mousemove', duringDrag);
-            document.removeEventListener('mouseup', stopDrag);
-        };
-        
-        this.progressBar.addEventListener('mousedown', startDrag);
-        this.progressThumb.addEventListener('mousedown', startDrag);
-    }
-    
-    setupControlsVisibility() {
-        let controlsTimeout;
-        
-        const showControls = () => {
-            this.controls.classList.add('visible');
-            clearTimeout(controlsTimeout);
-            
-            if (!this.video.paused) {
-                controlsTimeout = setTimeout(() => {
-                    this.controls.classList.remove('visible');
-                }, 2000);
-            }
-        };
-        
-        this.player.addEventListener('mousemove', showControls);
-        this.player.addEventListener('click', showControls);
-        this.video.addEventListener('play', showControls);
-        
-        this.player.addEventListener('mouseleave', () => {
-            if (!this.video.paused) {
-                setTimeout(() => {
-                    this.controls.classList.remove('visible');
-                }, 500);
-            }
-        });
-        
-        this.video.addEventListener('pause', () => {
-            this.controls.classList.add('visible');
-        });
-    }
-    
-    togglePlay() {
-        if (this.video.paused) {
-            this.video.play().catch(e => {
-                console.error('Ошибка воспроизведения:', e);
-            });
-        } else {
-            this.video.pause();
-        }
-    }
-    
-    updateProgress() {
-        if (this.video.duration) {
-            const percent = (this.video.currentTime / this.video.duration) * 100;
-            this.progressFill.style.width = `${percent}%`;
-            this.progressThumb.style.left = `${percent}%`;
-        }
-    }
-    
-    formatTime(seconds) {
-        if (isNaN(seconds)) return '0:00';
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-    
-    toggleFullscreen() {
-        if (!document.fullscreenElement) {
-            this.player.classList.add('fullscreen');
-            if (this.player.requestFullscreen) {
-                this.player.requestFullscreen();
-            }
-        } else {
-            this.player.classList.remove('fullscreen');
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.video-player').forEach(player => {
-        new VideoPlayer(player);
-    });
-});
-</script>
 <script src="{{ url_for('static', filename='js/faq.js') }}"></script>
 {% endblock %}
