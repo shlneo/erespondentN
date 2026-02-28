@@ -12,7 +12,7 @@ function addCsrfTokenToForm(form) {
     csrfInput.value = csrfToken;
 }
 
-const header = document.querySelector('.fixed-header');
+
 function scrollToAdmin() {
     const formElement = document.getElementById('toadmin');
     if (formElement) {
@@ -27,6 +27,7 @@ function scrollToTickets() {
 }
 
 window.addEventListener('scroll', () => {
+    const header = document.querySelector('.fixed-header');
     if (window.scrollY > 0) {
         header.style.backgroundColor = 'white';
         if (window.innerWidth >= 1000) {
@@ -39,7 +40,6 @@ window.addEventListener('scroll', () => {
         header.style.boxShadow = 'none';
     }
 });
-
 
 window.addEventListener('resize', () => {
     if (window.scrollY > 0) {

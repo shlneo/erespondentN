@@ -31,22 +31,22 @@ scheduler = BackgroundScheduler()
 def create_app():
     app = Flask(__name__, static_url_path='/static')
 
-    def delete_inactive_users():
-        with app.app_context(): 
-            expiration_time = datetime.utcnow() + timedelta(hours=3) - timedelta(days=365)
+    # def delete_inactive_users():
+    #     with app.app_context(): 
+    #         expiration_time = datetime.utcnow() + timedelta(hours=3) - timedelta(days=365)
             
-            inactive_users = User.query.filter(User.last_active < expiration_time).all()
-            users_to_delete = [user for user in inactive_users if user.type not in ['Администратор', 'Аудитор']]
+    #         inactive_users = User.query.filter(User.last_active < expiration_time).all()
+    #         users_to_delete = [user for user in inactive_users if user.type not in ['Администратор', 'Аудитор']]
             
-            for user in users_to_delete:
-                db.session.delete(user)
-                db.session.commit()
-            print(f"Удалено {len(users_to_delete)} неактивных пользователей.")
+    #         for user in users_to_delete:
+    #             db.session.delete(user)
+    #             db.session.commit()
+    #         print(f"Удалено {len(users_to_delete)} неактивных пользователей.")
     
-    scheduler.add_job(delete_inactive_users, 'cron', hour=0, minute=0, timezone=moscow_tz)
-    scheduler.start()
+    # scheduler.add_job(delete_inactive_users, 'cron', hour=0, minute=0, timezone=moscow_tz)
+    # scheduler.start()
 
-    app.config['SECRET_KEY'] = os.urandom(30).hex()
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['SESSION_TYPE'] = 'sqlalchemy'
     app.config['SESSION_SQLALCHEMY'] = db
     app.config['SESSION_PERMANENT'] = True
@@ -54,7 +54,8 @@ def create_app():
     app.config['BABEL_DEFAULT_LOCALE'] = 'ru'
     app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('postrgeuser')}:{os.getenv('postrgepass')}@localhost:5432/{os.getenv('postrgedbname')}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+    app.config['TESTING'] = False
     oauth = OAuth(app)
     google = oauth.register(
         name='google',
@@ -163,13 +164,13 @@ def create_app():
 
             login_user(user, remember=True)
 
-            from .session_utils import create_user_session 
+            from .sessions import create_user_session 
             session_token = create_user_session(user.id)
 
             session['username'] = username
             session['oauth_token'] = token
 
-            response = make_response(redirect(url_for('views.account')))
+            response = redirect(url_for('views.account'))
             response.set_cookie('session_token', session_token, httponly=True, samesite='Lax')
 
             flash('Добро пожаловать!', 'success')

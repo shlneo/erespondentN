@@ -46,7 +46,7 @@ from ..models import (
 )
 
 from website.ecp import check_certificate_expiry
-from website.session_utils import create_user_session, get_session_token_from_cookie, session_required
+from website.sessions import clear_session_cookie, create_login_response, create_session_token, force_logout, get_current_user, SESSION_COOKIE_NAME, session_required
 from ..time import current_utc_time
 from ..email import send_email
 
@@ -59,47 +59,6 @@ ZERO_DECIMAL = Decimal('0.00')
 def load_user(id):
     return User.query.get(int(id))
 
-def last_quarter():
-    current_month = current_utc_time().strftime("%m")
-    if (current_month == '01' or current_month == '02' or current_month == '03'):
-        last_quarter_value = 4
-    elif (current_month == '04' or current_month == '05' or current_month == '06'):
-        last_quarter_value = 1
-    elif (current_month == '07' or current_month == '08' or current_month == '09'):
-        last_quarter_value = 2
-    else:
-        last_quarter_value = 3
-    return last_quarter_value
-
-def year_fourMounth_ago():
-    months_to_subtract = 4
-    new_date = current_utc_time() - timedelta(days=months_to_subtract * 30)
-    year_4_months_ago = new_date.year
-    return year_4_months_ago
-
-def get_location_info(user_agent_string):
-    try:
-        ip_response = requests.get("https://api64.ipify.org?format=json")
-        ip_response.raise_for_status()
-        ip_address = ip_response.json().get("ip")
-
-        location_response = requests.get(f"https://ipinfo.io/{ip_address}/json")
-        location_response.raise_for_status()
-        location_data = location_response.json()
-
-        user_agent = parse(user_agent_string)
-        browser = user_agent.browser.family 
-        os = user_agent.os.family
-        
-        location = location_data.get("city", "Неизвестно") + ", " + location_data.get("region", "Неизвестно") + ", " + location_data.get("country", "Неизвестно")
-        ip_address_str = ip_address if ip_address else "Неизвестно"
-
-        return ip_address_str, location, os, browser
-
-    except Exception as e:
-        print(f"Ошибка при получении данных о местоположении: {e}")
-        return "Неизвестно", "Неизвестно", "Неизвестно", "Неизвестно"  
-        
 def send_activation_email(email):
     message = gener_password()
     session['activation_code'] = message
@@ -129,11 +88,14 @@ def login():
             if user:
                 if check_password_hash(user.password, password):
                     login_user(user, remember=remember)
-                    session_token = create_user_session(user.id)
-                    resp = make_response(redirect(url_for('views.account')))
-                    resp.set_cookie('session_token', session_token, httponly=True)
+                    
+                    user.last_active = current_utc_time()
+                    db.session.commit()
+
+                    response = create_login_response(user)
                     flash('Авторизация прошла успешно.', 'success')
-                    return resp
+                    return response
+                
             flash('Неправильный email или пароль.', 'error')
         else:
             flash('Введите данные для авторизации.', 'error')
@@ -143,15 +105,16 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
-    token = request.cookies.get('session_token')
-    if token:
-        session_obj = UserSession.query.filter_by(session_token=token).first()
-        if session_obj:
-            db.session.delete(session_obj)
-            db.session.commit()
-
+    # token = request.cookies.get('session_token')
+    # if token:
+    #     session_obj = UserSession.query.filter_by(session_token=token).first()
+    #     if session_obj:
+    #         db.session.delete(session_obj)
+    #         db.session.commit()
+    
+    
     response = make_response(redirect(url_for('views.login')))
-    response.delete_cookie('session_token')
+    response = clear_session_cookie(response)
     logout_user()
 
     flash('Выполнен выход из аккаунта.', 'success')
@@ -198,15 +161,14 @@ def code():
             db.session.commit()
             
             remember = True
+            new_user.last_active = current_utc_time()
+            db.session.commit()
             
+            response = create_login_response(new_user)
             login_user(new_user, remember=remember)
-            session_token = create_user_session(new_user.id)
-            resp = make_response(redirect(url_for('views.account')))
-            resp.set_cookie('session_token', session_token, httponly=True)
+
             flash('Аккаунт успешно активирован! Теперь перейдите к заполнению профиля!', 'success')
-            return resp
-            
-            # return redirect(url_for('views.login'))
+            return response
         else:
             flash('Некорректный код активации.', 'error')
     return redirect(url_for('views.code'))
@@ -222,31 +184,32 @@ def resend_code():
     else:
         return jsonify({'status': 'error', 'message': 'Не удалось отправить код повторно.'}), 400
 
-@auth.route('/sessions/clear-others', methods=['POST'])
-@login_required
-@session_required
-def clear_other_sessions():
-    current_token = get_session_token_from_cookie()
-    other_sessions = UserSession.query.filter(
-        UserSession.user_id == current_user.id,
-        UserSession.session_token != current_token
-    )
+# @auth.route('/sessions/clear-others', methods=['POST'])
+# @login_required
+# @session_required
+# def clear_other_sessions():
+#     current_token = get_session_token_from_cookie()
+#     other_sessions = UserSession.query.filter(
+#         UserSession.user_id == current_user.id,
+#         UserSession.session_token != current_token
+#     )
 
-    count = other_sessions.count()
+#     count = other_sessions.count()
 
-    if count == 0:
-        flash('Нет других активных сессий.', 'error')
-    else:
-        other_sessions.delete(synchronize_session=False)
-        db.session.commit()
-        flash(f'Удалено {count} других сессий.', 'success')
-    return redirect(url_for('views.profile_session'))
+#     if count == 0:
+#         flash('Нет других активных сессий.', 'error')
+#     else:
+#         other_sessions.delete(synchronize_session=False)
+#         db.session.commit()
+#         flash(f'Удалено {count} других сессий.', 'success')
+#     return redirect(url_for('views.profile_session'))
 
 @auth.route('/add-personal-parametrs', methods=['POST'])
 @login_required 
 @session_required
 def add_personal_parametrs():
     if request.method == 'POST':
+        
         name = request.form.get('name_common', '').strip()
         second_name = request.form.get('second_name_common', '').strip()
         patronymic = request.form.get('patronymic_common', '').strip()
