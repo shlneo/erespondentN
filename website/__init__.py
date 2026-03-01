@@ -88,7 +88,6 @@ def create_app():
     from .models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News, UserSession
     
     from website.admin.user_view import UserView
-    from website.admin.session_view import SessionView
     from website.admin.organization_view import OrganizationView
     from website.admin.report_view import ReportView
     from website.admin.version_report_view import Version_reportView
@@ -99,11 +98,8 @@ def create_app():
     from website.admin.message_view import MessageView
     from website.admin.news_view import NewsView
     
-    from website.admin.image_view import ImageView
-    
     admin = Admin(app, 'Вернуться', index_view=MyMainView(), template_mode='bootstrap4', url='/account')
     admin.add_view(UserView(User, db.session))
-    admin.add_view(SessionView(UserSession, db.session))
     admin.add_view(OrganizationView(Organization, db.session))
     admin.add_view(ReportView(Report, db.session))
     admin.add_view(Version_reportView(Version_report, db.session))
@@ -113,7 +109,6 @@ def create_app():
     admin.add_view(SectionsView(Sections, db.session))
     admin.add_view(MessageView(Message, db.session)) 
     admin.add_view(NewsView(News, db.session)) 
-    admin.add_view(ImageView())
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

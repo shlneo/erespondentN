@@ -277,8 +277,7 @@ def profile_common():
     return render_template('profile_common.html', 
                         user=current_user, 
                         count_reports=count_reports,
-                        active_tab = 'common',
-                        profileAddModal = True
+                        active_tab = 'common'
                         )
 
 @views.route('/profile/session', methods=['GET'])

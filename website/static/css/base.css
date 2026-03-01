@@ -4125,7 +4125,7 @@ th .resizer {
 .image-placeholder img {
     width: 100%;
     height: auto;
-    transform: scale(1.3    );
+    transform: scale(1.6);
     transform-origin: left;
     object-fit: cover;
     box-sizing: border-box;
@@ -6070,14 +6070,6 @@ th .resizer {
     margin: 15px 0;
     position: relative;
     width: 100%;    
-}
-
-.answer-highlight-second.org{
-    background: linear-gradient(120deg, rgba(67, 238, 181, 0.1) 0%, rgba(76, 240, 139, 0.1) 100%);
-}
-
-.{
-    background: linear-gradient(120deg, rgba(238, 87, 67, 0.1) 0%, rgba(240, 109, 76, 0.1) 100%);
 }
 
 .answer-highlight-second p {
@@ -9055,7 +9047,7 @@ th .resizer {
 
 
     .rotation-fromareas_info {
-        /* margin: 50px 25px 50px 0;   */
+        margin: 50px 25px 50px 0; 
     }
 
     .profile_page .personal-info_area{

@@ -202,7 +202,7 @@
                         <div class="slide-layout">
                             <div class="slide-info">
                                 <h3>Работать с отчетами теперь удобнее</h3>
-                                <p>Найти нужный отчет в списке было не просто. Теперь при нажатии на кнопку «Просмотр» откроется страница для заполнения отчета.</p>
+                                <p>Найти нужный отчет в списке было не просто. Теперь при нажатии на кнопку <strong>«Просмотр»</strong> откроется страница для заполнения отчета.</p>
                             </div>
                             <div class="slide-image">
                                 <div class="image-placeholder">
@@ -286,7 +286,7 @@
                             <div class="slide-image">
                                 <div class="image-placeholder">
                                    <a href="/FAQ#faq8">
-                                        <img src="{{ url_for('static', filename='img/info-news/info-report-2.png') }}" alt="Новые функции">
+                                        <img style = "transform: scale(1.2);" src="{{ url_for('static', filename='img/info-news/info-report-2.png') }}" alt="Новые функции">
                                     </a>
                                 </div>
                             </div>
@@ -322,7 +322,7 @@
                         <div class="slide-layout">
                             <div class="slide-info">
                                 <h3>Работать с отчетами теперь удобнее</h3>
-                                <p>Найти нужный отчет в списке было не просто. Теперь при нажатии на кнопку «Просмотр» откроется страница для заполнения отчета.</p>
+                                <p>Найти нужный отчет в списке было не просто. Теперь при нажатии на кнопку <strong>«Просмотр»</strong>откроется страница для заполнения отчета. Также как вернуть отчет к статусу «Непросмотренный» при клике на <strong>«Отменить действие»</strong>.</p>
                             </div>
                             <div class="slide-image">
                                 <div class="image-placeholder">
@@ -431,11 +431,11 @@
             <div class="info-modal-content">
                 <div class="modal-slides-container">
                     <div class="modal-slide active">
-                        <div class="slide-counter">1/2</div>
+                        <div class="slide-counter">1/3</div>
                         <div class="slide-layout">
                             <div class="slide-info">
                                 <h3>Добро пожаловать</h3>
-                                <p>Для доступа к заполнению отчетов, пожалуйста, заполните свой профиль: укажите персональные данные и выберите организацию. Для этого нажмите кнопку «Параметры профиля».</p>
+                                <p>Для доступа к заполнению отчетов, пожалуйста, заполните свой профиль: укажите персональные данные и выберите организацию. Для этого нажмите кнопку <strong>«Параметры профиля»</strong>.</p>
                             </div>
                             <div class="slide-image">
                                 <div class="image-placeholder">
@@ -444,33 +444,20 @@
                             </div>
                         </div>
                     </div>  
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    {% if profileAddModal %}
-    <div id="system-modal-profile" class="modal" style="display: none;">
-        <div class="info-modal-content">
-            <svg class="circle-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 8L16 16M8 16L16 8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <div class="info-modal-content">
-                <div class="modal-slides-container">
-                    <div class="modal-slide active">
-                        <div class="slide-counter">1/2</div>
+
+                    <div class="modal-slide">
+                        <div class="slide-counter">2/3</div>
                         <div class="slide-layout">
                             <div class="slide-info">
                                 <h3>Заполните свой профиль</h3>
-                                <p>Укажите персональные данные заполняющего отчеты: </p> 
-                                <ul>
+                                <p>Укажите персональные данные респондента заполняющего отчеты.</p>
+                                {#<ul>
                                     <li>Фамилию</li>
                                     <li>Имя</li>
                                     <li>Отчество</li>
                                     <li>Номер телефона</li>
                                     <li>Ваша организация</li>
-                                </ul>
-                                <p>Для сохранения изменений нажмите на «Применить изменения».</p>
+                                </ul>#}
                             </div>
                             <div class="slide-image">
                                 <div class="image-placeholder">
@@ -480,33 +467,35 @@
                         </div>
                     </div>  
                     <div class="modal-slide">
-                        <div class="slide-counter">2/2</div>
+                        <div class="slide-counter">3/3</div>
                         <div class="slide-layout">
                             <div class="slide-info">
                                 <h3>Выберите организацию</h3>
-                                <p>Нажмите на иконку 🔎, в открывшемся окне найдите свою организацию через поиск и кликните по ней. Затем не забудьте сохранить выбор путем клика по «Применить изменения»..</p> 
+                                <p>Нажмите на иконку "🔎" и в открывшемся окне найдите свою организацию через поиск, кликните по ней. </p> 
+                                <p>Не забудьте сохранить данные кликнув на <strong>«Применить изменения»</strong>.</p>
                             </div>
                             <div class="slide-image">
                                 <div class="image-placeholder">
-                                    <img src="{{ url_for('static', filename='img/info-news/profile-slide-2.png')}}" alt="welcome">
+                                    <img  style = "transform: scale(1.3);" src="{{ url_for('static', filename='img/info-news/profile-slide-2.png')}}" alt="welcome">
                                 </div>
                             </div>
                         </div>
                     </div>  
+
+                    <div class="slides-navigation-vertical">
+                        <button class="slide-prev-vertical" aria-label="Предыдущий слайд">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button class="slide-next-vertical" aria-label="Следующий слайд">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="slides-navigation-vertical">
-              <button class="slide-prev-vertical" aria-label="Предыдущий слайд">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-              </button>
-              <button class="slide-next-vertical" aria-label="Следующий слайд">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-              </button>
-          </div>
         </div>
     </div>
     {% endif %}

@@ -34,12 +34,12 @@ window.initCookieBanner = function() {
             hasSlides: true,
             delay: 300
         },
-        'system-modal-profile': { 
-            cookieName: 'system-modal-profile',
-            pages: ['/profile/common'],
-            hasSlides: true,
-            delay: 300
-        }
+        // 'system-modal-profile': { 
+        //     cookieName: 'system-modal-profile',
+        //     pages: ['/profile/common'],
+        //     hasSlides: true,
+        //     delay: 300
+        // }
     };
     
     function setCookie(name, value, days) {

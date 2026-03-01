@@ -70,7 +70,22 @@ def set_session_cookie(response, token):
 
 def create_login_response(user, redirect_endpoint='views.account'):
     token = create_session_token(user)
-    response = make_response(redirect(url_for(redirect_endpoint)))
+    
+    # Создаем HTML с немедленным редиректом через мета-тег
+    redirect_url = url_for(redirect_endpoint)
+    html = f'''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta http-equiv="refresh" content="0;url={redirect_url}">
+    </head>
+    <body>
+        <script>window.location.replace("{redirect_url}");</script>
+    </body>
+    </html>
+    '''
+    
+    response = make_response(html)
     response = set_session_cookie(response, token)
     return response, token
 
@@ -144,11 +159,9 @@ def session_required(view_func):
             print(f"User not found: {session_data['user_id']}")
             return force_logout()
         
-        # ИСПРАВЛЕНИЕ: преобразуем строку обратно в datetime для сравнения
         last_active = datetime.fromisoformat(session_data['last_active'])
         current_time = current_utc_time()
         
-        # Убираем timezone для сравнения если нужно
         if hasattr(current_time, 'tzinfo') and current_time.tzinfo is not None:
             current_time = current_time.replace(tzinfo=None)
         if hasattr(last_active, 'tzinfo') and last_active.tzinfo is not None:

@@ -152,6 +152,11 @@ def code():
         input_code = ''.join([
             request.form.get(f'activation_code_{i}', '') for i in range(5)
         ])
+        
+        if 'temp_user' not in session or 'activation_code' not in session:
+            flash('Сессия истекла. Пожалуйста, начните регистрацию заново.', 'error')
+            return redirect(url_for('views.sign'))
+        
         if input_code == session.get('activation_code'):
             new_user = User(
                 email=session['temp_user']['email'],
@@ -163,6 +168,9 @@ def code():
             remember = True
             new_user.last_active = current_utc_time()
             db.session.commit()
+            
+            session.pop('temp_user', None)
+            session.pop('activation_code', None)
             
             response = create_login_response(new_user)
             login_user(new_user, remember=remember)
