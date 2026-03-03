@@ -18,7 +18,7 @@ from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
 
 from flask import (
-    Blueprint, jsonify, request, flash, redirect, session,
+    Blueprint, current_app, jsonify, request, flash, redirect, session,
     url_for, send_file, make_response
 )
 
@@ -1475,36 +1475,52 @@ def exportXML():
 @session_required
 def sent_for_admin():
     if request.method == 'POST':
-        text = request.form.get('text')
-        if text:
-            admins = User.query.filter_by(type = "Администратор").all()
-            if admins:
-                for i in admins:
-                    new_message = Message(
-                        sender_id = current_user.id,
-                        text = text,
-                        recipient_id = i.id
-                    )
-                    db.session.add(new_message)
-                db.session.commit()
-                    
-                flash('Сообщение отправлено.', 'succes')
-                admin_user = os.getenv('adminemail3')
-                if admin_user:
-                    try:
-                        send_email(text, admin_user, 'just_notif')
-                    except Exception as e:
-                        auth.logger.error(f"Ошибка отправки email: {str(e)}")
-            else:
-                flash('Администраторов нет.', 'error')
+        question_type = request.form.get('askquestion_type')
+        problem_description = request.form.get('problem_description', '')
+        organization_name = request.form.get('organization_name', '')
+        organization_okpo = request.form.get('organization_okpo', '')
+        
+        if not question_type:
+            flash('Выберите тип вопроса.', 'error')
+            return redirect(url_for('views.beginPage'))
+        
+
+        if question_type == 'organization-none':
+            if not organization_name or not organization_okpo:
+                flash('Заполните название организации и ОКПО.', 'error')
+                return redirect(url_for('views.beginPage'))
+            
+            full_message = f"Нет организации.\n"
+            full_message += f"Название организации: {organization_name}\n"
+            full_message += f"ОКПО: {organization_okpo}\n"
+        elif question_type == 'other':
+            if not problem_description:
+                flash('Опишите проблему.', 'error')
+                return redirect(url_for('views.beginPage'))
+            full_message = f"{problem_description}"
+
+        admins = User.query.filter_by(type="Администратор").all()
+        if admins:
+            for admin in admins:
+                new_message = Message(
+                    sender_id=current_user.id,
+                    text=full_message,
+                    recipient_id=admin.id
+                )
+                db.session.add(new_message)
+            db.session.commit()
+                
+            flash('Сообщение отправлено.', 'success')
+            admin_user = os.getenv('adminemail3')
+            if admin_user:
+                try:
+                    send_email(full_message, admin_user, 'just_notif')
+                except Exception as e:
+                    current_app.logger.error(f"Ошибка отправки email: {str(e)}")
         else:
-            flash('Нельзя отравить пустое сообщение.', 'error')
+            flash('Администраторов нет.', 'error')
+            
     return redirect(url_for('views.beginPage'))
-
-
-
-
-
 
 def get_organizations_with_reports_excel_xlsx(year: int, quarter: int, statuses: list) -> bytes:
     status_filter = 'all_reports' if not statuses else statuses[0] if len(statuses) == 1 else 'all_reports'
@@ -1596,7 +1612,6 @@ def get_organizations_with_reports_excel_xlsx(year: int, quarter: int, statuses:
     wb.save(output)
     output.seek(0)
     return output.read()
-
 
 @auth.route('/load_org_stat', methods=['POST'])
 @login_required 

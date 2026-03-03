@@ -87,13 +87,23 @@
     {%if current_user.is_authenticated%}
         <div class="askquestion-row">
             <div class="askquestion_form">
-                <div class="news_name">Форма обратной связи</div>
-                <form action="/sent_for_admin" method="POST">
-                    {#<input type="text" name="fio" value = "{{current_user.fio}}" readonly>#}
-                    <textarea type="text" name="text" placeholder="Опишите проблему" maxlength="399" value = "" required></textarea>
+                <div class="askquestion_name">Форма обратной связи</div>
+                <form action="/sent_for_admin" method="POST" id = "askquestion-form">
+                    <div class="answer-highlight-second" style = "max-width: 600px;">
+                        <div class="highlight-icon">💡</div>
+                        <p>Тут можно задать вопрос, ответ приходит в профиле и на почту.</p>
+                    </div>
+                    <select name="askquestion_type" id="questionType" required>
+                        <option value="">Выберите тип вопроса</option>
+                        <option value="organization-none">Нет организации в списке</option>
+                        <option value="other">Другое</option>
+                    </select>
+                    <textarea type="text" name="organization_name" placeholder="Введите наименование предприятия" maxlength="150" value = "" required></textarea>
+                    <input type="text" name="organization_okpo" placeholder = "Введите код ОКПО" minlength = 12 maxlength = 12 required>
+
+                    <textarea type="text" name="problem_description" placeholder="Опишите проблему" maxlength="300" value = "" required></textarea>
                     <input type="text" name="email" value = "{{current_user.email}}" readonly>
-                    {#<input type="text" name="phone" value = "{{current_user.telephone}}" readonly>#}
-                    
+
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type = "submit" class="blue_btn">
                         <img src="/static/img/Send.svg" alt="" class="button-icon">
@@ -106,5 +116,50 @@
     {%endif%}
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const questionTypeSelect = document.getElementById('questionType');
+    const form = document.getElementById('askquestion-form');
+    const nameInput = form.querySelector('textarea[name="organization_name"]');
+    const okpoInput = form.querySelector('input[name="organization_okpo"]');
+    const textarea = form.querySelector('textarea[name="problem_description"]');
+    const submitButton = form.querySelector('.blue_btn');
+    
+    function updateFieldsVisibility() {
+        const selectedValue = questionTypeSelect.value;
+        
+        if (selectedValue === '') {
+            nameInput.style.display = 'none';
+            okpoInput.style.display = 'none';
+            textarea.style.display = 'block';
+            submitButton.style.display = 'none';
+            nameInput.required = false;
+            okpoInput.required = false;
+            textarea.required = true;
+        } else if (selectedValue === 'organization-none') {
+            nameInput.style.display = 'block';
+            okpoInput.style.display = 'block';
+            textarea.style.display = 'none';
+            submitButton.style.display = 'flex';
+            submitButton.disabled = false;
+            nameInput.required = true;
+            okpoInput.required = true;
+            textarea.required = false;
+        } else if (selectedValue === 'other') {
+            nameInput.style.display = 'none';
+            okpoInput.style.display = 'none';
+            textarea.style.display = 'block';
+            submitButton.style.display = 'flex';
+            submitButton.disabled = false;
+            nameInput.required = false;
+            okpoInput.required = false;
+            textarea.required = true;
+        }
+    }
+    
+    questionTypeSelect.addEventListener('change', updateFieldsVisibility);
+    updateFieldsVisibility();
+});
+</script>
 
 {% endblock %}

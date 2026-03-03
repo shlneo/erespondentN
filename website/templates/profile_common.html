@@ -195,29 +195,29 @@
         </div>
         <div class="answer-highlight-second">
             <div class="highlight-icon">💡</div>
-            <p>Введите <strong>наименование</strong> или <strong>ОКПО</strong> вашей организации. В случае <strong>ОТСУТСТВИЯ ОРГАНИЗАЦИИ</strong> заполните
-                <a href="/FAQ#faq15" class="instruction-link">ФОРМУ</a>, для её добавления.</p>
+            <p>Для поиска вашей организации введите <strong>наименование</strong> или <strong>ОКПО</strong>. <br> Организация может <strong>отсутствовать</strong>, в этом случае заполните
+                <a href="/FAQ#faq15" class="instruction-link">ФОРМУ</a> для её добавления.</p>
         </div>
 
         <div class="search-cont">
             <label for="search_organization">Поиск</label>
             <input name="search_organization" class="search_input" type="text" placeholder="Введите наименование или ОКПО">
         </div>
-        <div class="spravochniki_area">
-            <div class="organizations-table-container">
-                <table class="organizations-table">
-                    <thead>
-                        <tr>
-                            <th>Наименование организации</th>
-                            <th>ОКПО</th>
-                        </tr>
-                    </thead>
-                    <tbody id="chooserOganizationTableBody">
-                      
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        
+        <div class = "modal-main">
+            <table class="organizations-table">
+                <thead>
+                    <tr>
+                        <th>Наименование организации</th>
+                        <th>ОКПО</th>
+                    </tr>
+                </thead>
+                <tbody id="chooserOganizationTableBody">
+                    
+                </tbody>
+            </table>
+       </div>
+        
         <div class="pagination-area" id="paginationArea" style="display: none;">
             <div class="pagination-container">
                 <button id="prevPageBtn" class="pagination-btn prev-btn" aria-label="Предыдущая страница">
@@ -286,7 +286,7 @@
                 totalPagesEl.textContent = data.total_pages || currentPage;
 
                 if (!data.organizations.length) {
-                    tableBody.innerHTML = '<tr><td colspan="2">Нет данных</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="2" style = "padding: 15px 20px; text-align: center; font-size: 15px;">Такой организации нет</td></tr>';
                     if (paginationArea) paginationArea.style.display = "none";
                 } else {
                     data.organizations.forEach(org => {
@@ -360,7 +360,6 @@
             let row = event.target.closest("tr");
             if (!row) return;
             
-            // Получаем ID организации из data-атрибута
             const orgId = row.dataset.id;
             
             let orgData = {

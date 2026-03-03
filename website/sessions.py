@@ -14,15 +14,19 @@ SESSION_DURATION = timedelta(days=7)
 def get_user_session_timeout(user_type):
     return timedelta(hours=9) if user_type in ['Администратор', 'Аудитор'] else timedelta(minutes=60)
 
-def get_device_place(ip):
-    try:
-        response = requests.get(f'https://ipinfo.io/{ip}/json', timeout=2)
-        data = response.json()
-        city = data.get('city', '')
-        country = data.get('country', '')
-        return f'{city}, {country}' if city or country else 'Unknown'
-    except Exception:
-        return 'Unknown'
+# def get_device_place(ip):
+#     # Локальные IP не проверяем
+#     if ip.startswith("192.168.") or ip.startswith("10.") or ip.startswith("172.") or ip in ["127.0.0.1", "::1"]:
+#         return "Local Network"
+
+#     try:
+#         response = requests.get(f'https://ipinfo.io/{ip}/json', timeout=2)
+#         data = response.json()
+#         city = data.get('city', '')
+#         country = data.get('country', '')
+#         return f'{city}, {country}' if city or country else 'Unknown'
+#     except Exception:
+#         return 'Unknown'
 
 def create_session_token(user):
     ua_string = request.headers.get('User-Agent', '')
@@ -37,12 +41,12 @@ def create_session_token(user):
         'user_type': user.type,
         'username': user.fio,
         'session_id': str(uuid.uuid4()),
-        'device_info': {
-            'platform': user_agent.os.family or "Unknown",
-            'browser': user_agent.browser.family or "Unknown",
-            'ip': ip,
-            'location': get_device_place(ip)
-        },
+        # 'device_info': {
+        #     'platform': user_agent.os.family or "Unknown",
+        #     'browser': user_agent.browser.family or "Unknown",
+        #     'ip': ip,
+        #     'location': get_device_place(ip)
+        # },
         'created_at': now.isoformat(),
         'last_active': now.isoformat(),
         'exp': (now + SESSION_DURATION).timestamp()
@@ -68,26 +72,30 @@ def set_session_cookie(response, token):
     )
     return response
 
+# def create_login_response(user, redirect_endpoint='views.account'):
+#     token = create_session_token(user)
+    
+#     # Создаем HTML с немедленным редиректом через мета-тег
+#     redirect_url = url_for(redirect_endpoint)
+#     html = f'''
+#     <!DOCTYPE html>
+#     <html>
+#     <head>
+#         <meta http-equiv="refresh" content="0;url={redirect_url}">
+#     </head>
+#     <body>
+#         <script>window.location.replace("{redirect_url}");</script>
+#     </body>
+#     </html>
+#     '''
+    
+#     response = make_response(html)
+#     response = set_session_cookie(response, token)
+#     return response, token
+
+
 def create_login_response(user, redirect_endpoint='views.account'):
-    token = create_session_token(user)
-    
-    # Создаем HTML с немедленным редиректом через мета-тег
-    redirect_url = url_for(redirect_endpoint)
-    html = f'''
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta http-equiv="refresh" content="0;url={redirect_url}">
-    </head>
-    <body>
-        <script>window.location.replace("{redirect_url}");</script>
-    </body>
-    </html>
-    '''
-    
-    response = make_response(html)
-    response = set_session_cookie(response, token)
-    return response, token
+    return redirect(url_for(redirect_endpoint))
 
 def verify_session_token(token):
     try:
@@ -142,6 +150,9 @@ def session_required(view_func):
     def wrapper(*args, **kwargs):
         from .models import User
         from . import db
+        
+        if current_app.debug:
+            return view_func(*args, **kwargs)
         
         token = request.cookies.get(SESSION_COOKIE_NAME)
         
@@ -199,4 +210,4 @@ def get_current_user():
 
 def clear_session_cookie(response):
     response.delete_cookie(SESSION_COOKIE_NAME, path='/')
-    return response
+    return response 

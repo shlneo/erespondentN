@@ -231,14 +231,14 @@
                         </div>
                         
                         <ol class="steps-list">
-                            <li><strong>Перейдите на страницу <a href="/login">авторизации/входа в аккаунт</a></strong></li>
-                            <li><strong>Введите</strong> в поле <strong>E-mail</strong> электронный адрес, <strong>на который был зарегистрирован аккаунт</strong></li>
-                            <li><strong>Найдите</strong> на странице авторизации кнопку <strong>«Забыли пароль?»</strong> и <strong>нажмите на неё</strong> (см. рисунок №6)</li>
+                            <li><strong>Перейдите на страницу <a href="/login"  class = "instruction-link">авторизации</a></strong>;</li>
+                            <li>Введите в поле <strong>E-mail</strong> электронный адрес, <strong>на который был зарегистрирован аккаунт</strong>;</li>
+                            <li>Найдите на странице кнопку <strong>«Забыли пароль?»</strong> и <strong>нажмите на неё</strong> (см. рисунок №6).</li>
                         </ol>
                         
                         <div class="p_img">
-                            <img src="{{ url_for('static', filename='img/post/6.png') }}" alt="Страница входа с выделенной кнопкой 'Забыли пароль?'">
-                            <span>Рисунок 6 - Кнопка «Забыли пароль?» на странице входа</span>
+                            <img src="{{ url_for('static', filename='img/post/6.png') }}" alt="">
+                            <span>Рисунок 6 - Кнопка «Забыли пароль?» на странице авторизации</span>
                         </div>
                         
                         <div class="answer-highlight-second">
@@ -436,7 +436,7 @@
             <div class="info_page info_faq" data-question-id="7" style="display: none;">
                 <div class="faq_question_info">
                     <div class="info_page_name">
-                        <h1>Как задать вопрос администратору</h1>
+                        <h1>Как задать вопрос администратору?</h1>
                     </div>
                     <div class="infos">
                         <div class="answer-highlight-second">
@@ -447,17 +447,18 @@
                         </div>
                         
                         <ol class="steps-list">
-                            <li><strong>Перейдите на <a class = "instruction-link" href="/">Главную страницу</a></strong> веб-приложения</li>
-                            <li><strong>Прокрутите страницу вниз</strong> до самого конца</li>
-                            <li><strong>Найдите форму обратной связи</strong> в нижней части страницы</li>
-                            <li><strong>Введите ваш вопрос</strong> в текстовое поле формы</li>
-                            <li><strong>Нажмите кнопку отправки</strong> — ваше сообщение будет отправлено администратору</li>
+                            <li><strong>Перейдите на <a class = "instruction-link" href="/">Главную страницу</a></strong> веб-приложения.</li>
+                            <li><strong>Прокрутите страницу вниз</strong> до самого конца.</li>
+                            <li>Найдите <a class = "instruction-link" href="/#askquestion-form">форму обратной связи</a> в нижней части страницы.</li>
+                            <li>Выберите ваш <strong>тип вопроса</strong> из доступных на выбор.</li>
+                            <li><strong>Введите ваш вопрос</strong> если выбрали <strong>Прочее</strong>, или же введите данные организации если выбрали <strong>Нет организации.</strong></li>
+                            <li><strong>Нажмите кнопку отправки</strong> — ваше сообщение будет отправлено администратору.</li>
                         </ol>
                         
                         <div class="p_img">
-                            <img src="{{ url_for('static', filename='img/post/13.png') }}" alt="Форма обратной связи в нижней части главной страницы">
+                            <img src="{{ url_for('static', filename='img/post/askquestion-form-default.png') }}" alt="">
                             <span>Рисунок 15 - Форма для обращения к администратору</span>
-                        </div>
+                        </div>  
                         
                         <div class="answer-highlight-second">
                             <div class="highlight-icon">⏱️</div>
@@ -1119,6 +1120,11 @@
                     </div>
                     <div class="infos">
                     
+                        <div class="p_img">
+                            <img src="{{ url_for('static', filename='img/post/no-org.png') }}" alt="">
+                            <span>Рисунок 42 - Нет организации в списке</span>
+                        </div>
+
                         <div class="answer-highlight-second">
                             <div class="highlight-icon">💡</div>
                             <div>
@@ -1135,8 +1141,16 @@
                             <img src="{{ url_for('static', filename='img/post/66.jpg') }}" alt="Кнопка со знаком вопроса для перехода вниз страницы">
                             <span>Рисунок 43 - Кнопка «?» для прокрутки вниз</span>
                         </div>
-                        <p>Вы автоматически попадете на <a class = "instruction-link" href="/#toadmin">форму обратной связи</a>, где вам нужно будет сплошным текстом указать <strong>парамметры вашей организации</strong> для добавления (см. рисунок №44).</p>
-                        <div class="answer-highlight-second">
+                        <p>Вы автоматически попадете на <a class = "instruction-link" href="/#toadmin">форму обратной связи</a>, где вам нужно будет:</p>
+                        
+                        <ol class="steps-list">
+                            <li>Выбрать тип вопроса - <strong>Нет организации в списке</strong>.</li>
+                            <li>Написать <strong>полное наименование</strong> организации.</li>
+                            <li>Написать полный <strong>код ОКПО</strong> - 12 цифр.</li>
+                            <li>Нажать на кнопку <strong>"Отправить вопрос"</strong>.</li>
+                        </ol>
+                        
+                        <div class="answer-highlight-second" style = "margin-top: 50px;">
                             <div class="highlight-icon">📊</div>
                             <div>
                                 <p><strong>Необходимые парамметры организации:</strong></p>
@@ -1149,7 +1163,7 @@
                         </div>
 
                         <div class="p_img">
-                            <img src="{{ url_for('static', filename='img/post/13.png') }}" alt="Форма для добавления новой организации">
+                            <img src="{{ url_for('static', filename='img/post/askquestion-form.png') }}" alt="Форма для добавления новой организации">
                             <span>Рисунок 44 - Форма для заполнения данных организации</span>
                         </div>
                     
@@ -1162,7 +1176,6 @@
                         <h1>Что делать если не приходит код на почту?</h1>
                     </div>
                     <div class="infos">
-                        
                         <div class="p_img">
                             <img src="{{ url_for('static', filename='img/post/4.png') }}" alt="">
                             <span>Рисунок 4 - Код подтверждения</span>
@@ -1172,8 +1185,14 @@
                             <li>Проверьте <strong>правильно ли вы ввели</strong> свою электронную почту.</li>
                             <li>Проверьте <strong>СПАМ</strong>, нежелательные массово рассылаемые электронные сообщения.</li>
                             <li>Попробуйте через отложенное время кликнуть на <strong>Отправить ещё раз</strong> - вам должен будет прийти <strong>новый</strong> код активации.</li>
-                            <li><strong>В случае неудачи</strong> пунктов выше - обратитесь в <a href="/contacts" style = "font-weight: 600;">техническую поддержку</a>.</li>
+                            <li><strong>В случае неудачи</strong> пунктов выше - обратитесь в <a href="/contacts" class = "instruction-link">техническую поддержку</a>.</li>
                         </ol>
+                    </div>
+                    <div class="answer-highlight-second" style = "margin-top: 60px;">
+                        <div class="highlight-icon">💡</div>
+                        <div>
+                            <p>Все уведомления, отправляемые порталом <a href="/" class = "instruction-link">erespondentn.energoeffect.gov.by</a>, генерируются с адреса электронной почты <strong>admin@kvant-as.by</strong></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1226,14 +1245,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
-                                            <!-- Стрелка перехода -->
                                             <div class="transition-arrow">
                                                 <div class="arrow-line"></div>
                                                 <div class="arrow-head"></div>
                                             </div>
-                                            
-                                            <!-- Статус 2 -->
                                             <div class="status-card control">
                                                 <div class="status-header">
                                                     <div class="status-icon">🔍</div>
@@ -1268,14 +1283,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
-                                            <!-- Стрелка перехода -->
                                             <div class="transition-arrow">
                                                 <div class="arrow-line"></div>
                                                 <div class="arrow-head"></div>
                                             </div>
-                                            
-                                            <!-- Статус 3 -->
                                             <div class="status-card approval">
                                                 <div class="status-header">
                                                     <div class="status-icon">🤝</div>
@@ -1319,7 +1330,6 @@
                                         </div>
                                         
                                         <div class="status-cards audit-cards">
-                                            <!-- Статус 4 -->
                                             <div class="status-card unviewed">
                                                 <div class="status-header">
                                                     <div class="status-icon">🔵</div>
@@ -1344,8 +1354,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
-                                            <!-- Центральный узел аудитора -->
                                             <div class="audit-decision-center">
                                                 <div class="center-icon">👨‍⚖️</div>
                                                 <div class="center-title">Решение аудитора</div>
@@ -1430,8 +1438,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <!-- Ключевые особенности -->
                                 <div class="timeline-features">
                                     <h4>🎯 КЛЮЧЕВЫЕ ОСОБЕННОСТИ</h4>
                                     <div class="features-grid">
@@ -1454,8 +1460,6 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Легенда -->
                             <div class="status-legend">
                                 <h4></h4>
                                 <div class="legend-items">
