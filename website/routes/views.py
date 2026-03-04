@@ -1,11 +1,13 @@
 from datetime import datetime
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
+from flask import Blueprint, current_app, render_template, redirect, url_for, flash, request, jsonify, session
 from flask_login import current_user, login_required
+
+from website.report import get_reports_by_status
 from ..email import send_email
 from website.sessions import session_required
 from ..models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News, UserSession
 from .. import db
-from sqlalchemy import asc, case, or_, desc
+from sqlalchemy import and_, asc, case, or_, desc
 from functools import wraps
 from sqlalchemy.sql import func, or_
 from sqlalchemy.types import String
@@ -55,68 +57,6 @@ def auditors_only(f):
             return redirect(url_for('views.profile_common'))
         return f(*args, **kwargs)
     return decorated_function
-
-def get_reports_by_status(status, year=None, quarter=None):
-    filters = []
-    statuses = [
-        'Отправлен',
-        'Есть замечания',
-        'Одобрен',
-        'Готов к удалению'
-    ]
-
-    okpo_digit = str(current_user.organization.okpo)[0]
-
-    print(f"{okpo_digit}")
-    user_type = current_user.type
-
-    if year:
-        filters.append(Report.year == year)
-    if quarter:
-        filters.append(Report.quarter == quarter)
-
-    if user_type == "Администратор" or (user_type == "Аудитор" and str(current_user.organization.okpo)[-4] == "8"):
-        if status == 'all_reports':
-            return Report.query.join(Version_report).filter(
-                or_(*[Version_report.status == s for s in statuses]),
-                *filters
-            ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all() 
-        else:
-            trans_status = translate_status(status)
-            if trans_status:
-                return Report.query.join(Version_report).filter(
-                    Version_report.status == trans_status,
-                    *filters
-                ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
-            else:
-                return []
-    else:
-        print(f"{status}")
-        if status == 'all_reports':
-            return Report.query.join(Version_report).join(Organization).filter(
-                or_(*[Version_report.status == s for s in statuses]),
-                *filters,
-                func.substr(Organization.okpo, func.length(Organization.okpo) - 3, 1) == okpo_digit
-            ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
-        else:
-            trans_status = translate_status(status)
-            if trans_status:
-                return Report.query.join(Version_report).join(Organization).filter(
-                    Version_report.status == trans_status,
-                    *filters,
-                    func.substr(Organization.okpo, func.length(Organization.okpo) - 3, 1) == okpo_digit
-                ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
-            else:
-                return []
-
-def translate_status(status):
-    status_map = {
-        'not_viewed': 'Отправлен',
-        'remarks': 'Есть замечания',
-        'to_download': 'Одобрен',
-        'to_delete': 'Готов к удалению'
-    }
-    return status_map.get(status)
 
 @views.route('/', methods=['GET'])
 def beginPage():
@@ -338,7 +278,6 @@ def get_organizations():
         "total_pages": pagination.pages,  
         "total_items": pagination.total 
     })
-
 
 @views.route('/profile/password', methods=['GET'])
 @login_required

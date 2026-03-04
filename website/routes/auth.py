@@ -1319,9 +1319,9 @@ def print_version_tickets():
 @session_required
 def exportDBF():
     if request.method == 'POST':
-        from ..export import create_dbf_zip, get_approved_versions, send_zip_file
+        from ..export import create_dbf_zip, get_approved_reports, send_zip_file
         try:
-            versions = get_approved_versions(request.form)
+            versions = get_approved_reports(request.form)
             if not versions:
                 flash('Нет одобренных отчетов для выбранных фильтров.', 'error')
                 return redirect(request.referrer)
@@ -1641,6 +1641,13 @@ def load_org_stat():
     response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     response.headers['Content-Disposition'] = f'attachment; filename=orgs_{year_filter}_{quarter_filter}.xlsx'
     return response
+
+
+
+
+
+
+
 
 def create_test_users(userpassword):
     hashed_pass = generate_password_hash(userpassword)

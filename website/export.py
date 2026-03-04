@@ -5,15 +5,17 @@ from tempfile import NamedTemporaryFile
 import dbf
 import pandas as pd
 
-from flask import send_file, Response
+from flask import current_app, send_file, Response
 from flask_login import current_user
+
+from website.report import EXCLUDED_OKPO_LISTS, SPECIAL_OKPO_LISTS
 
 from . import db
 from .models import (
     Report, Version_report, Sections
 )
 
-from sqlalchemy import asc, case, func, desc
+from sqlalchemy import asc, case, func, desc, or_
 from sqlalchemy import func, String
 from sqlalchemy.orm import joinedload
 
@@ -470,7 +472,7 @@ def generate_excel_report(version_id):
 
     return send_file(file_stream, as_attachment=True, download_name=f'{current_report.okpo}_{current_report.year}_{current_report.quarter}.xlsx', mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
-def get_approved_versions(form_data):
+def get_approved_reports(form_data):
     year_filter = form_data.get('year_filter')
     quarter_filter = form_data.get('quarter_filter')
 
@@ -481,7 +483,19 @@ def get_approved_versions(form_data):
         filters.append(Report.quarter == quarter_filter)
 
     current_user_type = current_user.type
-    okpo_digit = str(current_user.organization.okpo)[-4]
+    user_okpo = str(current_user.organization.okpo)
+    okpo_digit = user_okpo[0] 
+
+    current_app.logger.info(f"4-я цифра с конца OKPO пользователя: {okpo_digit}")
+
+    special_condition = False
+    if okpo_digit.isdigit() and int(okpo_digit) in SPECIAL_OKPO_LISTS:
+        special_condition = True
+    
+
+    excluded_condition = False
+    if okpo_digit.isdigit() and int(okpo_digit) in EXCLUDED_OKPO_LISTS:
+        excluded_condition = True
 
     subquery = db.session.query(
         Report.okpo,
@@ -514,9 +528,30 @@ def get_approved_versions(form_data):
     )
 
     if not (current_user_type == "Администратор" or (current_user_type == "Аудитор" and okpo_digit == "8")):
-        query = query.filter(
-            func.substr(func.cast(Report.okpo, String), func.length(Report.okpo) - 3, 1) == okpo_digit
-        )
+        digit_condition = func.substr(func.cast(Report.okpo, String), func.length(Report.okpo) - 3, 1) == okpo_digit
+        
+        if special_condition and excluded_condition:
+            query = query.filter(
+                or_(
+                    digit_condition,
+                    Report.okpo.in_(SPECIAL_OKPO_LISTS[int(okpo_digit)])
+                ),
+                ~Report.okpo.in_(EXCLUDED_OKPO_LISTS[int(okpo_digit)])
+            )
+        elif special_condition:
+            query = query.filter(
+                or_(
+                    digit_condition,
+                    Report.okpo.in_(SPECIAL_OKPO_LISTS[int(okpo_digit)])
+                )
+            )
+        elif excluded_condition:
+            query = query.filter(
+                digit_condition,
+                ~Report.okpo.in_(EXCLUDED_OKPO_LISTS[int(okpo_digit)])
+            )
+        else:
+            query = query.filter(digit_condition)
 
     return query.all()
 

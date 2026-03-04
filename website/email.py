@@ -73,7 +73,7 @@ class Worker(Thread):
                 self.sent_today += 1
                 self.last_sent = time.time()
 
-            log.info(f"[ACC {self.acc_id}] Отправлено на {to_email}")
+            # log.info(f"[ACC {self.acc_id}] Отправлено на {to_email}")
             return True
 
         except Exception as e:
