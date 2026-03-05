@@ -8,7 +8,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
 
-SMTP_HOST = "ms7.g-cloud.by"
+SMTP_HOST = os.getenv("SMTP_HOST")
 
 EMAILS_PER_MINUTE = 10
 DAILY_LIMIT = 200
@@ -23,6 +23,19 @@ PRIORITY = {
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("email-service")
+
+
+def safe_email_log(email, show_chars=4):
+    if not email or '@' not in email:
+        return email
+    
+    local, domain = email.split('@', 1)
+
+    if len(local) > show_chars:
+        masked_local = local[:show_chars] + '*' * (len(local) - show_chars)
+    else:
+        masked_local = local + '*' * (show_chars - len(local))
+    return f"{masked_local}@{domain}"
 
 class Worker(Thread):
     def __init__(self, email, password, acc_id, queue):
@@ -71,7 +84,7 @@ class Worker(Thread):
                 server.sendmail(self.email, to_email, msg.as_string())
                 server.quit()
                 
-                log.info(f"[ACC {self.acc_id}] Успешно подключились через порт {port}")
+                # log.info(f"[ACC {self.acc_id}] Успешно подключились через порт {port}")
                 
                 with self.lock:
                     self.sent_today += 1
@@ -81,10 +94,10 @@ class Worker(Thread):
                 
             except Exception as e:
                 last_error = e
-                log.warning(f"[ACC {self.acc_id}] Порт {port} не работает: {str(e)}")
+                log.warning(f"Port {port} error: {str(e)}")
                 continue
         
-        log.error(f"[ACC {self.acc_id}] Все порты недоступны: {last_error}")
+        # log.error(f"[ACC {self.acc_id}] Все порты недоступны: {last_error}")
         return False
 
     def run(self):
@@ -137,9 +150,9 @@ class EmailQueue:
             i += 1
 
         if not workers:
-            raise RuntimeError("Не найдено ни одного аккаунта")
+            raise RuntimeError("No email accs")
 
-        log.info(f"Загружено {len(workers)} аккаунтов")
+        # log.info(f"Загружено {len(workers)} аккаунтов")
         return workers
 
     def add(self, to_email, subject, html, email_type="default"):
@@ -151,7 +164,7 @@ class EmailQueue:
             "attempt": 0,
             "type": email_type
         }))
-        log.info(f"Задание добавлено в очередь: {to_email}, тип: {email_type}")
+        log.info(f"The task has been added to the queue: {safe_email_log(to_email)}, type: {email_type}")
 
 def build_html(message_body, email_type):
     html_template = f"""
@@ -259,4 +272,4 @@ def send_email(message, recipient_email, email_type="default"):
         html=html,
         email_type=email_type
     )
-    log.info(f"Письмо поставлено в очередь для {recipient_email}")
+    log.info(f"The message has been queued for {safe_email_log(recipient_email)}")

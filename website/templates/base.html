@@ -14,19 +14,19 @@
     <div class="overlay hidden"></div>
     {% if not hide_header %}
     <header class="fixed-header">
-      <div class="header-left">
-         <nav>
-          <ul>  
-            <li id="menu-button"> 
-              <img src="{{ url_for('static', filename='img/menu_black.png')}}" alt="">
-            </li> 
-            <li class = "name_app" onclick="window.location.href='/'"> 
-              <img src="{{ url_for('static', filename='img/logo_blue.png')}}" alt="logo">
-              <a href="/">ErespondentN</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+        <div class="header-left">
+            <nav>
+            <ul>  
+                <li id="menu-button"> 
+                <img src="{{ url_for('static', filename='img/menu_black.png')}}" alt="">
+                </li> 
+                <li class = "name_app" onclick="window.location.href='/'"> 
+                <img src="{{ url_for('static', filename='img/logo_blue.png')}}" alt="logo">
+                <a href="/">ErespondentN</a>
+                </li>
+            </ul>
+            </nav>
+        </div>
         <div class="header-center">
             <nav>
                 <ul>
@@ -78,55 +78,55 @@
                 </ul>
             </nav>
         </div>
-      <div class="header-right">   
-        <div class="user-container">
-          {% set icon_path = 'img/icon_black-user.png' if current_user.is_authenticated else 'img/log.png' %}
-          <img class="user-icon-header" src="{{ url_for('static', filename=icon_path) }}" alt="">
+        <div class="header-right">   
+            <div class="user-container">
+            {% set icon_path = 'img/icon_black-user.png' if current_user.is_authenticated else 'img/log.png' %}
+            <img class="user-icon-header" src="{{ url_for('static', filename=icon_path) }}" alt="">
+            </div>
+            <div id="user-navigation" class="user-navigation">
+                {% if current_user.is_authenticated %}
+                    <button onclick="window.location.href='/account'">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span>Мой профиль</span>
+                    </button>
+                    <button onclick="window.location.href='/profile/common'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                        <span>Парамметры профиля</span>
+                    </button>
+                    <button onclick="window.location.href='/FAQ'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                    </svg>
+                        <span>Ответы на вопросы</span>
+                    </button>
+                    <button onclick="window.location.href='/#toadmin'">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <span>Обратная связь</span>
+                    </button>
+                                    
+                    <button onclick="window.location.href='/logout'">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span>Выйти</span>
+                    </button>
+                {% else %}
+                    <button onclick="window.location.href='/login'">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span>Войти</span>
+                    </button>
+                {% endif %}
+            </div>
         </div>
-        <div id="user-navigation" class="user-navigation">
-            {% if current_user.is_authenticated %}
-                <button onclick="window.location.href='/account'">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span>Мой профиль</span>
-                </button>
-                <button onclick="window.location.href='/profile/common'">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                    <span>Парамметры профиля</span>
-                </button>
-                <button onclick="window.location.href='/FAQ'">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
-                  </svg>
-                    <span>Ответы на вопросы</span>
-                </button>
-                <button onclick="window.location.href='/#toadmin'">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    <span>Обратная связь</span>
-                </button>
-                                
-                <button onclick="window.location.href='/logout'">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <span>Выйти</span>
-                </button>
-            {% else %}
-                <button onclick="window.location.href='/login'">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <span>Войти</span>
-                </button>
-            {% endif %}
-        </div>
-      </div>
     </header>
     {% endif %}
 
@@ -460,7 +460,7 @@
         </div>
     </div>
     {% endif %}
-    {% if accwelcomeModal %}
+    {% if accwelcomeModal and current_user.organization_id == None %}
     <div id="system-welcome-modal-acc" class="modal" style="display: none;">
         <div class="info-modal-content">
             <svg class="circle-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
