@@ -9,7 +9,7 @@ The web application automates the processes of respondents forming reports in th
 
 ### Version
 
-3.7.14 - byPostgre
+4.7.14
 
 ### Requirements
 
@@ -19,28 +19,17 @@ The web application automates the processes of respondents forming reports in th
 
 ### Database Settings
 
-1. Make a user `kyrator` and give him pass `palletenjoer`.
+Create database `erespondentdb` with superuser `admin` for an example.
 
-2. Create database `erespondent` with superuser `kyrator`.
-
-Create database eres with superuser kyrator.
 ### Installation app
 
 1. Clone the `erespondentN` repository.
 
-2. Create a virtual environment:
+2. Enter the commands:
 ```bash 
-python -m venv .venv
-```
-
-3. Activate the virtual environment:
-```bash 
-.venv\Scripts\activate
-```
-
-4. Install the libraries:
-```bash 
-pip install -r requirements.txt
+python -m venv .venv                    # Create a virtual environment
+.venv\Scripts\activate                  # Activate the virtual environment
+pip install -r requirements.txt         # Install the libraries
 ```
 
 ### Launch
