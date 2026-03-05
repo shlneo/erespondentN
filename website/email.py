@@ -9,7 +9,6 @@ from email.mime.text import MIMEText
 from email.utils import formatdate
 
 SMTP_HOST = "ms7.g-cloud.by"
-SMTP_PORT = 465  # Или 587
 
 EMAILS_PER_MINUTE = 10
 DAILY_LIMIT = 200
@@ -47,38 +46,46 @@ class Worker(Thread):
         return True
 
     def send_email(self, to_email, subject, html):
-        try:
-            if SMTP_PORT == 465:
-                server = smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=20)
-            else:
-                server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20)
-                if SMTP_PORT == 587:
-                    server.starttls()
-            
-            server.ehlo()
-            
-            server.login(self.email, self.password)
-
-            msg = MIMEMultipart()
-            msg["From"] = self.email
-            msg["To"] = to_email
-            msg["Subject"] = subject
-            msg["Date"] = formatdate(localtime=True)
-            msg.attach(MIMEText(html, "html"))
-
-            server.sendmail(self.email, to_email, msg.as_string())
-            server.quit()
-
-            with self.lock:
-                self.sent_today += 1
-                self.last_sent = time.time()
-
-            # log.info(f"[ACC {self.acc_id}] Отправлено на {to_email}")
-            return True
-
-        except Exception as e:
-            log.error(f"[ACC {self.acc_id}] Ошибка: {str(e)}")
-            return False
+        ports_to_try = [465, 587]
+        
+        last_error = None
+        for port in ports_to_try:
+            try:
+                if port == 465:
+                    server = smtplib.SMTP_SSL(SMTP_HOST, port, timeout=20)
+                else:
+                    server = smtplib.SMTP(SMTP_HOST, port, timeout=20)
+                    if port == 587:
+                        server.starttls()
+                
+                server.ehlo()
+                server.login(self.email, self.password)
+                
+                msg = MIMEMultipart()
+                msg["From"] = self.email
+                msg["To"] = to_email
+                msg["Subject"] = subject
+                msg["Date"] = formatdate(localtime=True)
+                msg.attach(MIMEText(html, "html"))
+                
+                server.sendmail(self.email, to_email, msg.as_string())
+                server.quit()
+                
+                log.info(f"[ACC {self.acc_id}] Успешно подключились через порт {port}")
+                
+                with self.lock:
+                    self.sent_today += 1
+                    self.last_sent = time.time()
+                
+                return True
+                
+            except Exception as e:
+                last_error = e
+                log.warning(f"[ACC {self.acc_id}] Порт {port} не работает: {str(e)}")
+                continue
+        
+        log.error(f"[ACC {self.acc_id}] Все порты недоступны: {last_error}")
+        return False
 
     def run(self):
         while True:
