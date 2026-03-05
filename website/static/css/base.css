@@ -1347,14 +1347,17 @@ main {
 }
 
 .news-row-right{
-    max-width: 650px; text-align: center;
+    max-width: 650px; 
+    text-align: center;
 }
 
 .news-row-right img{
     width: 80%;
     height: auto;
     object-fit: cover;    
-    border-radius: 10px;
+    border-radius: 20px;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.301);  */
+    border: 1px solid var(--border-color);
 }
 
 .item_news{
