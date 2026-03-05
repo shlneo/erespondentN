@@ -17,18 +17,18 @@ class Message(db.Model):
     sender = db.relationship('User', foreign_keys=[sender_id], backref=backref('sent_messages', lazy=True, cascade="all, delete-orphan"))
     recipient = db.relationship('User', foreign_keys=[recipient_id], backref=backref('received_messages', lazy=True, cascade="all, delete-orphan"))
 
-class UserSession(db.Model):
-    __tablename__ = 'user_session' 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    session_token = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
-    device_name = db.Column(db.String(64), default='None')
-    device_app = db.Column(db.String(64), default='None')
-    device_place = db.Column(db.String(64), default='None')
-    ip_address = db.Column(db.String(45), default='None')
-    created_at = db.Column(db.DateTime, default=current_utc_time)
-    last_active = db.Column(db.DateTime, default=current_utc_time)
-    user = db.relationship('User', backref=backref('sessions', lazy=True, cascade="all, delete-orphan"))
+# class UserSession(db.Model):
+#     __tablename__ = 'user_session' 
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+#     session_token = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
+#     device_name = db.Column(db.String(64), default='None')
+#     device_app = db.Column(db.String(64), default='None')
+#     device_place = db.Column(db.String(64), default='None')
+#     ip_address = db.Column(db.String(45), default='None')
+#     created_at = db.Column(db.DateTime, default=current_utc_time)
+#     last_active = db.Column(db.DateTime, default=current_utc_time)
+#     user = db.relationship('User', backref=backref('sessions', lazy=True, cascade="all, delete-orphan"))
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'

@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 from website.report import get_reports_by_status
 from ..email import send_email
 from website.sessions import session_required
-from ..models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News, UserSession
+from ..models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News
 from .. import db
 from sqlalchemy import and_, asc, case, or_, desc
 from functools import wraps
@@ -224,22 +224,22 @@ def profile_common():
 @login_required
 @session_required
 def profile_session():
-    current_token = request.cookies.get('session_token')
-    sessions = UserSession.query.filter_by(user_id=current_user.id).all()
+    # current_token = request.cookies.get('session_token')
+    # sessions = UserSession.query.filter_by(user_id=current_user.id).all()
 
-    current_session = None
-    other_sessions = []
+    # current_session = None
+    # other_sessions = []
 
-    for sess in sessions:
-        if sess.session_token == current_token:
-            current_session = sess
-        else:
-            other_sessions.append(sess)
+    # for sess in sessions:
+    #     if sess.session_token == current_token:
+    #         current_session = sess
+    #     else:
+    #         other_sessions.append(sess)
 
     return render_template(
         'profile_session.html',
-        current_session=current_session,
-        other_sessions=other_sessions,
+        # current_session=current_session,
+        # other_sessions=other_sessions,
                         active_tab = 'session'
     )
 

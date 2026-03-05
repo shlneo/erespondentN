@@ -42,7 +42,7 @@ from reportlab.pdfbase import pdfmetrics
 from .. import db
 from ..models import (
     User, Organization, Report, Version_report, DirUnit,
-    DirProduct, Sections, Ticket, Message, UserSession
+    DirProduct, Sections, Ticket, Message
 )
 
 from website.ecp import check_certificate_expiry
@@ -292,15 +292,20 @@ def profile_password():
 
         send_email('Вы успешно изменили свой пароль для входа в учетную запись ErespondentN', current_user.email, 'just_notif')
 
-        UserSession.query.filter_by(user_id=current_user.id).delete()
-        db.session.commit()
+        # UserSession.query.filter_by(user_id=current_user.id).delete()
+        # db.session.commit()
 
+        # logout_user()
+        # session.clear()
+
+        # response = make_response(redirect(url_for('auth.login')))
+        # response.delete_cookie('session_token')
+        
+        response = make_response(redirect(url_for('views.login')))
+        response = clear_session_cookie(response)
         logout_user()
-        session.clear()
-
-        response = make_response(redirect(url_for('auth.login')))
-        response.delete_cookie('session_token')
-        flash('Пароль изменён. Выполнен выход из всех устройств.', 'success')
+    
+        flash('Пароль изменён. Выполнен выход из системы.', 'success')
         return response
     return redirect(url_for('views.profile_password'))
 

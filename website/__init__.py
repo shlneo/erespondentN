@@ -85,7 +85,7 @@ def create_app():
         create_database(app, db)
     
     from website.admin.admin_views import MyMainView
-    from .models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News, UserSession
+    from .models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News
     
     from website.admin.user_view import UserView
     from website.admin.organization_view import OrganizationView

@@ -12,7 +12,7 @@ from collections import defaultdict
 
 from .time import get_previous_quarter, get_report_year, current_utc_time
 
-from .models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News, UserSession
+from .models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News
 from . import db
 
 def cancel_sending(id):
