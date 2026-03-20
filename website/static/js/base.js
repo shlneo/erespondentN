@@ -26,18 +26,46 @@ function scrollToTickets() {
     }
 }
 
+let ticking = false;
+
 window.addEventListener('scroll', () => {
     const header = document.querySelector('.fixed-header');
-    if (window.scrollY > 0) {
-        header.style.backgroundColor = 'white';
-        if (window.innerWidth >= 1000) {
-            header.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.1)';
-        } else {
-            header.style.boxShadow = 'none';
+    const scrollY = window.scrollY;
+    
+    if (!ticking) {
+        requestAnimationFrame(() => {
+            if (scrollY > 50) {
+                if (!header.classList.contains('bubble')) {
+                    header.classList.remove('bubble-reverse');
+                    header.classList.add('bubble');
+                }
+            } else if (scrollY === 0) {
+                if (header.classList.contains('bubble')) {
+                    header.classList.remove('bubble');
+                    header.classList.add('bubble-reverse');
+                    setTimeout(() => {
+                        header.classList.remove('bubble-reverse');
+                    }, 500);
+                }
+            }
+            
+            ticking = false;
+        });
+        
+        ticking = true;
+    }
+});
+
+window.addEventListener('resize', () => {
+    const header = document.querySelector('.fixed-header');
+    const scrollY = window.scrollY;
+    
+    if (window.innerWidth <= 768) {
+        if (scrollY > 50) {
+            header.classList.add('bubble');
+        } else if (scrollY === 0) {
+            header.classList.remove('bubble');
         }
-    } else {
-        header.style.backgroundColor = 'transparent';
-        header.style.boxShadow = 'none';
     }
 });
 
@@ -305,73 +333,20 @@ document.addEventListener('DOMContentLoaded', function () {
         initResizableTables();
     }
 
-    const menuButton = document.getElementById('menu-button');   
-    const img = menuButton.querySelector('img'); 
-    
-    const headerCenter = document.querySelector('.header-center');
-    const fixed_header = document.querySelector('.fixed-header');
-    
     const usernavigation = document.getElementById('user-navigation');
     const overlay = document.querySelector('.overlay');
     
-    function showHeaderCenter() {
-        if (headerCenter && overlay) {
-            usernavigation.classList.add('hidden');
-            headerCenter.classList.remove('hidden');                 
-            fixed_header.style.backgroundColor = '#fff';
-            headerCenter.classList.add('show');
-    
-            overlay.classList.add('show');
-        }
-    }
-    
-    function hideHeaderCenter() {
-        if (headerCenter && overlay) {
-            headerCenter.classList.remove('show');
-            headerCenter.classList.add('hidden');
-            overlay.classList.remove('show');
-        }
-    }
-    
-    if (menuButton && headerCenter && overlay) {
-        menuButton.addEventListener('click', function(event) {
-            if (headerCenter.classList.contains('show')) {
-                img.classList.remove('rotate');
-                hideHeaderCenter();
-            } else {
-                showHeaderCenter();
-                img.classList.toggle('rotate');
-            }
-            event.stopPropagation();
-        });
-    
-        document.addEventListener('click', function(event) {
-            if (!headerCenter.contains(event.target) && !menuButton.contains(event.target)) {
-                img.classList.remove('rotate'); 
-                hideHeaderCenter();
-            }
-        });
-    
-        headerCenter.addEventListener('click', function(event) {
-            img.classList.remove('rotate'); 
-            event.stopPropagation();
-        });
-    }
-    
-    /* end menuButton */
-
     /* show and hide buttons passwords */
     setupPasswordToggle('password-field', 'show-icon', 'hide-icon');
     setupPasswordToggle('password-field1', 'show-icon1', 'hide-icon1');
     /* end show and hide buttons passwords */
 
     /* hoveruser panel */
-    const userImgs = document.querySelectorAll('.user-icon-header');
+    const userImgs = document.querySelectorAll('.user-container');
     let timeoutId;
     
     function showusernavigation() {
         if (usernavigation && overlay) {
-            headerCenter.classList.add('hidden');
             usernavigation.classList.remove('hidden');
             usernavigation.classList.add('show');
             overlay.classList.add('show');

@@ -36,14 +36,10 @@
                 <td>dirProduct</td>
                 <td>{{ dirProduct_data }}</td>
             </tr>
-            <tr>
-                <td>img files</td>
-                <td>{{ num_images }}</td>
-            </tr>
         </tbody>
     </table>
     
-    <div style="margin-top: 20px;">
+    {#<div style="margin-top: 20px;">
         <form action="{{ url_for('dbs.units') }}" method="get" target="_blank">
             <button type="submit" class="btn btn-primary">Показать все юниты</button>
         </form>
@@ -72,7 +68,8 @@
         <form action="{{ url_for('dbs.add_units') }}" method="get" target="_blank">
             <button type="submit" class="btn btn-primary">Добавить новые юниты</button>
         </form>
-    </div>{##}
+    </div>
+    #}
 </div>
 
 {% endblock %}

@@ -36,7 +36,7 @@ class UserView(ModelView):
     }
     
     column_exclude_list = ['password']
-    column_searchable_list = ['email', 'fio', 'telephone']
+    column_searchable_list = ['email', 'fio', 'telephone', 'id']
     column_filters = ['id','email', 'fio']
     column_editable_list = ['email', 'fio', 'type']
     

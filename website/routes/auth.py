@@ -1516,12 +1516,12 @@ def sent_for_admin():
             db.session.commit()
                 
             flash('Сообщение отправлено.', 'success')
-            admin_user = os.getenv('adminemail3')
-            if admin_user:
-                try:
-                    send_email(full_message, admin_user, 'just_notif')
-                except Exception as e:
-                    current_app.logger.error(f"Ошибка отправки email: {str(e)}")
+            # admin_user = os.getenv('adminemail3')
+            # if admin_user:
+            #     try:
+            #         send_email(full_message, admin_user, 'just_notif')
+            #     except Exception as e:
+            #         current_app.logger.error(f"Ошибка отправки email: {str(e)}")
         else:
             flash('Администраторов нет.', 'error')
             
