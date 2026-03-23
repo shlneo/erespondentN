@@ -7,7 +7,7 @@
     <div class = "log_reg_contener">
         <div class = "log_reg_img">
         </div>
-        <div class = "log_reg_form"> 
+        <div class = "log-reg-form"> 
             <form action = '/sign' method="POST">
                 <div class = "link_cont">
                     <a onclick="window.location.href='/login'" style = "margin-right: 19px;">Авторизация</a>
@@ -97,7 +97,7 @@
                 <div class = "remember_cont">
                     <input type="checkbox" name= "" required>
                     <span>Я принимаю условия 
-                        <a href="{{ url_for('static', filename='files/user_agreement/пользовательское_соглашение.pdf') }}" download="Пользовательское_соглашение.pdf">
+                        <a class = "instruction-link" href="{{ url_for('static', filename='files/user_agreement/пользовательское_соглашение.pdf') }}" download="Пользовательское_соглашение.pdf">
                             пользовательского соглашения
                         </a></span>
                 </div>

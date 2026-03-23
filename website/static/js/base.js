@@ -1161,4 +1161,88 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
+(function() {
+    const rollers = document.querySelectorAll('.counter-roller');
+    if (!rollers.length) return;
+    
+    const ITEM_HEIGHT = 75;
+    
+    const createDigitWheel = (digit) => {
+        const wheel = document.createElement('div');
+        wheel.className = 'digit-wheel';
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'digit-wrapper';
+        
+        for (let i = 0; i <= 9; i++) {
+            const span = document.createElement('span');
+            span.textContent = i;
+            wrapper.appendChild(span);
+        }
+        
+        wheel.appendChild(wrapper);
+        return { wheel, wrapper };
+    };
+    
+    const formatNumber = (num) => {
+        return num.toString().split('');
+    };
+    
+    rollers.forEach(roller => {
+        const target = parseInt(roller.getAttribute('data-target'));
+        if (isNaN(target)) return;
+        
+        const digits = formatNumber(target);
+        const container = roller.querySelector('.digits-container');
+        container.innerHTML = '';
+        
+        const wheels = [];
+        
+        digits.forEach((digit, index) => {
+            const { wheel, wrapper } = createDigitWheel(parseInt(digit));
+            container.appendChild(wheel);
+            wheels.push({
+                wrapper,
+                targetDigit: parseInt(digit),
+                currentDigit: 0
+            });
+        });
+        
+        roller.wheels = wheels;
+        roller.targetValue = target;
+    });
+    
+    let animated = false;
+    const startAnimation = () => {
+        if (animated) return;
+        animated = true;
+        
+        setTimeout(() => {
+            rollers.forEach((roller, rollerIndex) => {
+                const wheels = roller.wheels;
+                if (!wheels) return;
+                
+                wheels.forEach((wheel, wheelIndex) => {
+                    setTimeout(() => {
+                        const targetDigit = wheel.targetDigit;
+                        const rotations = 2;
+                        const totalSteps = rotations * 10 + targetDigit;
+                        const offset = -(totalSteps % 10) * ITEM_HEIGHT;
+                        
+                        wheel.wrapper.style.transform = `translateY(${offset}px)`;
+                    }, rollerIndex * 200 + wheelIndex * 150);
+                });
+            });
+        }, 300);
+    };
+    
+    const observer = new IntersectionObserver(entries => {
+        if (entries.some(e => e.isIntersecting)) {
+            startAnimation();
+            observer.disconnect();
+        }
+    }, { threshold: 0.3 });
+    
+    const statsRow = document.querySelector('.statistics-row');
+    statsRow ? observer.observe(statsRow) : startAnimation();
+})();

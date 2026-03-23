@@ -7,7 +7,7 @@
         <div class = "log_reg_img">
 
         </div>
-        <div class = "log_reg_form" > 
+        <div class = "log-reg-form" > 
             <form action = "/login" method="POST">
                 <div class = "link_cont">
                     <a onclick="window.location.href='/login'" class = "active" style = "margin-right: 19px;">Авторизация</a>
@@ -73,21 +73,9 @@
                 
             </form>
             <div class = "log_buttons_area">
-                <form action= "/relod-password" method="POST">
-                    
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <div class = "forgot_cont">
-                        <input   
-                            type="hidden"
-                            class="form-control"
-                            id="email_relod"
-                            name="email_relod" 
-                            value = ""
-                            readonly
-                            >
-                        <button class = 'relod_button' type="submit">Забыли пароль?</button>
-                    </div>
-                </form>
+                <div class="forgot_cont">
+                    <a onclick="window.location.href='/forgot-password'" type="submit">Забыли пароль?</a>
+                </div>
                 <hr style = "border: none; border-bottom: 1px solid rgb(56, 56, 56); width: 100%;"/> 
                 <div class = "log_with"> 
                     <button type="button" class="google_button" onclick="window.location.href='{{ url_for('login_google') }}'" title="Войти с помощью google">

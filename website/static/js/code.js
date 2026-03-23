@@ -34,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
         inputs[nextFocusIndex].focus();
     });
 
-    const resendButton = document.getElementById('relod_button_code');
-    const TIME_LIMIT = 60; // 60 секунд (1 минута)
+    const resendButton = document.getElementById('resend-cod');
+    const TIME_LIMIT = 60;
     const STORAGE_KEY = 'resend_code_timer';
 
     let timerInterval = null;

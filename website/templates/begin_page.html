@@ -45,23 +45,29 @@
         </div>
     </div>
     <div class="statistics-row">
-        <div class = "statistics-row-left">
+        <div class="statistics-row-left">
             <img src="{{ url_for('static', filename='img/stats.jpg')}}" alt="">
         </div>
-        <div class = "statistics-row-right">
+        <div class="statistics-row-right">
             <div class="item_stat">  
-                <div class = "stat_count">{{organization_data}}</div>
-                <a class = "stat_name">предприятий</a>
+                <div class="counter-roller" data-target="{{ organization_data }}">
+                    <div class="digits-container"></div>
+                </div>
+                <a class="stat_name">предприятий</a>
             </div>
 
             <div class="item_stat">
-                <div class = "stat_count">{{report_data}}</div>
-                <a class = "stat_name">отчетов</a>
+                <div class="counter-roller" data-target="{{ report_data }}">
+                    <div class="digits-container"></div>
+                </div>
+                <a class="stat_name">отчетов</a>
             </div>
 
             <div class="item_stat">
-                <div class = "stat_count">{{user_data}}</div>
-                <a class = "stat_name">респондентов</a>
+                <div class="counter-roller" data-target="{{ user_data }}">
+                    <div class="digits-container"></div>
+                </div>
+                <a class="stat_name">респондентов</a>
             </div>
         </div>
     </div>

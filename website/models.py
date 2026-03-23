@@ -1,9 +1,7 @@
 from . import db
 from flask_login import UserMixin
-from datetime import datetime, timedelta
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Numeric
-import uuid
 from .time import current_utc_time
 
 class Message(db.Model):
@@ -13,22 +11,8 @@ class Message(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     text = db.Column(db.String(500))
-
     sender = db.relationship('User', foreign_keys=[sender_id], backref=backref('sent_messages', lazy=True, cascade="all, delete-orphan"))
     recipient = db.relationship('User', foreign_keys=[recipient_id], backref=backref('received_messages', lazy=True, cascade="all, delete-orphan"))
-
-# class UserSession(db.Model):
-#     __tablename__ = 'user_session' 
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-#     session_token = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
-#     device_name = db.Column(db.String(64), default='None')
-#     device_app = db.Column(db.String(64), default='None')
-#     device_place = db.Column(db.String(64), default='None')
-#     ip_address = db.Column(db.String(45), default='None')
-#     created_at = db.Column(db.DateTime, default=current_utc_time)
-#     last_active = db.Column(db.DateTime, default=current_utc_time)
-#     user = db.relationship('User', backref=backref('sessions', lazy=True, cascade="all, delete-orphan"))
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
@@ -53,19 +37,15 @@ class Organization(db.Model):
     ministry = db.Column(db.String()) 
     is_active = db.Column(db.Boolean, default=True)
     reports = db.relationship('Report', backref='organization', lazy=True)
-
     # @property
     # def ministry(self):
     #     return self.ministry_rel.name if self.ministry_rel else None
-
 
 # class Ministry(db.Model):
 #     __tablename__ = 'ministry'
 #     id = db.Column(db.Integer, primary_key=True)
 #     name = db.Column(db.String(200), nullable=False, unique=True)
 #     code = db.Column(db.String(50), nullable=True)
-    
-#     # Связь с организациями
 #     organizations = db.relationship('Organization', backref='ministry_rel', lazy=True)
 
 class Report(db.Model):
@@ -102,7 +82,6 @@ class Ticket(db.Model):
     luck = db.Column(db.Boolean, default=False)
     note = db.Column(db.String(500))
     version_report_id = db.Column(db.Integer, db.ForeignKey('version_report.id'))
-
     version_report = db.relationship("Version_report", back_populates="tickets")
 
 class DirUnit(db.Model):

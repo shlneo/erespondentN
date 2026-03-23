@@ -233,7 +233,7 @@
                         <ol class="steps-list">
                             <li><strong>Перейдите на страницу <a href="/login"  class = "instruction-link">авторизации</a></strong>;</li>
                             <li>Введите в поле <strong>E-mail</strong> электронный адрес, <strong>на который был зарегистрирован аккаунт</strong>;</li>
-                            <li>Найдите на странице кнопку <strong>«Забыли пароль?»</strong> и <strong>нажмите на неё</strong> (см. рисунок №6).</li>
+                            <li>Найдите на странице кнопку <strong>«Забыли пароль?»</strong> и <strong>нажмите на неё</strong> (см. рисунок №6);</li>
                         </ol>
                         
                         <div class="p_img">
@@ -241,14 +241,22 @@
                             <span>Рисунок 6 - Кнопка «Забыли пароль?» на странице авторизации</span>
                         </div>
                         
+                        <ol class="steps-list" style="counter-reset: step-counter 3;" >
+                            <li><strong>В открывшейся форме введите ваш электронный адрес;</strong></li>
+                            <li><strong>Нажмите кнопку "Отправить" (см. рисунок №7).</strong></li>
+                        </ol>
+                        <div class="p_img">
+                            <img src="{{ url_for('static', filename='img/post/foget-pass-form.png') }}" alt="">
+                            <span>Рисунок 7 - Форма "Забыли пароль?"</span>
+                        </div>
                         <div class="answer-highlight-second">
                             <div class="highlight-icon">📧</div>
                             <div>
                                 <p><strong>Что происходит дальше:</strong></p>
                                 <ol>
-                                    <li>Если аккаунт с таким email <strong>существует</strong>, на вашу почту придет письмо</li>
-                                    <li>В письме будет <strong>новый временный пароль</strong></li>
-                                    <li><strong>Используйте</strong> этот пароль для входа в систему</li>
+                                    <li>Если аккаунт с таким email <strong>существует</strong>, на вашу почту придет письмо.</li>
+                                    <li>В письме будет <strong>новый временный пароль</strong>.</li>
+                                    <li><strong>Используйте</strong> этот пароль для входа в систему.</li>
                                 </ol>
                             </div>
                         </div>

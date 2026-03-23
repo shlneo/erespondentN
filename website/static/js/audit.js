@@ -1,124 +1,197 @@
-var rollbackButton = document.getElementById('rollbackButton');
-rollbackButton.addEventListener('click', function(event) {
-    var activeRow = document.querySelector('.report_row.active-report');
-    if (activeRow !== null) {
-        var ReportId = activeRow.dataset.id;
-        if (ReportId) {
-            var deleteForm = document.getElementById('deleteReport');
-            deleteForm.action = '/rollbackreport/' + ReportId;
+// static/js/audit_module.js
+class AuditModule {
+    constructor() {
+        this.currentStatus = document.getElementById('current-status')?.value || 'all_reports';
+        this.yearFilter = document.getElementById('year-filter-value')?.value || '';
+        this.quarterFilter = document.getElementById('quarter-filter-value')?.value || '';
+        this.previousReportRow = null;
+        this.selectedReportId = null;
+        this.longPressTimer = null;
+        this.LONG_PRESS_DELAY = 500;
+        this.isLongPress = false;
+        this.init();
+    }
+
+    async init() {
+        await this.loadData();
+        this.attachEventListeners();
+        this.attachGlobalEventListeners();
+    }
+
+    attachGlobalEventListeners() {
+        const rollbackButton = document.getElementById('rollbackButton');
+        if (rollbackButton) {
+            rollbackButton.addEventListener('click', (event) => this.handleRollback(event));
         }
-    } else {
-        alert('Выберите отчет для отката');
-        event.preventDefault();
+
+        window.addEventListener('scroll', () => this.handleScroll());
+        
+        const contextMenuReport = document.getElementById('contextMenu_report');
+        if (contextMenuReport) {
+            document.addEventListener('click', (event) => this.hideContextMenu(event));
+            document.addEventListener('touchstart', (event) => this.hideContextMenu(event));
+        }
+        
+        this.setupNavigationItems();
+        this.setupModals();
+        this.setupDownloadLinks();
     }
-});
 
-window.addEventListener('scroll', function() {
-    const menu = document.querySelector('.sticky_menu');
-    if (window.scrollY > 60) {
-        menu.classList.add('shadow');
-    } else {
-        menu.classList.remove('shadow');
+    async loadData() {
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const reportsContent = document.getElementById('reports-content');
+        const emptyState = document.getElementById('empty-state');
+        
+        if (loadingSpinner) loadingSpinner.style.display = 'flex';
+        if (reportsContent) reportsContent.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'none';
+
+        this.animateStatsLoading();
+
+        try {
+            const data = await this.fetchAuditData();
+            if (data.success) {
+                this.updateStatsWithAnimation(data.stats);
+                this.renderReports(data.reports);
+                
+                if (loadingSpinner) loadingSpinner.style.display = 'none';
+                
+                this.attachRowEventListeners();
+            }
+        } catch (error) {
+            console.error('Error loading data:', error);
+            if (loadingSpinner) loadingSpinner.style.display = 'none';
+            this.showError('Ошибка загрузки данных');
+        }
     }
-});
 
-
-document.addEventListener('DOMContentLoaded', function () {
-    var reportRows = document.querySelectorAll('.report_row');
-    var navigationItems = document.querySelectorAll('.menu_audit li');
-
-    var previousReportRow = null;
-    var selectedReportId = null;
-    var contextMenuReport = document.getElementById('contextMenu_report');
-    var form = document.getElementById('change-category-form');
-    var reportIdInput = document.getElementById('report-id-input');
-    var actionInput = document.getElementById('action-input');
-
-    
-    function filterTable() {
-        const okpoValue = document.getElementById('okpo-filter').value.toLowerCase();
-        const organizationValue = document.getElementById('organization-filter').value.toLowerCase();
-
-        document.querySelectorAll('.report_row').forEach(row => {
-            const okpoText = row.querySelector('#report_okpo') ? row.querySelector('#report_okpo').value.toLowerCase() : '';
-            const organizationText = row.querySelector('#report_organization_name') ? row.querySelector('#report_organization_name').value.toLowerCase() : '';
-
-            const okpoMatch = okpoText.includes(okpoValue);
-            const organizationMatch = organizationText.includes(organizationValue);
-
-            row.style.display = okpoMatch && organizationMatch ? '' : 'none';
+    attachRowEventListeners() {
+        const reportRows = document.querySelectorAll('.report_row');
+        
+        reportRows.forEach((row) => {
+            row.removeEventListener('click', this.handleRowClick);
+            row.removeEventListener('contextmenu', this.handleContextMenu);
+            row.removeEventListener('touchstart', this.handleTouchStart);
+            row.removeEventListener('touchmove', this.handleTouchMove);
+            row.removeEventListener('touchend', this.handleTouchEnd);
+            row.removeEventListener('touchcancel', this.handleTouchCancel);
+            row.removeEventListener('dragstart', this.handleDragStart);
+            row.removeEventListener('dragend', this.handleDragEnd);
+            
+            this.handleRowClick = this.handleRowClick.bind(this);
+            this.handleContextMenu = this.handleContextMenu.bind(this);
+            this.handleTouchStart = this.handleTouchStart.bind(this);
+            this.handleTouchMove = this.handleTouchMove.bind(this);
+            this.handleTouchEnd = this.handleTouchEnd.bind(this);
+            this.handleTouchCancel = this.handleTouchCancel.bind(this);
+            this.handleDragStart = this.handleDragStart.bind(this);
+            this.handleDragEnd = this.handleDragEnd.bind(this);
+            
+            row.addEventListener('click', this.handleRowClick);
+            row.addEventListener('contextmenu', this.handleContextMenu);
+            row.addEventListener('touchstart', this.handleTouchStart);
+            row.addEventListener('touchmove', this.handleTouchMove);
+            row.addEventListener('touchend', this.handleTouchEnd);
+            row.addEventListener('touchcancel', this.handleTouchCancel);
+            row.addEventListener('dragstart', this.handleDragStart);
+            row.addEventListener('dragend', this.handleDragEnd);
         });
+        
+        this.setupDropTargets();
     }
 
-    document.getElementById('okpo-filter').addEventListener('input', filterTable);
-    document.getElementById('organization-filter').addEventListener('input', filterTable);
-
-    function hideContextMenu() {
-        contextMenuReport.style.display = 'none';
-    }
-
-    function setDraggingState(isDragging) {
-        var imgs = document.querySelectorAll('.count-img');
-        var with_remarks = document.querySelector('li[data-action="remarks"]');
-        var to_conf = document.querySelector('li[data-action="to_download"]');
-        var to_del = document.querySelector('li[data-action="to_delete"]');
-    
-        imgs.forEach((img, index) => {
-            with_remarks.style.background = isDragging ? 'rgb(255, 211, 129)' : '';
-            to_conf.style.background = isDragging ? 'rgb(144, 255, 162)' : '';
-            to_del.style.background = isDragging ? 'rgb(255, 139, 139)' : '';
-
-            const colorStyle = isDragging ? 'black' : '';
-            with_remarks.style.color = colorStyle;
-            to_conf.style.color = colorStyle;
-            to_del.style.color = colorStyle;
-
-            const paddingStyle = isDragging ? '20px 50px' : '';
-            with_remarks.style.padding = paddingStyle;
-            to_conf.style.padding = paddingStyle;
-            to_del.style.padding = paddingStyle;
-
-            const marginStyle = isDragging ? '0' : '';
-            with_remarks.style.marginBottom = marginStyle;
-            to_conf.style.marginBottom = marginStyle;
-            to_del.style.marginBottom = marginStyle;
-        });
-    }
-
-    function setDraggingStatetoNonread(isDragging) {
-        var not_read = document.querySelector('li[data-action="not_viewed"]');
-        imgs.forEach((img, index) => {
-
-            const draggingStyle = isDragging ? 'rgb(96, 255, 122)' : '';
-            not_read.style.background = draggingStyle;
-
-            const colorStyle = isDragging ? 'black' : '';
-            not_read.style.color = colorStyle;
-
-            const paddingStyle = isDragging ? '20px 50px' : '';
-            not_read.style.padding = paddingStyle;
-
-            const marginStyle = isDragging ? '0' : '';
-            not_read.style.marginBottom = marginStyle;
-        });
-    }
-
-    var longPressTimer = null;
-    var LONG_PRESS_DELAY = 500;
-    var isLongPress = false;
-
-    function showContextMenu(event, row) {
-        event.preventDefault();
+    handleRowClick(event) {
+        const row = event.currentTarget;
+        if (this.isLongPress) {
+            this.isLongPress = false;
+            return;
+        }
+        
         if (row.dataset.id) {
-            selectedReportId = row.dataset.id;
+            this.selectedReportId = row.dataset.id;
+            if (row.classList.contains('active-report')) {
+                row.classList.remove('active-report');
+                this.previousReportRow = null;
+            } else {
+                if (this.previousReportRow) {
+                    this.previousReportRow.classList.remove('active-report');
+                }
+                row.classList.add('active-report');
+                this.previousReportRow = row;
+            }
+            this.hideContextMenu();
+        }
+    }
 
-            if (previousReportRow !== null) {
-                previousReportRow.classList.remove('active-report');
+    handleContextMenu(event) {
+        event.preventDefault();
+        this.showContextMenu(event, event.currentTarget);
+    }
+
+    handleTouchStart(event) {
+        this.isLongPress = false;
+        this.longPressTimer = setTimeout(() => {
+            this.isLongPress = true;
+            this.showContextMenu(event, event.currentTarget);
+        }, this.LONG_PRESS_DELAY);
+    }
+
+    handleTouchMove(event) {
+        clearTimeout(this.longPressTimer);
+    }
+
+    handleTouchEnd(event) {
+        clearTimeout(this.longPressTimer);
+    }
+
+    handleTouchCancel(event) {
+        clearTimeout(this.longPressTimer);
+    }
+
+    handleDragStart(event) {
+        const row = event.currentTarget;
+        const reportId = row.dataset.id;
+        
+        const statusCell = row.children[8];
+        const statusBadge = statusCell?.querySelector('.status-badge');
+        const statusText = statusBadge?.querySelector('span:last-child')?.textContent.trim() || '';
+        
+        if (statusText === 'Непросмотренный') {
+            event.dataTransfer.setData('text/plain', reportId);
+            row.classList.add('dragging');
+            this.setDraggingState(true);
+        } else {
+            event.preventDefault();
+        }
+        
+        if (this.previousReportRow) {
+            this.previousReportRow.classList.remove('active-report');
+        }
+        row.classList.add('active-report');
+        this.previousReportRow = row;
+    }
+
+    handleDragEnd(event) {
+        const row = event.currentTarget;
+        row.classList.remove('dragging');
+        this.setDraggingState(false);
+    }
+
+    showContextMenu(event, row) {
+        event.preventDefault();
+        const contextMenuReport = document.getElementById('contextMenu_report');
+        if (!contextMenuReport) return;
+        
+        if (row.dataset.id) {
+            this.selectedReportId = row.dataset.id;
+            
+            if (this.previousReportRow) {
+                this.previousReportRow.classList.remove('active-report');
             }
             row.classList.add('active-report');
-            previousReportRow = row;
-
-            var pageX, pageY;
+            this.previousReportRow = row;
+            
+            let pageX, pageY;
             if (event.touches) {
                 pageX = event.touches[0].pageX;
                 pageY = event.touches[0].pageY;
@@ -126,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 pageX = event.pageX;
                 pageY = event.pageY;
             }
-
+            
             contextMenuReport.style.top = pageY + 'px';
             contextMenuReport.style.left = pageX + 'px';
             contextMenuReport.style.display = 'flex';
@@ -137,219 +210,521 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    reportRows.forEach(function(row) {
-        row.addEventListener('click', function(event) {
-            if (isLongPress) {
-                isLongPress = false;
-                return;
-            }
-            
-            if (this.dataset.id) {
-                selectedReportId = this.dataset.id;
-                if (this.classList.contains('active-report')) {
-                    this.classList.remove('active-report');
-                    previousReportRow = null;
-                } else {
-                    if (previousReportRow !== null) {
-                        previousReportRow.classList.remove('active-report');
-                    }
-                    this.classList.add('active-report');
-                    previousReportRow = this;
-                }
-                hideContextMenu();
-            }
-        });
-
-        row.addEventListener('contextmenu', function(event) {
-            event.preventDefault();
-            showContextMenu(event, this);
-        });
-        
-        row.addEventListener('touchstart', function(event) {
-            isLongPress = false;
-            longPressTimer = setTimeout(() => {
-                isLongPress = true;
-                showContextMenu(event, this);
-            }, LONG_PRESS_DELAY);
-        });
-        
-        row.addEventListener('touchmove', function(event) {
-            clearTimeout(longPressTimer);
-        });
-        
-        row.addEventListener('touchend', function(event) {
-            clearTimeout(longPressTimer);
-        });
-        
-        row.addEventListener('touchcancel', function(event) {
-            clearTimeout(longPressTimer);
-        });
-
-        row.addEventListener('dragstart', function(event) {
-            var reportId = this.dataset.id; 
-
-            var statusCell = this.children[8];
-            var statusBadge = statusCell.querySelector('.status-badge');
-            var sevenColumnValue = statusBadge ? statusBadge.querySelector('span:last-child').textContent.trim(): '';
-
-            if (sevenColumnValue === 'Непросмотренный') {
-                event.dataTransfer.setData('text/plain', reportId);
-                this.classList.add('dragging');
-                setDraggingState(true);
-            } else {
-                event.preventDefault();
-            }
-            
-            if (previousReportRow !== null) {
-                previousReportRow.classList.remove('active-report');
-            }
-            this.classList.add('active-report');
-            previousReportRow = this;
-        
-        });
-        
-        row.addEventListener('dragend', function(event) {
-            this.classList.remove('dragging');
-            setDraggingState(false);
-            setDraggingStatetoNonread(false);
-        });
-    });
-
-    document.addEventListener('click', function(event) {
-        if (!contextMenuReport.contains(event.target)) {
+    hideContextMenu(event) {
+        const contextMenuReport = document.getElementById('contextMenu_report');
+        if (contextMenuReport && (!event || !contextMenuReport.contains(event.target))) {
             contextMenuReport.style.display = 'none';
         }
-    });
-
-    document.addEventListener('touchstart', function(event) {
-        if (!contextMenuReport.contains(event.target)) {
-            contextMenuReport.style.display = 'none';
-        }
-    });
-
-    navigationItems.forEach(function(item) {
-        var action = item.dataset.action;
-        if (['remarks', 'to_download', 'to_delete'].includes(action)) {
-            item.addEventListener('dragover', function(event) {
-                event.preventDefault();
-            });
-
-            item.addEventListener('dragenter', function(event) {
-                event.preventDefault();
-                this.classList.add('dragging');
-            });
-
-            item.addEventListener('dragleave', function(event) {
-                event.preventDefault();
-                this.classList.remove('dragging');
-            });
-
-            item.addEventListener('drop', function(event) {
-                event.preventDefault();
-                this.classList.remove('dragging');
-                var reportId = event.dataTransfer.getData('text/plain');
-                var action = this.dataset.action;
-            
-                var activeReport = document.querySelector('.active-report');
-                if (activeReport && activeReport.dataset.id === reportId) {
-                    reportIdInput.value = reportId;
-                    actionInput.value = action;
-                    
-                    form.submit();
-                 
-                }
-            
-                if (previousReportRow !== null) {
-                    previousReportRow.classList.remove('active-report');
-                    previousReportRow = null;
-                }
-            });
-            
-        }
-    });
-
-/*proverka comment modal*/
-var ChooseAudit_modal = document.getElementById('ChooseAuditModal');
-var close_ChooseAudit_modal = ChooseAudit_modal.querySelector('.close');
-
-close_ChooseAudit_modal.addEventListener('click', function() {
-    ChooseAudit_modal.style.display = 'none';
-
-});
-
-ChooseAudit_modal.addEventListener('click', function(event) {
-    if (event.target === ChooseAudit_modal) {
-        ChooseAudit_modal.style.display = 'none';
     }
-});
-/*end*/
 
-    
-
-    document.addEventListener('click', function(event) {
-        if (!contextMenuReport.contains(event.target)) {
-            hideContextMenu();
+    setDraggingState(isDragging) {
+        const with_remarks = document.querySelector('li[data-action="remarks"]');
+        const to_conf = document.querySelector('li[data-action="to_download"]');
+        const to_del = document.querySelector('li[data-action="to_delete"]');
+        
+        if (with_remarks) {
+            with_remarks.style.background = isDragging ? 'rgb(255, 211, 129)' : '';
+            with_remarks.style.color = isDragging ? 'black' : '';
+            with_remarks.style.padding = isDragging ? '20px 50px' : '';
+            with_remarks.style.marginBottom = isDragging ? '0' : '';
         }
-    });
+        if (to_conf) {
+            to_conf.style.background = isDragging ? 'rgb(144, 255, 162)' : '';
+            to_conf.style.color = isDragging ? 'black' : '';
+            to_conf.style.padding = isDragging ? '20px 50px' : '';
+            to_conf.style.marginBottom = isDragging ? '0' : '';
+        }
+        if (to_del) {
+            to_del.style.background = isDragging ? 'rgb(255, 139, 139)' : '';
+            to_del.style.color = isDragging ? 'black' : '';
+            to_del.style.padding = isDragging ? '20px 50px' : '';
+            to_del.style.marginBottom = isDragging ? '0' : '';
+        }
+    }
 
-    hideContextMenu();
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const navItems = document.querySelectorAll('.menu_audit li[data-action]');
-    
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            navItems.forEach(i => i.classList.remove('activefunctions_menu'));
-            item.classList.add('activefunctions_menu');
-            
-            const action = item.getAttribute('data-action');
-            window.location.href = `/audit-area/${action}?year=${getQueryParam('year')}&quarter=${getQueryParam('quarter')}`;
+    setupDropTargets() {
+        const navigationItems = document.querySelectorAll('.menu_audit li');
+        
+        navigationItems.forEach((item) => {
+            const action = item.dataset.action;
+            if (['remarks', 'to_download', 'to_delete'].includes(action)) {
+                item.removeEventListener('dragover', this.handleDragOver);
+                item.removeEventListener('dragenter', this.handleDragEnter);
+                item.removeEventListener('dragleave', this.handleDragLeave);
+                item.removeEventListener('drop', this.handleDrop);
+                
+                this.handleDragOver = this.handleDragOver.bind(this);
+                this.handleDragEnter = this.handleDragEnter.bind(this);
+                this.handleDragLeave = this.handleDragLeave.bind(this);
+                this.handleDrop = this.handleDrop.bind(this);
+                
+                item.addEventListener('dragover', this.handleDragOver);
+                item.addEventListener('dragenter', this.handleDragEnter);
+                item.addEventListener('dragleave', this.handleDragLeave);
+                item.addEventListener('drop', this.handleDrop);
+            }
         });
-    });
-    
-    function getQueryParam(param) {
+    }
+
+    handleDragOver(event) {
+        event.preventDefault();
+    }
+
+    handleDragEnter(event) {
+        event.preventDefault();
+        event.currentTarget.classList.add('dragging');
+    }
+
+    handleDragLeave(event) {
+        event.preventDefault();
+        event.currentTarget.classList.remove('dragging');
+    }
+
+    handleDrop(event) {
+        event.preventDefault();
+        const targetItem = event.currentTarget;
+        targetItem.classList.remove('dragging');
+        const reportId = event.dataTransfer.getData('text/plain');
+        const action = targetItem.dataset.action;
+        
+        const form = document.getElementById('change-category-form');
+        const reportIdInput = document.getElementById('report-id-input');
+        const actionInput = document.getElementById('action-input');
+        
+        const activeReport = document.querySelector('.active-report');
+        if (activeReport && activeReport.dataset.id === reportId && form) {
+            if (reportIdInput) reportIdInput.value = reportId;
+            if (actionInput) actionInput.value = action;
+            form.submit();
+        }
+        
+        if (this.previousReportRow) {
+            this.previousReportRow.classList.remove('active-report');
+            this.previousReportRow = null;
+        }
+    }
+
+    setupNavigationItems() {
+        const navItems = document.querySelectorAll('.menu_audit li[data-action]');
+        
+        navItems.forEach(item => {
+            item.removeEventListener('click', this.handleNavClick);
+            this.handleNavClick = (event) => {
+                navItems.forEach(i => i.classList.remove('activefunctions_menu'));
+                item.classList.add('activefunctions_menu');
+                
+                const action = item.getAttribute('data-action');
+                window.location.href = `/audit-area/${action}?year=${this.getQueryParam('year')}&quarter=${this.getQueryParam('quarter')}`;
+            };
+            item.addEventListener('click', this.handleNavClick);
+        });
+        
+        const currentAction = window.location.pathname.split('/').pop();
+        navItems.forEach(item => {
+            if (item.getAttribute('data-action') === currentAction) {
+                item.classList.add('activefunctions_menu');
+            }
+        });
+    }
+
+    handleRollback(event) {
+        const activeRow = document.querySelector('.report_row.active-report');
+        if (activeRow !== null) {
+            const ReportId = activeRow.dataset.id;
+            if (ReportId) {
+                const deleteForm = document.getElementById('deleteReport');
+                if (deleteForm) {
+                    deleteForm.action = '/rollbackreport/' + ReportId;
+                }
+            }
+        } else {
+            alert('Выберите отчет для отката');
+            event.preventDefault();
+        }
+    }
+
+    handleScroll() {
+        const menu = document.querySelector('.sticky_menu');
+        if (menu) {
+            if (window.scrollY > 60) {
+                menu.classList.add('shadow');
+            } else {
+                menu.classList.remove('shadow');
+            }
+        }
+    }
+
+    setupModals() {
+        const ChooseAudit_modal = document.getElementById('ChooseAuditModal');
+        if (ChooseAudit_modal) {
+            const close_ChooseAudit_modal = ChooseAudit_modal.querySelector('.close');
+            if (close_ChooseAudit_modal) {
+                close_ChooseAudit_modal.addEventListener('click', () => {
+                    ChooseAudit_modal.style.display = 'none';
+                });
+            }
+            ChooseAudit_modal.addEventListener('click', (event) => {
+                if (event.target === ChooseAudit_modal) {
+                    ChooseAudit_modal.style.display = 'none';
+                }
+            });
+        }
+        
+        this.handleModal('period_modal', 'link_period');
+        this.handleModal('load_reports_modal', 'link_load');
+    }
+
+    handleModal(modalId, linkId) {
+        const modal = document.getElementById(modalId);
+        const openLink = document.getElementById(linkId);
+        if (modal && openLink) {
+            const closeBtn = modal.querySelector('.close');
+            openLink.addEventListener('click', (event) => {
+                if (openLink.style.opacity === '0.5') {
+                    event.preventDefault();
+                } else {
+                    modal.classList.add('active');
+                }
+            });
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    modal.classList.remove('active');
+                });
+            }
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        }
+    }
+
+    setupDownloadLinks() {
+        const dbfLink = document.getElementById('douwnload_DBF_link');
+        if (dbfLink) {
+            dbfLink.addEventListener('click', () => {
+                document.getElementById('douwnload_DBF_form')?.submit();
+            });
+        }
+        
+        const xmlLink = document.getElementById('douwnload_XML_link');
+        if (xmlLink) {
+            xmlLink.addEventListener('click', () => {
+                document.getElementById('douwnload_XML_form')?.submit();
+            });
+        }
+    }
+
+    getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param) || '';
     }
-    
-    const currentAction = window.location.pathname.split('/').pop();
-    navItems.forEach(item => {
-        if (item.getAttribute('data-action') === currentAction) {
-            item.classList.add('activefunctions_menu');
+
+    async fetchAuditData() {
+        const params = new URLSearchParams({
+            status: this.currentStatus,
+            year: this.yearFilter,
+            quarter: this.quarterFilter
+        });
+        
+        const response = await fetch(`/api/audit-data?${params}`);
+        return await response.json();
+    }
+
+    animateStatsLoading() {
+        const statElements = [
+            document.querySelector('[data-action="not_viewed"] .count-reports span'),
+            document.querySelector('[data-action="to_delete"] .count-reports span'),
+            document.querySelector('[data-action="remarks"] .count-reports span'),
+            document.querySelector('[data-action="to_download"] .count-reports span'),
+            document.querySelector('[data-action="all_reports"] .count-reports span')
+        ];
+        
+        statElements.forEach(element => {
+            if (element) {
+                element.classList.add('stat-loading');
+                element.textContent = '...';
+            }
+        });
+    }
+
+    updateStatsWithAnimation(stats) {
+        const statElements = {
+            'not_viewed': document.querySelector('[data-action="not_viewed"] .count-reports span'),
+            'to_delete': document.querySelector('[data-action="to_delete"] .count-reports span'),
+            'remarks': document.querySelector('[data-action="remarks"] .count-reports span'),
+            'to_download': document.querySelector('[data-action="to_download"] .count-reports span'),
+            'all_reports': document.querySelector('[data-action="all_reports"] .count-reports span')
+        };
+        
+        for (const [key, element] of Object.entries(statElements)) {
+            if (element && stats[key] !== undefined) {
+                element.classList.remove('stat-loading');
+                element.classList.add('stat-updated');
+                this.animateNumber(element, element.textContent, stats[key]);
+                setTimeout(() => {
+                    element.classList.remove('stat-updated');
+                }, 500);
+            }
         }
-    });
-});
+    }
 
-document.getElementById('douwnload_DBF_link').addEventListener('click', function() {
-    document.getElementById('douwnload_DBF_form').submit();
-});
+    animateNumber(element, oldValue, newValue) {
+        const start = parseInt(oldValue) || 0;
+        const end = parseInt(newValue) || 0;
+        const duration = 500;
+        const startTime = performance.now();
+        
+        const updateNumber = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const current = Math.floor(start + (end - start) * this.easeOutCubic(progress));
+            element.textContent = current;
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateNumber);
+            } else {
+                element.textContent = end;
+            }
+        };
+        
+        requestAnimationFrame(updateNumber);
+    }
 
-document.getElementById('douwnload_XML_link').addEventListener('click', function() {
-    document.getElementById('douwnload_XML_form').submit();
-});
+    easeOutCubic(x) {
+        return 1 - Math.pow(1 - x, 3);
+    }
 
-
-function handleModal(modalElement, openLink, closeLink) {
-    openLink.addEventListener('click', function(event) {
-        if (openLink.style.opacity === '0.5') {
-            event.preventDefault();
-        } else {
-            modalElement.classList.add('active');
+    updateStats(stats) {
+        const statElements = {
+            'not_viewed': document.querySelector('[data-action="not_viewed"] .count-reports span'),
+            'to_delete': document.querySelector('[data-action="to_delete"] .count-reports span'),
+            'remarks': document.querySelector('[data-action="remarks"] .count-reports span'),
+            'to_download': document.querySelector('[data-action="to_download"] .count-reports span'),
+            'all_reports': document.querySelector('[data-action="all_reports"] .count-reports span')
+        };
+        
+        for (const [key, element] of Object.entries(statElements)) {
+            if (element && stats[key] !== undefined) {
+                element.textContent = stats[key];
+            }
         }
-    });
+    }
 
-    closeLink.addEventListener('click', function() {
-        modalElement.classList.remove('active');
-    });
+    renderReports(reports) {
+        const tbody = document.getElementById('reports-tbody');
+        const reportsContent = document.getElementById('reports-content');
+        const emptyState = document.getElementById('empty-state');
+        
+        if (!tbody) return;
 
-    window.addEventListener('click', function(event) {
-        if (event.target === modalElement) {
-            modalElement.classList.remove('active');
+        if (!reports || reports.length === 0) {
+            if (tbody) tbody.innerHTML = '';
+            if (reportsContent) reportsContent.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'flex';
+            return;
         }
-    });
+
+        if (emptyState) emptyState.style.display = 'none';
+        if (reportsContent) reportsContent.style.display = 'block';
+
+        const groupedReports = this.groupReportsByVersion(reports);
+        tbody.innerHTML = this.generateReportsHTML(groupedReports);
+    }
+
+    groupReportsByVersion(reports) {
+        const grouped = {};
+        reports.forEach(report => {
+            if (!grouped[report.id]) {
+                grouped[report.id] = {
+                    id: report.id,
+                    organization_name: report.organization_name,
+                    okpo: report.okpo,
+                    year: report.year,
+                    quarter: report.quarter,
+                    versions: []
+                };
+            }
+            grouped[report.id].versions.push(report);
+        });
+        return grouped;
+    }
+
+    generateReportsHTML(groupedReports) {
+        let html = '';
+        for (const row of Object.values(groupedReports)) {
+            for (const version of row.versions) {
+                html += this.getReportRowHTML(row, version);
+            }
+        }
+        return html;
+    }
+
+    getReportRowHTML(row, version) {
+        return `
+            <tr class="report_row ${version.has_not ? 'hascomment-row' : ''}" data-id="${row.id}" draggable="true">
+                <td>
+                </td>
+                <td style="padding: 4px;">
+                    <button class="open-report-btn" onclick="window.location.href='/audit-area/report/${version.version_id}'">   
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span>Просмотр</span>
+                    </button>
+                </td>
+                <td style="display: none;">
+                    <input type="text" id="report_id" value="${row.id}" readonly>
+                </td>
+                <td>
+                    <input type="text" id="report_organization_name" value='${this.escapeHtml(row.organization_name).toUpperCase()}' readonly style="width: 100%; border: none; background: transparent; text-transform: uppercase;">
+                </td>
+                <td>
+                    <input type="text" id="report_okpo" value="${row.okpo}" readonly style="width: 100%; border: none; background: transparent;">
+                </td>
+                <td>
+                    <input type="text" id="report_year" value="${row.year}" readonly style="width: 100%; border: none; background: transparent;">
+                </td>
+                <td>
+                    <input type="text" id="report_quarter" value="${row.quarter}" readonly style="width: 100%; border: none; background: transparent;">
+                </td>
+                <td>
+                    <input type="text" value="${version.sent_time}" readonly style="width: 100%; border: none; background: transparent;">
+                </td>
+                <td>
+                    ${this.getStatusBadge(version.status)}
+                </td>
+                <td>
+                </td>
+            </tr>
+        `;
+    }
+
+    getStatusBadge(status) {
+        const badges = {
+            'Одобрен': {
+                class: 'status-approved',
+                icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />',
+                text: 'Одобрен'
+            },
+            'Отправлен': {
+                class: 'status-pending',
+                icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />',
+                text: 'Непросмотренный'
+            },
+            'Есть замечания': {
+                class: 'status-warning',
+                icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />',
+                text: 'Есть замечания'
+            },
+            'Готов к удалению': {
+                class: 'status-delete',
+                icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />',
+                text: 'Готов к удалению'
+            }
+        };
+
+        const badge = badges[status];
+        if (badge) {
+            return `
+                <span class="status-badge ${badge.class}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        ${badge.icon}
+                    </svg>
+                    <span>${badge.text}</span>
+                </span>
+            `;
+        }
+        return `<span class="status-badge status-default"><span>${status}</span></span>`;
+    }
+
+    async filterReports() {
+        const searchName = document.getElementById('organization-filter')?.value || '';
+        const searchOkpo = document.getElementById('okpo-filter')?.value || '';
+        
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const reportsContent = document.getElementById('reports-content');
+        const emptyState = document.getElementById('empty-state');
+        
+        if (loadingSpinner) loadingSpinner.style.display = 'flex';
+        if (reportsContent) reportsContent.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'none';
+
+        try {
+            const params = new URLSearchParams({
+                status: this.currentStatus,
+                year: this.yearFilter,
+                quarter: this.quarterFilter,
+                search_name: searchName,
+                search_okpo: searchOkpo
+            });
+            
+            const response = await fetch(`/api/audit-data?${params}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.renderReports(data.reports);
+                
+                if (loadingSpinner) loadingSpinner.style.display = 'none';
+                
+                this.attachRowEventListeners();
+            }
+        } catch (error) {
+            console.error('Error filtering reports:', error);
+            if (loadingSpinner) loadingSpinner.style.display = 'none';
+            this.showError('Ошибка фильтрации');
+        }
+    }
+
+    showError(message) {
+        const reportsContent = document.getElementById('reports-content');
+        const emptyState = document.getElementById('empty-state');
+        
+        if (reportsContent) reportsContent.style.display = 'none';
+        if (emptyState) {
+            emptyState.style.display = 'flex';
+            emptyState.innerHTML = `
+                <div class="empty-state">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                    </svg>
+                    <h3>Ошибка</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+    }
+
+    attachEventListeners() {
+        const organizationFilter = document.getElementById('organization-filter');
+        const okpoFilter = document.getElementById('okpo-filter');
+        
+        let searchTimeout;
+        const handleSearch = () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                this.filterReports();
+            }, 300);
+        };
+
+        if (organizationFilter) {
+            organizationFilter.removeEventListener('input', handleSearch);
+            organizationFilter.addEventListener('input', handleSearch);
+        }
+        if (okpoFilter) {
+            okpoFilter.removeEventListener('input', handleSearch);
+            okpoFilter.addEventListener('input', handleSearch);
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
 }
 
-// modals
-handleModal(document.getElementById('period_modal'), document.getElementById('link_period'), period_modal.querySelector('.close'));
-handleModal(document.getElementById('load_reports_modal'), document.getElementById('link_load'), load_reports_modal.querySelector('.close'));
+document.addEventListener('DOMContentLoaded', () => {
+    new AuditModule();
+});

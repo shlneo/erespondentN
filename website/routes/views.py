@@ -85,6 +85,12 @@ def login():
     return render_template('login.html', user=current_user
             )
 
+@views.route('/forgot-password', methods=['GET'])
+def forgot_password():
+    return render_template('forgot-password.html', user=current_user
+            )
+
+
 @views.route('/code', methods=['GET'])
 def code():
     return render_template('code.html', user=current_user
@@ -371,94 +377,81 @@ def report_section(report_type, id):
 @session_required
 @auditors_only
 def audit_area(status):
-    year_filter = request.args.get('year')
-    quarter_filter = request.args.get('quarter')
-    
-    reports = get_reports_by_status(status, year_filter, quarter_filter)
-
-    sent_count = len(get_reports_by_status('not_viewed', year_filter, quarter_filter))
-    remarks_count = len(get_reports_by_status('remarks', year_filter, quarter_filter))
-    approved_count = len(get_reports_by_status('to_download', year_filter, quarter_filter))
-    delete_count = len(get_reports_by_status('to_delete', year_filter, quarter_filter))
-    total_count = len(get_reports_by_status('all_reports', year_filter, quarter_filter))
+    year_filter = request.args.get('year', '')
+    quarter_filter = request.args.get('quarter', '')
     
     return render_template('audit_area.html',
                            current_user=current_user,
-                           reports=reports,
                            year_filter=year_filter,
                            quarter_filter=quarter_filter,
                            previous_quarter=get_previous_quarter(),
                            previous_year=get_report_year(),
-                           sent_count=sent_count,
-                           remarks_count=remarks_count,
-                           approved_count=approved_count,
-                           delete_count=delete_count,
-                           total_count=total_count,
                            status_reports=status,
-                           auditAreaInfoModal = True
-                           )
+                           auditAreaInfoModal=True)
 
-@views.route('/api/audit-area/reports', methods=['GET'])
+@views.route('/api/audit-data', methods=['GET'])
 @login_required
 @profile_complete
 @session_required
 @auditors_only
-def api_get_reports():
+def api_audit_data():
     status = request.args.get('status', 'all_reports')
-    year_filter = request.args.get('year', '')
-    quarter_filter = request.args.get('quarter', '')
-    search_name = request.args.get('search_name', '')
-    search_okpo = request.args.get('search_okpo', '')
-
-    reports = get_reports_by_status(status, year_filter, quarter_filter)
-    if search_name:
-        reports = [r for r in reports if search_name.lower() in r.organization.full_name.lower()]
-    if search_okpo:
-        reports = [r for r in reports if search_okpo in r.okpo]
+    year_filter = request.args.get('year')
+    quarter_filter = request.args.get('quarter')
+    search_name = request.args.get('search_name')
+    search_okpo = request.args.get('search_okpo')
     
-    sent_count = len(get_reports_by_status('not_viewed', year_filter, quarter_filter))
-    remarks_count = len(get_reports_by_status('remarks', year_filter, quarter_filter))
-    approved_count = len(get_reports_by_status('to_download', year_filter, quarter_filter))
-    delete_count = len(get_reports_by_status('to_delete', year_filter, quarter_filter))
-    total_count = len(get_reports_by_status('all_reports', year_filter, quarter_filter))
+    reports = get_reports_by_status(status, year_filter, quarter_filter)
+    
+    if search_name or search_okpo:
+        filtered_reports = []
+        for report in reports:
+            match_name = True
+            match_okpo = True
+            
+            if search_name:
+                match_name = search_name.lower() in report.organization.full_name.lower()
+            if search_okpo:
+                match_okpo = search_okpo in str(report.okpo)
+                
+            if match_name and match_okpo:
+                filtered_reports.append(report)
+        reports = filtered_reports
     
     reports_data = []
     for row in reports:
         for version in row.versions:
-            report_data = {
+            sent_date = ''
+            if version.sent_time:
+                sent_date = version.sent_time.strftime('%Y-%m-%d')
+            
+            reports_data.append({
                 'id': row.id,
                 'version_id': version.id,
                 'organization_name': row.organization.full_name,
                 'okpo': row.okpo,
                 'year': row.year,
                 'quarter': row.quarter,
-                'sent_time': version.sent_time.strftime('%d.%m.%Y %H:%M') if version.sent_time else '',
+                'sent_time': sent_date,
+                'sent_datetime': version.sent_time.strftime('%Y-%m-%d %H:%M:%S') if version.sent_time else '',
                 'status': version.status,
-                'status_type': get_status_type(version.status),
-                'has_comment': version.hasNot if hasattr(version, 'hasNot') else False
-            }
-            reports_data.append(report_data)
+                'has_not': version.hasNot if hasattr(version, 'hasNot') else False
+            })
+    
+    stats = {
+        'not_viewed': len(get_reports_by_status('not_viewed', year_filter, quarter_filter)),
+        'to_delete': len(get_reports_by_status('to_delete', year_filter, quarter_filter)),
+        'remarks': len(get_reports_by_status('remarks', year_filter, quarter_filter)),
+        'to_download': len(get_reports_by_status('to_download', year_filter, quarter_filter)),
+        'all_reports': len(get_reports_by_status('all_reports', year_filter, quarter_filter))
+    }
     
     return jsonify({
         'success': True,
         'reports': reports_data,
-        'counters': {
-            'sent': sent_count,
-            'remarks': remarks_count,
-            'approved': approved_count,
-            'delete': delete_count,
-            'total': total_count
-        }
+        'stats': stats,
+        'count': len(reports_data)
     })
-
-def get_status_type(status):
-    status_map = {
-        'Одобрен': 'approved',
-        'Отправлен': 'pending',
-        'Есть замечания': 'warning',
-        'Готов к удалению': 'delete'
-    }
-    return status_map.get(status, 'default')
 
 @views.route('/audit-area/report/<int:id>', methods=['GET'])
 @login_required

@@ -109,7 +109,78 @@ body.dimmed {
     --header-top: 8px;
 }
 
+.loading-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 9999;
+}
 
+.loader-pulse {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--blue-back, #0073c0);
+    animation: load-pulse 0.85s infinite linear;
+    box-shadow: 0 0 20px rgba(0, 115, 192, 0.5);
+}
+
+@keyframes load-pulse {
+    0% {
+        transform: scale(0.15);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+@keyframes statPulse {
+    0% {
+        opacity: 0.5;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.stat-loading {
+    animation: statPulse 0.8s ease-in-out infinite;
+    opacity: 0.6;
+    display: inline-block;
+}
+
+.stat-updated {
+    animation: statUpdate 0.5s ease-out;
+}
+
+@keyframes statUpdate {
+    0% {
+        transform: scale(1.2);
+        color: black;
+    }
+    100% {
+        transform: scale(1);
+        color: inherit;
+    }
+}
+
+.content-wrapper {
+    display: none;
+}
 
 .blurred-background {
     position: absolute;
@@ -1238,7 +1309,7 @@ main {
     font-size: 18px;
 }
 
-.log_reg_form {
+.log-reg-form {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background: rgba(255, 255, 255, 0.2);
     display: flex; 
@@ -1246,7 +1317,7 @@ main {
     text-align: center;
     align-items: center;
     padding: 30px;    
-    border-radius: 10px;
+    border-radius: 17px;
 }
 
 .link_cont{
@@ -1317,11 +1388,11 @@ main {
     font-size: 17px;
 }
 
-.log_reg_form input::-webkit-input-placeholder {  
+.log-reg-form input::-webkit-input-placeholder {  
     color: rgb(0, 0, 0); 
 }
 
-.log_reg_form .remember_cont {
+.log-reg-form .remember_cont {
     border: none;
     text-align: left; 
     font-size: 14px;
@@ -1330,12 +1401,6 @@ main {
     margin: 14px 0;
     margin-bottom: 25px;
     vertical-align: middle;
-}
-
-.log_reg_form .remember_cont span a{
-    color: var(--moreblue_text);
-    font-weight: 500;
-    cursor: pointer;
 }
 
 .remember_cont input[type='checkbox'] {
@@ -1386,7 +1451,7 @@ main {
     margin-top: 15px;
 }
 
-.log_reg_form .submit_button{
+.log-reg-form .submit_button{
     margin-top: 10px;
     padding: 5px 20px;
     width: 100%;
@@ -1398,14 +1463,14 @@ main {
     font-size: 13px;
 }
 
-.log_reg_form .forgot_cont{
+.log-reg-form .forgot_cont{
     position: relative;
     text-align: center;
     display: flex;
     flex-direction: column;
 }
 
-.log_reg_form .forgot_cont a{
+.log-reg-form .forgot_cont a{
     color: rgb(0, 0, 0);
     font-size: 12px;
     cursor: pointer;
@@ -1414,27 +1479,44 @@ main {
     transition: all 0.3s ease;
 }
 
-.log_reg_form .forgot_cont a:hover{
+.log-reg-form .forgot_cont a:hover{
 
     transform: translateY(-2px);
 }
 
 
-.relod_button{
+.under-link{
     background-color: #ffffff00;
-    padding: 0;
     margin: 10px 0;
     border: none;
-    color: black;
     transition: all 0.3s ease;
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
     font-weight: 500;
+    color: #007bff;
+    padding: 5px 10px;
+    font-family: inherit;
 }
 
-.relod_button:hover{
+.under-link:hover{
     transform: translateY(-2px);
 
+}
+
+.under-link:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.under-link:hover:not(:disabled) {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.under-link:focus {
+    outline: none;
 }
 /*================= login and registr pages end ==============*/
 
@@ -1536,7 +1618,6 @@ main {
     min-height: 1px;
     padding-left: 30px;
 }
-
 .statistics-row {
     max-width: 100%;
     margin-top: 220px;
@@ -1551,7 +1632,6 @@ main {
     height: 100%;
     object-fit: cover;
     border-radius: 20px;
-    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.301);  */
     border: 1px solid var(--border-color);
 }
 
@@ -1568,34 +1648,59 @@ main {
     display: flex;
     flex-direction: column;
     text-align: center;
+    position: relative;
     transition: all 0.3s ease;
     transform: translateY(0);
-}
-
-.item_stat:hover{
-    transform: translateY(-6px);
 }
 
 .item_stat:nth-child(2){
     margin: 10% 0
 }
 
-.stat_count {
-    font-size: 50px;    
-    color: var(--blue-back);   
-    font-weight: 600;
-    text-align: center;
-    align-items: center;
-    display: inline-block;
-    transform-origin: center;
-    padding: 5px 15px;
+.counter-roller {
+    display: flex;
+    justify-content: center;
+}
+
+.digit-wheel {
+    overflow: hidden;
+    height: 65px;
+    width: 35px;
+    position: relative;
     border-radius: 8px;
+}
+
+.digits-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.digit-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.digit-wrapper span {
+    font-size: 50px;
+    font-weight: 600;
+    color: var(--blue-back);
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 
 .stat_name{
     font-size: 16px;
     color: #555555;    
     font-weight: 500;
+}
+
+.stat_count {
+    display: none;
 }
 
 .news-row {
@@ -4222,8 +4327,8 @@ cook
 }
 
 .report-area {
-    display: flex;
-    flex-direction: row;
+    /* display: flex;
+    flex-direction: row; */
     overflow-x: auto;
     margin-top: 10px;
     margin-bottom: 30px;
@@ -6622,6 +6727,7 @@ th .resizer {
     line-height: 1.7;
     margin-bottom: 8px;
     padding-left: 5px;
+    font-weight: 500;
 }
 
 .answer-highlight-second li:last-child {
@@ -9165,17 +9271,17 @@ th .resizer {
     /*header end*/
 
     /*log_reg*/
-    .log_reg_form{
+    .log-reg-form{
         box-sizing: border-box;
         width: 100%;
         /* background-color: rgba(255, 255, 255, 0);
         box-shadow: none; */
         padding: 30px; 
-        margin: 10px;
+        margin: 5px;
     }
 
     .link_cont{ 
-        margin: 20px 0 60px 0;
+        margin: 20px 10px 60px 0;
     }
     /*log_reg end*/
 
@@ -9235,10 +9341,6 @@ th .resizer {
 
     .item_stat:nth-child(2){
         margin: 6% 0
-    }
-
-    .stat_count {
-        font-size: 50px;
     }
 
     .stat_name {
