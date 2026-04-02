@@ -1732,10 +1732,11 @@ main {
 .news-row-right img{
     width: 80%;
     height: auto;
+    max-height: 450px;
     object-fit: cover;    
     border-radius: 20px;
     /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.301);  */
-    border: 1px solid var(--border-color);
+    /* border: 1px solid var(--border-color); */
 }
 
 .item_news{
