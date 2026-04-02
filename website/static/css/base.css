@@ -178,10 +178,6 @@ body.dimmed {
     }
 }
 
-.content-wrapper {
-    display: none;
-}
-
 .blurred-background {
     position: absolute;
     top: 0;
@@ -336,6 +332,19 @@ input[type="checkbox"]:checked::before {
     box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
     transform: translateY(-2px);
 }
+
+.blue_btn.transp{
+    background: linear-gradient(135deg, #009b0000, #1b804500);
+    color: rgb(0, 0, 0);
+    border: 1px solid var(--border-color);
+}
+
+.blue_btn.transp:hover {
+    background: linear-gradient(135deg, #009b0000, #1b804500);
+    color: rgb(0, 0, 0);
+    border: 1px solid var(--border-color);
+}
+
 
 .blue_btn.xml{
     background: linear-gradient(135deg, #800080, #9B59B6);

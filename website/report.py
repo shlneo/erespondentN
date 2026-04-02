@@ -26,12 +26,14 @@ def cancel_sending(id):
         flash('Отменить можно только непросмотренный отчет!', 'error')
     return redirect(request.referrer)
 
-SPECIAL_OKPO_LISTS = {
-    6: ['020133895000']
+SPECIAL_OKPO_LISTS = { # убрать откуда номер региона : ['ОКПО']
+    6: ['020133895000'],
+    5: ['305144986000'],
 }
 
-EXCLUDED_OKPO_LISTS = {
-    5: ['020133895000']
+EXCLUDED_OKPO_LISTS = { # добавить куда номер региона : ['ОКПО']
+    5: ['020133895000'],
+    6: ['305144986000']
 }
 
 def get_reports_by_status(status, year=None, quarter=None):
