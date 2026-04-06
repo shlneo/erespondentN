@@ -95,6 +95,11 @@ def forgot_password():
 def code():
     return render_template('code.html', user=current_user
             )
+    
+@views.route('/test', methods=['GET'])
+def test():
+    return render_template('test.html', user=current_user
+            )
 
 @views.route('/account', methods=['GET'])
 @login_required
@@ -138,8 +143,34 @@ def delete_message(message_id):
             
     except Exception as e:
         db.session.rollback()
-        print(f"Ошибка при удалении сообщения: {str(e)}")
+        current_app.logger.error(f"Ошибка при удалении сообщения: {str(e)}")
         return jsonify({'success': False, 'error': 'Внутренняя ошибка сервера'}), 500
+
+@views.route('/delete_all_message', methods=['POST'])
+@login_required
+def delete_all_message():
+    try:
+        messages = Message.query.filter_by(
+            recipient_id=current_user.id
+        ).all()
+        
+        if not messages:
+            flash('Нет сообщений для удаления.', 'error')
+            return redirect(url_for('views.account'))
+        
+        for message in messages:
+            db.session.delete(message)
+        
+        db.session.commit()
+        flash('Все сообщения успешно удалены.', 'success')
+        current_app.logger.error("Все сообщения удалены")
+            
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Ошибка при удалении сообщений: {str(e)}")
+        flash('Ошибка при удалении сообщений', 'error')
+        
+    return redirect(url_for('views.account'))
 
 @views.route('/get_messages_count')
 @login_required

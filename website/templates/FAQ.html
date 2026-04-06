@@ -408,7 +408,10 @@
                         </ol>
                         <p>После перехода на страницу редактирования профиля, вам будет доступна форма для заполнения личных данных. Эта информация необходима для корректной работы системы и связи с вами.</p>
 
-
+                        <div class="answer-highlight-second" >
+                            <div class="highlight-icon">💡</div>
+                            <p>При заполнении профиля указывайте персональные данные заполняющего отчеты.</p>
+                        </div>
                         <p><strong>Что нужно заполнить в профиле:</strong></p>
                         <div class = "opred-text fit">
                             <strong>Фамилия</strong> — укажите вашу фамилию
@@ -670,13 +673,15 @@
                             <div class="video-container">
                                 <div class="video-wrapper">
                                     <div class="video-player">
-                                        <div class="video-poster" style="background-image: url('{{ url_for('static', filename='img/post/gaid_poster.png') }}');">
+                                        <div class="video-poster" style="background-image: url('{{ url_for('static', filename='img/info-news/info-modal-new2.png') }}');">
                                             <div class="poster-content">
-                                                <div class="play-button">
-                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                        <path d="M8 5V19L19 12L8 5Z" fill="white"/>
-                                                    </svg>
-                                                </div>
+                                                <a href="https://rutube.ru/video/90616fc194f8c29a5a466164547f84da/" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                                                    <div class="play-button">
+                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                            <path d="M8 5V19L19 12L8 5Z" fill="white"/>
+                                                        </svg>
+                                                    </div>
+                                                </a>
                                                 <div class="poster-text">
                                                     <span class="video-duration">4:43</span>
                                                 </div>
@@ -687,7 +692,7 @@
                                             <source src="{{ url_for('static', filename='video/erespondentN.mp4') }}" type="video/mp4">
                                             Ваш браузер не поддерживает видео.
                                         </video>
-                                        
+                                        {#
                                         <div class="video-controls">
                                             <div class="progress-container">
                                                 <div class="progress-bar">
@@ -725,7 +730,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+                                        #}
                                         <div class="loading-indicator">
                                             <div class="spinner"></div>
                                         </div>
@@ -733,7 +738,7 @@
                                 </div>
 
                                 <div class="video-caption">
-                                    <p class="caption-text">Интрукция по использованию платформы (без звука)</p>
+                                    <p class="caption-text">Инcтрукция по использованию платформы (без звука)</p>
                                     <div class="caption-meta">
                                         <span class="meta-item">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -902,8 +907,8 @@
                         </ol>
 
                         <div class="p_img">
-                            <img src="{{ url_for('static', filename='gif/24gif.gif') }}" alt="Перетаскивание отчета">
-                            <span>Видео 24 - Как изменить статус отчета</span>
+                            <img src="{{ url_for('static', filename='img/post/audit-report.png') }}" alt="Перетаскивание отчета">
+                            <span>Рисунок 24 - Как изменить статус отчета</span>
                         </div>
 
                         <p><strong>Что делать, если ошиблись со статусом:</strong></p>
@@ -1155,6 +1160,7 @@
                             <li>Выбрать тип вопроса - <strong>Нет организации в списке</strong>.</li>
                             <li>Написать <strong>полное наименование</strong> организации.</li>
                             <li>Написать полный <strong>код ОКПО</strong> - 12 цифр.</li>
+                            <li>Написать <strong>код УНП</strong> - 9 цифр.</li>
                             <li>Нажать на кнопку <strong>"Отправить вопрос"</strong>.</li>
                         </ol>
                         
@@ -1164,10 +1170,11 @@
                                 <p><strong>Необходимые парамметры организации:</strong></p>
                                 <ol>
                                     <li><strong>Полное официальное наименование вашей организации.</strong></li>
-                                    <li><strong>Код ОКПО вашей организации</strong>.</li>
+                                    <li><strong>Код ОКПО вашей организации</strong> (4-ая цифра с конца "1-7" должна отображать ваш регион).</li>
+                                    <li><strong>Код УНП вашей организации</strong>.</li>
                                 </ol>
                             </div>
-                            <div class="answer-highlight-note">Указывайте <strong>полный</strong> код ОКПО: <strong>12</strong> цифр, к примеру: <strong>000226971000</strong>. Если код будет неудовлетворительным, вашу организацию не смогут добавить.</div>
+                        <div class="answer-highlight-note">Указывайте <strong>полный</strong> код ОКПО: <strong>12</strong> цифр, к примеру: <strong>000226976000</strong> (4-ая цифра с конца 1 соответственно Минская область). Если код будет неудовлетворительным, вашу организацию не смогут добавить.</div>
                         </div>
 
                         <div class="p_img">

@@ -1,3 +1,24 @@
+// const all_inputs = document.querySelectorAll('input');
+
+// const validateInput = (input) => {
+//     if (input.value.trim() === '') {
+//         input.classList.add('input-error');
+//     } else {
+//         input.classList.remove('input-error');
+//     }
+// };
+
+// all_inputs.forEach(input => {
+//     input.addEventListener('input', () => validateInput(input));
+//     input.addEventListener('blur', () => validateInput(input));
+//     input.addEventListener('focus', function() {
+//         if (this.value.trim() !== '') {
+//             this.classList.remove('input-error');
+//         }
+//     });
+// });
+
+
 function addCsrfTokenToForm(form) {
     var csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) return;
@@ -908,7 +929,7 @@ function deleteMessage(messageId) {
     const originalText = deleteBtn.innerHTML;
     
     deleteBtn.disabled = true;
-    deleteBtn.innerHTML = '⌛ Удаление...';
+    deleteBtn.innerHTML = 'Удаление...';
     deleteBtn.style.opacity = '0.5';
     deleteBtn.style.cursor = 'default';
     

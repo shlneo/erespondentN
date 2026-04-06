@@ -73,6 +73,15 @@
             <div class="account_messageArea">
                 <img src="{{ url_for('static', filename='img/icon_messages.png')}}" alt="">
                 <span>Уведомления</span>
+                {% if messages %}
+                    <form method="POST" action="{{ url_for('views.delete_all_message') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="print-btn delete">
+                            {{ icons.delete_icon() }} 
+                            <span>Удалить все</span>
+                        </button>
+                    </form>
+                {% endif %}
             </div>
             <div class="message_cont" id="messagesContainer">
                 {% if messages %}

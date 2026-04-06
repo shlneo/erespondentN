@@ -23,6 +23,24 @@ input{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis; 
+    transition: border-color 0.2s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+.input-error {
+    border: 1px solid #f44336 !important;
+    animation: shake 0.25s ease-in-out;
+    background-color: #ffebee;
+    outline: none;
+}
+
+.input-error:focus {
+    outline: 2px solid rgba(244, 67, 54, 0.3);
 }
 
 input:-webkit-autofill,
@@ -1792,7 +1810,7 @@ main {
     font-size: 19px;
     color: var(--blue-back);   
     font-weight: 600;
-    padding-bottom: 10px;
+    padding-bottom: 30px;
     align-items: center;
     text-align: center;
 }
@@ -2169,6 +2187,10 @@ cook
     gap: 25px;
 }
 
+.account_messageArea :nth-child(3) {
+    margin-left: auto;
+}
+
 .account_messageArea img {
     width: 28px;
     height: 28px;
@@ -2267,7 +2289,7 @@ cook
     height: 28px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4345,12 +4367,13 @@ cook
     padding-bottom: 5px;
     transition: opacity 0.3s ease-in-out;
     position: relative;
+    width: 100%;
 }
 
 .report-area {
     transition: opacity 0.3s ease-in-out;
     position: relative;
-    min-height: 400px;
+    /* min-height: 400px; */
 }
 
 .report-area.fade-out {
@@ -5611,6 +5634,24 @@ th .resizer {
     transition: all 0.2s ease;
 }
 
+.print-btn.delete {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+.print-btn.delete svg{
+    width: 15px;
+    height: 15px;
+}
+
+.print-btn.delete:hover {
+    background: red;
+    border: none;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
 .print-btn:hover {
     background: #667eea;
     border-color: #667eea;
@@ -5623,11 +5664,13 @@ th .resizer {
     transform: translateY(0);
 }
 
-.print-btn__icon {
+.print-btn svg {
     transition: transform 0.2s ease;
+    width: 18px;
+    height: 18px;
 }
 
-.print-btn:hover .print-btn__icon {
+.print-btn:hover .print-btn svg {
     transform: rotate(12deg);
 }
 
@@ -6344,6 +6387,7 @@ th .resizer {
     background: #ffffff;
     border-radius: 12px;
     border: 1px solid #eef0f2;
+    display: none;
 }
 
 .timestamps-title {

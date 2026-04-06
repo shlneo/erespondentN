@@ -1475,6 +1475,76 @@ def exportXML():
         mimetype="application/zip"
     )
 
+import threading
+import time
+from flask import current_app, copy_current_request_context
+
+def validate_okpo(okpo):
+    if not okpo or len(okpo) != 12:
+        return False, "ОКПО должен содержать ровно 12 цифр"
+    
+    if not okpo.isdigit():
+        return False, "ОКПО должен содержать только цифры"
+    
+    fourth_from_end = okpo[-4]
+    if fourth_from_end not in ['1', '2', '3', '4', '5', '6', '7']:
+        return False, "4-я цифра с конца ОКПО должна быть от 1 до 7"
+    return True, ""
+
+def validate_ynp(ynp):
+    if not ynp or len(ynp) != 9:
+        return False, "УНП должен содержать ровно 9 цифр"
+    
+    if not ynp.isdigit():
+        return False, "УНП должен содержать только цифры"
+
+    return True, ""
+
+def send_delayed_response(user_id, text, delay_seconds=10):
+    @copy_current_request_context
+    def send_message():
+        time.sleep(delay_seconds)
+        from website.models import Message, db
+        new_message = Message(
+            text=text,
+            recipient_id=user_id,
+        )
+        db.session.add(new_message)
+        db.session.commit()
+
+    thread = threading.Thread(target=send_message)
+    thread.daemon = True
+    thread.start()
+    current_app.logger.error("Сообщение в обработке.")
+
+def create_new_organization(organization_name, organization_okpo, organization_ynp, sender):
+    from website.models import Organization, Message, db
+    
+    existing_org = Organization.query.filter_by(okpo=organization_okpo).first()
+    if existing_org:
+        current_app.logger.error("Такая организация уже существует.")
+        send_delayed_response(
+            sender.id, 
+            "Ответ на ваше сообщение. Такая организация уже существует."
+        )
+        return existing_org
+    
+    new_organization = Organization(
+        full_name=organization_name,
+        okpo=organization_okpo,
+        ynp=organization_ynp
+    )
+    db.session.add(new_organization)
+    db.session.commit()
+    
+    send_delayed_response(
+        sender.id, 
+        "Ответ на ваше сообщение. Ваша организация была добавлена."
+    )
+    
+    current_app.logger.error("Организация создана.")
+    return new_organization
+
 @auth.route('/sent_for_admin', methods=['POST'])
 @login_required 
 @session_required
@@ -1484,48 +1554,66 @@ def sent_for_admin():
         problem_description = request.form.get('problem_description', '')
         organization_name = request.form.get('organization_name', '')
         organization_okpo = request.form.get('organization_okpo', '')
+        organization_ynp = request.form.get('organization_ynp', '')
         
         if not question_type:
             flash('Выберите тип вопроса.', 'error')
             return redirect(url_for('views.beginPage'))
         
-
         if question_type == 'organization-none':
-            if not organization_name or not organization_okpo:
-                flash('Заполните название организации и ОКПО.', 'error')
+            if not organization_name or not organization_okpo or not organization_ynp:
+                flash('Заполните название организации, УНП и ОКПО.', 'error')
+                return redirect(url_for('views.beginPage'))
+            
+            is_valid_okpo, okpo_error = validate_okpo(organization_okpo)
+            if not is_valid_okpo:
+                flash(okpo_error, 'error')
+                return redirect(url_for('views.beginPage'))
+            
+            is_valid_ynp, ynp_error = validate_ynp(organization_ynp)
+            if not is_valid_ynp:
+                flash(ynp_error, 'error')
                 return redirect(url_for('views.beginPage'))
             
             full_message = f"Нет организации.\n"
             full_message += f"Название организации: {organization_name}\n"
             full_message += f"ОКПО: {organization_okpo}\n"
+            full_message += f"УНП: {organization_ynp}\n"
+            
         elif question_type == 'other':
             if not problem_description:
                 flash('Опишите проблему.', 'error')
                 return redirect(url_for('views.beginPage'))
             full_message = f"{problem_description}"
-
-        admins = User.query.filter_by(type="Администратор").all()
-        if admins:
-            for admin in admins:
-                new_message = Message(
-                    sender_id=current_user.id,
-                    text=full_message,
-                    recipient_id=admin.id
-                )
-                db.session.add(new_message)
-            db.session.commit()
-                
-            flash('Сообщение отправлено.', 'success')
-            # admin_user = os.getenv('adminemail3')
-            # if admin_user:
-            #     try:
-            #         send_email(full_message, admin_user, 'just_notif')
-            #     except Exception as e:
-            #         current_app.logger.error(f"Ошибка отправки email: {str(e)}")
         else:
-            flash('Администраторов нет.', 'error')
-            
-    return redirect(url_for('views.beginPage'))
+            flash('Неверный тип вопроса.', 'error')
+            return redirect(url_for('views.beginPage'))
+
+        new_message = Message(
+            text=f"Ваше сообщение было отправлено. Текст сообщения: {full_message}",
+            recipient_id=current_user.id,
+        )
+        db.session.add(new_message)
+        db.session.commit()
+        if question_type != 'organization-none':
+            admins = User.query.filter_by(type="Администратор").all()
+            if admins:
+                for admin in admins:
+                    new_message = Message(
+                        sender_id=current_user.id,
+                        text=full_message,
+                        recipient_id=admin.id
+                    )
+                    db.session.add(new_message)
+                db.session.commit()
+                flash('Сообщение отправлено.', 'success')
+            else:
+                flash('Администраторов нет.', 'error')
+        
+        if question_type == 'organization-none':
+            create_new_organization(organization_name, organization_okpo, organization_ynp, current_user)
+        
+    return redirect(url_for('views.account'))
 
 def get_organizations_with_reports_excel_xlsx(year: int, quarter: int, statuses: list) -> bytes:
     status_filter = 'all_reports' if not statuses else statuses[0] if len(statuses) == 1 else 'all_reports'
@@ -1654,149 +1742,149 @@ def load_org_stat():
 
 
 
-def create_test_users(userpassword):
-    hashed_pass = generate_password_hash(userpassword)
-    users_data = [
-        ('testuser1BrestReg@gmail.com', 'Григорьев Антон Олегович', 'Пусто', hashed_pass, 3),
-        ('testuser2BrestReg@gmail.com', 'Иванов Алексей Дмитриевич', 'Пусто', hashed_pass, 4),
-        ('testuser1VitebskReg@gmail.com', 'Петров Николай Сергеевич', 'Пусто', hashed_pass, 1170),
-        ('testuser2VitebskReg@gmail.com', 'Кузнецов Андрей Валерьевич', 'Пусто', hashed_pass, 1171),
-        ('testuser1GomelReg@gmail.com', 'Фёдоров Дмитрий Иванович', 'Пусто', hashed_pass, 2229),
-        ('testuser2GomelReg@gmail.com', 'Морозов Сергей Александрович', 'Пусто', hashed_pass, 2230),
-        ('testuser1GrodnoReg@gmail.com', 'Васильев Игорь Михайлович', 'Пусто', hashed_pass, 3431),
-        ('testuser2GrodnoReg@gmail.com', 'Новиков Евгений Павлович', 'Пусто', hashed_pass, 3432),
-        ('testuser1MinskReg@gmail.com', 'Мельников Артём Владимирович', 'Пусто', hashed_pass, 4674),
-        ('testuser2MinskReg@gmail.com', 'Орлов Роман Викторович', 'Пусто', hashed_pass, 4675),
-        ('testuser1MogilevReg@gmail.com', 'Смирнов Константин Петрович', 'Пусто', hashed_pass, 6607),
-        ('testuser2MogilevReg@gmail.com', 'Козлов Денис Сергеевич', 'Пусто', hashed_pass, 6608),
-        ('testuser1Minsk@gmail.com', 'Зайцев Павел Андреевич', 'Пусто', hashed_pass, 7493),
-        ('testuser2Minsk@gmail.com', 'Соловьёв Владимир Николаевич', 'Пусто', hashed_pass, 6899),
-    ]
+# def create_test_users(userpassword):
+#     hashed_pass = generate_password_hash(userpassword)
+#     users_data = [
+#         ('testuser1BrestReg@gmail.com', 'Григорьев Антон Олегович', 'Пусто', hashed_pass, 3),
+#         ('testuser2BrestReg@gmail.com', 'Иванов Алексей Дмитриевич', 'Пусто', hashed_pass, 4),
+#         ('testuser1VitebskReg@gmail.com', 'Петров Николай Сергеевич', 'Пусто', hashed_pass, 1170),
+#         ('testuser2VitebskReg@gmail.com', 'Кузнецов Андрей Валерьевич', 'Пусто', hashed_pass, 1171),
+#         ('testuser1GomelReg@gmail.com', 'Фёдоров Дмитрий Иванович', 'Пусто', hashed_pass, 2229),
+#         ('testuser2GomelReg@gmail.com', 'Морозов Сергей Александрович', 'Пусто', hashed_pass, 2230),
+#         ('testuser1GrodnoReg@gmail.com', 'Васильев Игорь Михайлович', 'Пусто', hashed_pass, 3431),
+#         ('testuser2GrodnoReg@gmail.com', 'Новиков Евгений Павлович', 'Пусто', hashed_pass, 3432),
+#         ('testuser1MinskReg@gmail.com', 'Мельников Артём Владимирович', 'Пусто', hashed_pass, 4674),
+#         ('testuser2MinskReg@gmail.com', 'Орлов Роман Викторович', 'Пусто', hashed_pass, 4675),
+#         ('testuser1MogilevReg@gmail.com', 'Смирнов Константин Петрович', 'Пусто', hashed_pass, 6607),
+#         ('testuser2MogilevReg@gmail.com', 'Козлов Денис Сергеевич', 'Пусто', hashed_pass, 6608),
+#         ('testuser1Minsk@gmail.com', 'Зайцев Павел Андреевич', 'Пусто', hashed_pass, 7493),
+#         ('testuser2Minsk@gmail.com', 'Соловьёв Владимир Николаевич', 'Пусто', hashed_pass, 6899),
+#     ]
 
-    current_time = datetime.utcnow()
-    current_year = current_time.year
-    current_quarter = 1
+#     current_time = datetime.utcnow()
+#     current_year = current_time.year
+#     current_quarter = 1
 
-    created_version_ids = []
+#     created_version_ids = []
 
-    for user_data in users_data:
-        user = User.query.filter_by(email=user_data[0]).first()
-        if not user:
-            user = User(
-                email=user_data[0],
-                fio=user_data[1],
-                telephone=user_data[2],
-                password=user_data[3],
-                organization_id=user_data[4],
-            )
-            db.session.add(user)
-            db.session.flush()
+#     for user_data in users_data:
+#         user = User.query.filter_by(email=user_data[0]).first()
+#         if not user:
+#             user = User(
+#                 email=user_data[0],
+#                 fio=user_data[1],
+#                 telephone=user_data[2],
+#                 password=user_data[3],
+#                 organization_id=user_data[4],
+#             )
+#             db.session.add(user)
+#             db.session.flush()
 
-        organization = Organization.query.get(user.organization_id)
-        if not organization:
-            continue
+#         organization = Organization.query.get(user.organization_id)
+#         if not organization:
+#             continue
 
-        # 2 отчёта: текущий год и следующий квартал
-        for quarter in (current_quarter, current_quarter + 1):
-            new_report = Report(
-                okpo=organization.okpo,
-                org_id=organization.id,
-                year=current_year,
-                quarter=quarter,
-                user_id=user.id
-            )
-            db.session.add(new_report)
-            db.session.flush()
+#         # 2 отчёта: текущий год и следующий квартал
+#         for quarter in (current_quarter, current_quarter + 1):
+#             new_report = Report(
+#                 okpo=organization.okpo,
+#                 org_id=organization.id,
+#                 year=current_year,
+#                 quarter=quarter,
+#                 user_id=user.id
+#             )
+#             db.session.add(new_report)
+#             db.session.flush()
 
-            new_version_report = Version_report(
-                begin_time=current_time,
-                status="Заполнение",
-                fio=user.fio,
-                telephone=user.telephone,
-                email=user.email,
-                report=new_report
-            )
-            db.session.add(new_version_report)
-            db.session.flush()
+#             new_version_report = Version_report(
+#                 begin_time=current_time,
+#                 status="Заполнение",
+#                 fio=user.fio,
+#                 telephone=user.telephone,
+#                 email=user.email,
+#                 report=new_report
+#             )
+#             db.session.add(new_version_report)
+#             db.session.flush()
 
-            created_version_ids.append(new_version_report.id)
+#             created_version_ids.append(new_version_report.id)
 
-            sections = Sections.query.filter_by(id_version=new_version_report.id).all()
-            if not sections:
-                id_version = new_version_report.id
-                sections_data = [
-                    (id_version, 326, 9100, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('33.00'), Decimal('411.00'), Decimal('378.00'), ''),
-                    (id_version, 329, 9010, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), 'какая-то информация'),
-                    (id_version, 332, 9001, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('33.00'), Decimal('411.00'), Decimal('378.00'), ''),
+#             sections = Sections.query.filter_by(id_version=new_version_report.id).all()
+#             if not sections:
+#                 id_version = new_version_report.id
+#                 sections_data = [
+#                     (id_version, 326, 9100, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('33.00'), Decimal('411.00'), Decimal('378.00'), ''),
+#                     (id_version, 329, 9010, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), 'какая-то информация'),
+#                     (id_version, 332, 9001, 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('33.00'), Decimal('411.00'), Decimal('378.00'), ''),
 
-                    (id_version, 6, '0026', 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('33.00'), Decimal('411.00'), Decimal('378.00'), ''),
+#                     (id_version, 6, '0026', 1, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('33.00'), Decimal('411.00'), Decimal('378.00'), ''),
 
-                    (id_version, 327, 9100, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-                    (id_version, 330, 9010, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), 'какая-то информация'),
-                    (id_version, 333, 9001, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-                    (id_version, 328, 9100, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-                    (id_version, 331, 9010, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), 'какая-то информация'),
-                    (id_version, 334, 9001, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
-                ]
-                for data in sections_data:
-                    section = Sections(
-                        id_version=data[0],
-                        id_product=data[1],
-                        code_product=data[2],
-                        section_number=data[3],
-                        Oked=data[4],
-                        produced=data[5],
-                        Consumed_Quota=data[6],
-                        Consumed_Fact=data[7],
-                        Consumed_Total_Quota=data[8],
-                        Consumed_Total_Fact=data[9],
-                        total_differents=data[10],
-                        note=data[11]
-                    )
-                    db.session.add(section)
+#                     (id_version, 327, 9100, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
+#                     (id_version, 330, 9010, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), 'какая-то информация'),
+#                     (id_version, 333, 9001, 2, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
+#                     (id_version, 328, 9100, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
+#                     (id_version, 331, 9010, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), 'какая-то информация'),
+#                     (id_version, 334, 9001, 3, '', Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), Decimal('0.00'), ''),
+#                 ]
+#                 for data in sections_data:
+#                     section = Sections(
+#                         id_version=data[0],
+#                         id_product=data[1],
+#                         code_product=data[2],
+#                         section_number=data[3],
+#                         Oked=data[4],
+#                         produced=data[5],
+#                         Consumed_Quota=data[6],
+#                         Consumed_Fact=data[7],
+#                         Consumed_Total_Quota=data[8],
+#                         Consumed_Total_Fact=data[9],
+#                         total_differents=data[10],
+#                         note=data[11]
+#                     )
+#                     db.session.add(section)
 
-    db.session.commit()
+#     db.session.commit()
 
-    versions_to_update = Version_report.query.filter(Version_report.id.in_(created_version_ids)).all()
-    for version in versions_to_update:
-        version.status = 'Отправлен'
-        version.sent_time = current_utc_time()
-    db.session.commit()
+#     versions_to_update = Version_report.query.filter(Version_report.id.in_(created_version_ids)).all()
+#     for version in versions_to_update:
+#         version.status = 'Отправлен'
+#         version.sent_time = current_utc_time()
+#     db.session.commit()
 
-    return "Пользователи и два отчёта на каждый год созданы"
+#     return "Пользователи и два отчёта на каждый год созданы"
 
-def delete_test_users():
-    emails = [
-        'testuser1BrestReg@gmail.com',
-        'testuser2BrestReg@gmail.com',
-        'testuser1VitebskReg@gmail.com',
-        'testuser2VitebskReg@gmail.com',
-        'testuser1GomelReg@gmail.com',
-        'testuser2GomelReg@gmail.com',
-        'testuser1GrodnoReg@gmail.com',
-        'testuser2GrodnoReg@gmail.com',
-        'testuser1MinskReg@gmail.com',
-        'testuser2MinskReg@gmail.com',
-        'testuser1MogilevReg@gmail.com',
-        'testuser2MogilevReg@gmail.com',
-        'testuser1Minsk@gmail.com',
-        'testuser2Minsk@gmail.com',
-    ]
+# def delete_test_users():
+#     emails = [
+#         'testuser1BrestReg@gmail.com',
+#         'testuser2BrestReg@gmail.com',
+#         'testuser1VitebskReg@gmail.com',
+#         'testuser2VitebskReg@gmail.com',
+#         'testuser1GomelReg@gmail.com',
+#         'testuser2GomelReg@gmail.com',
+#         'testuser1GrodnoReg@gmail.com',
+#         'testuser2GrodnoReg@gmail.com',
+#         'testuser1MinskReg@gmail.com',
+#         'testuser2MinskReg@gmail.com',
+#         'testuser1MogilevReg@gmail.com',
+#         'testuser2MogilevReg@gmail.com',
+#         'testuser1Minsk@gmail.com',
+#         'testuser2Minsk@gmail.com',
+#     ]
     
-    users = User.query.filter(User.email.in_(emails)).all()
-    for user in users:
-        db.session.delete(user)
-    db.session.commit()
-    return "Пользователи удалены"
+#     users = User.query.filter(User.email.in_(emails)).all()
+#     for user in users:
+#         db.session.delete(user)
+#     db.session.commit()
+#     return "Пользователи удалены"
 
-@auth.route('/create-test-users', methods=['POST'])
-@login_required 
-@session_required
-def create_test_users_rout():
-    return create_test_users(userpassword = '1111')
+# @auth.route('/create-test-users', methods=['POST'])
+# @login_required 
+# @session_required
+# def create_test_users_rout():
+#     return create_test_users(userpassword = '1111')
 
-@auth.route('/delete-test-users', methods=['POST'])
-@login_required 
-@session_required
-def delete_test_users_rout():
-    return delete_test_users()
+# @auth.route('/delete-test-users', methods=['POST'])
+# @login_required 
+# @session_required
+# def delete_test_users_rout():
+#     return delete_test_users()

@@ -95,23 +95,19 @@
             <div class="askquestion_form">
                 <div class="askquestion_name">Форма обратной связи</div>
                 <form action="/sent_for_admin" method="POST" id = "askquestion-form">
-                    <div class="answer-highlight-second" style = "max-width: 600px;">
-                        <div class="highlight-icon">💡</div>
-                        <p>Тут можно задать вопрос, ответ приходит в профиле и на почту.</p>
-                    </div>
                     <select name="askquestion_type" id="questionType" required>
                         <option value="">Выберите тип вопроса</option>
                         <option value="organization-none">Нет организации в списке</option>
                         <option value="other">Другое</option>
                     </select>
-                    <textarea type="text" name="organization_name" placeholder="Введите наименование предприятия" maxlength="150" value = "" required></textarea>
-                    <input type="text" name="organization_okpo" placeholder = "Введите код ОКПО" minlength = 12 maxlength = 12 required>
-
-                    <textarea type="text" name="problem_description" placeholder="Опишите проблему" maxlength="300" value = "" required></textarea>
+                    <textarea type="text" name="organization_name" placeholder="Введите полное наименование предприятия" maxlength="150" value = "" required></textarea>
+                    <input type="text" name="organization_ynp" placeholder="Введите код УНП" minlength="9" maxlength="9" required id="ynpInput">
+                    <input type="text" name="organization_okpo" placeholder="Введите код ОКПО" minlength="12" maxlength="12" required id="okpoInput">
+                    <textarea type="text" name="problem_description" placeholder="Напишите ваш вопрос" maxlength="300" value = "" required></textarea>
                     <input type="text" name="email" value = "{{current_user.email}}" readonly>
 
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type = "submit" class="blue_btn">
+                    <button type = "submit" class="blue_btn" id = "send-btn">
                         <img src="/static/img/Send.svg" alt="" class="button-icon">
                         <span>Отправить вопрос</span>
                     </button>
@@ -121,48 +117,184 @@
     {%else%}
     {%endif%}
 </div>
-
 <script>
+
 document.addEventListener('DOMContentLoaded', function() {
     const questionTypeSelect = document.getElementById('questionType');
     const form = document.getElementById('askquestion-form');
     const nameInput = form.querySelector('textarea[name="organization_name"]');
     const okpoInput = form.querySelector('input[name="organization_okpo"]');
+    const ynpInput = form.querySelector('input[name="organization_ynp"]');
     const textarea = form.querySelector('textarea[name="problem_description"]');
-    const submitButton = form.querySelector('.blue_btn');
-    
+    const submitButton = document.getElementById('send-btn');
+
+    function checkOkpoValidity(value) {
+        if (value.length === 0) return true;
+        if (value.length !== 12) return false;
+        const fourthFromEnd = value[value.length - 4];
+        const allowedDigits = ['1', '2', '3', '4', '5', '6', '7'];
+        return allowedDigits.includes(fourthFromEnd);
+    }
+
+    function checkYnpValidity(value) {
+        if (value.length === 0) return true;
+        return value.length === 9;
+    }
+
+    function updateOkpoError() {
+        const value = okpoInput.value;
+        const existingError = document.getElementById('okpoError');
+        if (existingError) existingError.remove();
+        
+        if (value.length === 0) {
+            okpoInput.classList.remove('input-error');
+            return;
+        }
+        
+        if (value.length !== 12) {
+            okpoInput.classList.add('input-error');
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'okpoError';
+            errorDiv.style.color = 'red';
+            errorDiv.style.fontSize = '12px';
+            errorDiv.style.marginBottom = '15px';
+            errorDiv.textContent = 'ОКПО должен содержать ровно 12 цифр';
+            okpoInput.parentNode.insertBefore(errorDiv, okpoInput.nextSibling);
+            return;
+        }
+        
+        const fourthFromEnd = value[value.length - 4];
+        const allowedDigits = ['1', '2', '3', '4', '5', '6', '7'];
+        
+        if (!allowedDigits.includes(fourthFromEnd)) {
+            okpoInput.classList.add('input-error');
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'okpoError';
+            errorDiv.style.color = 'red';
+            errorDiv.style.fontSize = '12px';
+            errorDiv.style.marginBottom = '15px';
+            errorDiv.textContent = '4-я цифра с конца в коде ОКПО отражает регион, она должна быть от 1 до 7';
+            okpoInput.parentNode.insertBefore(errorDiv, okpoInput.nextSibling);
+            return;
+        }
+        
+        okpoInput.classList.remove('input-error');
+    }
+
+    function updateYnpError() {
+        const value = ynpInput.value;
+        const existingError = document.getElementById('ynpError');
+        if (existingError) existingError.remove();
+        
+        if (value.length === 0) {
+            ynpInput.classList.remove('input-error');
+            return;
+        }
+        
+        if (value.length !== 9) {
+            ynpInput.classList.add('input-error');
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'ynpError';
+            errorDiv.style.color = 'red';
+            errorDiv.style.fontSize = '12px';
+            errorDiv.style.marginBottom = '15px';
+            errorDiv.textContent = 'УНП должен содержать ровно 9 цифр';
+            ynpInput.parentNode.insertBefore(errorDiv, ynpInput.nextSibling);
+            return;
+        }
+        
+        ynpInput.classList.remove('input-error');
+    }
+
+    document.getElementById('ynpInput').addEventListener('input', function(e) {
+        let value = this.value.replace(/[^\d]/g, '');
+        if (value.length > 9) {
+            value = value.slice(0, 9);
+        }
+        this.value = value;
+        updateYnpError();
+        validateForm();
+    });
+
+    document.getElementById('okpoInput').addEventListener('input', function(e) {
+        let value = this.value.replace(/[^\d]/g, '');
+        if (value.length > 12) {
+            value = value.slice(0, 12);
+        }
+        this.value = value;
+        updateOkpoError();
+        validateForm();
+    });
+
+    function validateForm() {
+        const selectedValue = questionTypeSelect.value;
+        
+        if (selectedValue === '') {
+            submitButton.disabled = true;
+            submitButton.style.display = 'none';
+            return;
+        } else {
+            submitButton.style.display = 'flex';
+        }
+        
+        if (selectedValue === 'organization-none') {
+            const nameValid = nameInput.value.trim() !== '';
+            const okpoValid = okpoInput.value.length === 12 && checkOkpoValidity(okpoInput.value);
+            const ynpValid = ynpInput.value.length === 9;
+            
+            if (nameValid && okpoValid && ynpValid) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        } else if (selectedValue === 'other') {
+            const textareaValid = textarea.value.trim() !== '';
+            submitButton.disabled = !textareaValid;
+        }
+    }
+
     function updateFieldsVisibility() {
         const selectedValue = questionTypeSelect.value;
         
         if (selectedValue === '') {
             nameInput.style.display = 'none';
             okpoInput.style.display = 'none';
+            ynpInput.style.display = 'none';
             textarea.style.display = 'block';
+            submitButton.disabled = true;
             submitButton.style.display = 'none';
             nameInput.required = false;
             okpoInput.required = false;
+            ynpInput.required = false;
             textarea.required = true;
         } else if (selectedValue === 'organization-none') {
             nameInput.style.display = 'block';
             okpoInput.style.display = 'block';
+            ynpInput.style.display = 'block';
             textarea.style.display = 'none';
             submitButton.style.display = 'flex';
-            submitButton.disabled = false;
             nameInput.required = true;
             okpoInput.required = true;
+            ynpInput.required = true;
             textarea.required = false;
+            validateForm();
         } else if (selectedValue === 'other') {
             nameInput.style.display = 'none';
             okpoInput.style.display = 'none';
+            ynpInput.style.display = 'none';
             textarea.style.display = 'block';
             submitButton.style.display = 'flex';
-            submitButton.disabled = false;
             nameInput.required = false;
             okpoInput.required = false;
+            ynpInput.required = false;
             textarea.required = true;
+            validateForm();
         }
     }
     
+    nameInput.addEventListener('input', validateForm);
+    ynpInput.addEventListener('input', validateForm);
+    textarea.addEventListener('input', validateForm);
     questionTypeSelect.addEventListener('change', updateFieldsVisibility);
     updateFieldsVisibility();
 });
