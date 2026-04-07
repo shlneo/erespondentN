@@ -193,6 +193,15 @@
                 {% else %}
                 {% endif %}
             </span>
+            <span> 
+                <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
+            </span>
+            <span class="status-badge video-check" 
+                title="Перейти к видео-инструкции" 
+                onclick="window.open('/FAQ#faq9', '_blank'); return false;">
+                {{ icons.icon_video_redirect() }} 
+                <span>Видео-инструкция</span>
+            </span>
         </div>
     </div>
     <div class = "report-area">
