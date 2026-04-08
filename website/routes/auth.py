@@ -290,7 +290,7 @@ def profile_password():
         user.password = generate_password_hash(new_password)
         db.session.commit()
 
-        send_email('Вы успешно изменили свой пароль для входа в учетную запись ErespondentN', current_user.email, 'just_notif')
+        # send_email('Вы успешно изменили свой пароль для входа в учетную запись ErespondentN', current_user.email, 'just_notif')
 
         # UserSession.query.filter_by(user_id=current_user.id).delete()
         # db.session.commit()
@@ -1137,7 +1137,7 @@ def change_category_report():
             db.session.add(user_message)
             db.session.commit()
     
-            send_email(status_itog, user.email, 'status')
+            # send_email(status_itog, user.email, 'status')
 
             flash(f'Статус отчета был изменен на «{status_itog}».', 'success')
             return redirect(request.referrer) 

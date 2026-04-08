@@ -12,8 +12,8 @@ from email.utils import formatdate
 
 SMTP_HOST = os.getenv("SMTP_HOST")
 
-EMAILS_PER_MINUTE = 3
-DAILY_LIMIT = 200
+EMAILS_PER_MINUTE = 2
+DAILY_LIMIT = 5000
 
 PRIORITY = {
     "activation_code": 3,
