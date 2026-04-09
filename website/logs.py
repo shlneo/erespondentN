@@ -19,7 +19,6 @@ class logs(logging.Formatter):
             "function": record.funcName,
         }
         
-
         if record.exc_info:
             log_data["exception"] = {
                 "type": record.exc_info[0].__name__,
@@ -34,17 +33,17 @@ class logs(logging.Formatter):
 
 
 def setup_logging(app):
-    # log_dir = "logs"
-    # use_file_logging = False
+    log_dir = "logs"
+    use_file_logging = True
     
-    # if use_file_logging and not os.path.exists(log_dir):
-    #     os.makedirs(log_dir)
+    if use_file_logging and not os.path.exists(log_dir):
+        os.makedirs(log_dir)
 
-    # log_file = os.path.join(log_dir, "py-app.log") if use_file_logging else None
+    log_file = os.path.join(log_dir, "py-app.log") if use_file_logging else None
     
     log_level = app.config.get('LOG_LEVEL', 'DEBUG').upper()
     
-    # json_formatter = logs() if use_file_logging else None
+    json_formatter = logs() if use_file_logging else None
     
     console_formatter = logging.Formatter(
         '%(asctime)s | %(levelname)-8s | %(name)s | %(filename)s:%(lineno)d | %(message)s',
@@ -61,17 +60,18 @@ def setup_logging(app):
     console_handler.set_name('console_handler')
     root_logger.addHandler(console_handler)
     
-
-    # file_handler = RotatingFileHandler(
-    #     log_file,
-    #     maxBytes=10*1024*1024,
-    #     backupCount=5,
-    #     encoding='utf-8'
-    # )
-    # file_handler.setLevel(getattr(logging, log_level))
-    # file_handler.setFormatter(json_formatter)
-    # file_handler.set_name('json_file_handler')
-    # root_logger.addHandler(file_handler)
+    if use_file_logging and log_file:
+        file_handler = RotatingFileHandler(
+            log_file,
+            maxBytes=10*1024*1024,
+            backupCount=5,
+            encoding='utf-8'
+        )
+        file_handler.setLevel(getattr(logging, log_level))
+        file_handler.setFormatter(json_formatter)
+        file_handler.set_name('json_file_handler')
+        root_logger.addHandler(file_handler)
+        app.logger.info(f"Logs are recorded in: {log_file}")
 
     app.logger.handlers.clear()
     app.logger.propagate = True
@@ -80,9 +80,6 @@ def setup_logging(app):
     app.logger.info(f"Launch time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     app.logger.info(f"Logging level: {log_level}")
     app.logger.info(f"Debug mode: {app.config.get('DEBUG', False)}")
-
-    # app.logger.info(f"Logs are recorded in: {log_file}")
-    
     app.logger.info("=" * 60)
     
 def log_with_extra(logger, level, message, **extra_fields):

@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const resendButton = document.getElementById('resend-cod');
-    const TIME_LIMIT = 60;
-    const STORAGE_KEY = 'resend_code_timer';
+    const TIME_LIMIT = 300;
+    const STORAGE_KEY = 'resend_code_timer_end';
 
     let timerInterval = null;
 
@@ -46,8 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     }
 
-    function saveTimerState(timeLeft) {
-        const endTime = Math.floor(Date.now() / 1000) + timeLeft;
+    function saveTimerState(endTime) {
         localStorage.setItem(STORAGE_KEY, endTime.toString());
     }
 
@@ -69,27 +68,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function startTimer(seconds) {
+    function startTimer(endTimestamp) {
         clearExistingTimer();
         
-        let timeLeft = seconds;
-        updateButtonState(false, `Повторная отправка через ${formatTime(timeLeft)}`);
-        saveTimerState(timeLeft);
-        
-        timerInterval = setInterval(() => {
-            timeLeft--;
+        const updateTimer = () => {
+            const currentTime = Math.floor(Date.now() / 1000);
+            const timeLeft = endTimestamp - currentTime;
             
             if (timeLeft <= 0) {
                 clearExistingTimer();
                 updateButtonState(true, 'Отправить ещё раз');
                 localStorage.removeItem(STORAGE_KEY);
             } else {
-                if (timeLeft % 5 === 0) {
-                    saveTimerState(timeLeft);
-                }
                 updateButtonState(false, `Повторная отправка через ${formatTime(timeLeft)}`);
             }
-        }, 1000);
+        };
+        
+        updateTimer();
+        
+        if (endTimestamp > Math.floor(Date.now() / 1000)) {
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+    }
+
+    function startNewTimer() {
+        clearExistingTimer();
+        const newEndTime = Math.floor(Date.now() / 1000) + TIME_LIMIT;
+        saveTimerState(newEndTime);
+        startTimer(newEndTime);
     }
 
     function initTimer() {
@@ -100,22 +106,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const endTime = parseInt(savedEndTime);
             const timeLeft = endTime - currentTime;
 
-            if (timeLeft > 0 && timeLeft <= TIME_LIMIT) {
-                startTimer(timeLeft);
-            } else if (timeLeft > TIME_LIMIT) {
-                startTimer(TIME_LIMIT);
+            if (timeLeft > 0) {
+                startTimer(endTime);
             } else {
                 localStorage.removeItem(STORAGE_KEY);
                 updateButtonState(true, 'Отправить ещё раз');
             }
         } else {
-            updateButtonState(true, 'Отправить ещё раз');
+            startNewTimer();
         }
-    }
-
-    function resetTimer() {
-        clearExistingTimer();
-        startTimer(TIME_LIMIT);
     }
 
     initTimer();
@@ -141,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             
             if (data.status === 'success') {
-                resetTimer();
+                startNewTimer();
                 
                 if (data.message) {
                 }
@@ -155,20 +154,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && timerInterval) {
+        if (!document.hidden) {
             const savedEndTime = localStorage.getItem(STORAGE_KEY);
             if (savedEndTime) {
                 const currentTime = Math.floor(Date.now() / 1000);
                 const endTime = parseInt(savedEndTime);
                 const timeLeft = endTime - currentTime;
                 
-                if (timeLeft > 0 && timeLeft <= TIME_LIMIT) {
+                if (timeLeft > 0) {
                     clearExistingTimer();
-                    startTimer(timeLeft);
-                } else if (timeLeft <= 0) {
-                    clearExistingTimer();
-                    updateButtonState(true, 'Отправить ещё раз');
-                    localStorage.removeItem(STORAGE_KEY);
+                    startTimer(endTime);
                 }
             }
         }
