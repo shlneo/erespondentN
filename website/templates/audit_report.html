@@ -252,28 +252,27 @@
                                     readonly
                                 >
                             </td>
-                            {% if row.total_differents is not none and (row.total_differents < 0.0 or row.total_differents == 0,00) %}
+                            {% if row.total_differents is not none and row.total_differents >= 0.0 %}
                                 <td style="background-color: #a2ff77;">
-                                    <input 
+                                    <input  
+                                        type="text"
                                         style="background-color: #a2ff77; color: black;" 
                                         name="row_total_differents" 
-                                        type = "text"
                                         value="{{ row.total_differents }}" 
                                         readonly
                                     >
                                 </td>
-                            {%else%}
+                            {% else %}
                                 <td style="background-color: #ff7676;">
-                                    <input 
-                                        style="background-color: #ff7676; 
-                                        color: black;" 
-                                        type = "text"
+                                    <input  
+                                        type="text"
+                                        style="background-color: #ff7676; color: black;" 
                                         name="row_total_differents" 
                                         value="{{ row.total_differents }}" 
                                         readonly
                                     >
                                 </td>
-                            {%endif%}
+                            {% endif %}
                             <td> 
                                 <input 
                                     name = "note_fuel" 
@@ -411,26 +410,27 @@
                                     readonly
                                 >
                             </td>
-                            {% if row.total_differents is not none and (row.total_differents < 0.0 or row.total_differents == 0,00) %}
+                            {% if row.total_differents is not none and row.total_differents >= 0.0 %}
                                 <td style="background-color: #a2ff77;">
-                                    <input type = "text"
+                                    <input  
+                                        type="text"
                                         style="background-color: #a2ff77; color: black;" 
                                         name="row_total_differents" 
                                         value="{{ row.total_differents }}" 
                                         readonly
                                     >
                                 </td>
-                            {%else%}
+                            {% else %}
                                 <td style="background-color: #ff7676;">
-                                    <input type = "text"
-                                        style="background-color: #ff7676; 
-                                        color: black;" 
+                                    <input  
+                                        type="text"
+                                        style="background-color: #ff7676; color: black;" 
                                         name="row_total_differents" 
                                         value="{{ row.total_differents }}" 
                                         readonly
                                     >
                                 </td>
-                            {%endif%}
+                            {% endif %}
                             <td> 
                                 <input type = "text"
                                     name = "note_fuel" 
@@ -523,15 +523,27 @@
                             <td>     
                                 <input type = "text" name = "Consumed_Total_Fact_fuel" value = "{{ row.Consumed_Total_Fact }}" readonly>
                             </td>
-                            {% if row.total_differents is not none and (row.total_differents < 0.0 or row.total_differents == 0,00) %}
+                            {% if row.total_differents is not none and row.total_differents >= 0.0 %}
                                 <td style="background-color: #a2ff77;">
-                                    <input type = "text" style="background-color: #a2ff77; color: black;" name="row_total_differents"  value="{{ row.total_differents }}" readonly>
+                                    <input  
+                                        type="text"
+                                        style="background-color: #a2ff77; color: black;" 
+                                        name="row_total_differents" 
+                                        value="{{ row.total_differents }}" 
+                                        readonly
+                                    >
                                 </td>
-                            {%else%}
+                            {% else %}
                                 <td style="background-color: #ff7676;">
-                                    <input type = "text" style="background-color: #ff7676; color: black;" name="row_total_differents"  value="{{ row.total_differents }}" readonly>
+                                    <input  
+                                        type="text"
+                                        style="background-color: #ff7676; color: black;" 
+                                        name="row_total_differents" 
+                                        value="{{ row.total_differents }}" 
+                                        readonly
+                                    >
                                 </td>
-                            {%endif%}
+                            {% endif %}
                             <td> 
                                 <input type = "text" name = "note_fuel" value = "{{ row.note }}" readonly>
                             </td>     
