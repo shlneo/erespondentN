@@ -332,7 +332,7 @@
                             readonly
                         >
                     </td>
-                    {% if row.total_differents is not none and row.total_differents >= 0.0 %}
+                    {% if row.total_differents is not none and row.total_differents <= 0.0 %}
                         <td style="background-color: #a2ff77;">
                             <input  
                                 type="text"

@@ -252,7 +252,7 @@
                                     readonly
                                 >
                             </td>
-                            {% if row.total_differents is not none and row.total_differents >= 0.0 %}
+                            {% if row.total_differents is not none and row.total_differents <= 0.0 %}
                                 <td style="background-color: #a2ff77;">
                                     <input  
                                         type="text"
@@ -410,7 +410,7 @@
                                     readonly
                                 >
                             </td>
-                            {% if row.total_differents is not none and row.total_differents >= 0.0 %}
+                            {% if row.total_differents is not none and row.total_differents <= 0.0 %}
                                 <td style="background-color: #a2ff77;">
                                     <input  
                                         type="text"
@@ -523,7 +523,7 @@
                             <td>     
                                 <input type = "text" name = "Consumed_Total_Fact_fuel" value = "{{ row.Consumed_Total_Fact }}" readonly>
                             </td>
-                            {% if row.total_differents is not none and row.total_differents >= 0.0 %}
+                            {% if row.total_differents is not none and row.total_differents <= 0.0 %}
                                 <td style="background-color: #a2ff77;">
                                     <input  
                                         type="text"
