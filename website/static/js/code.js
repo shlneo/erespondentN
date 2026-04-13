@@ -78,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (timeLeft <= 0) {
                 clearExistingTimer();
                 updateButtonState(true, 'Отправить ещё раз');
-                localStorage.removeItem(STORAGE_KEY);
             } else {
                 updateButtonState(false, `Повторная отправка через ${formatTime(timeLeft)}`);
             }
@@ -91,11 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function startNewTimer() {
+    function startInitialTimer() {
         clearExistingTimer();
-        const newEndTime = Math.floor(Date.now() / 1000) + TIME_LIMIT;
-        saveTimerState(newEndTime);
-        startTimer(newEndTime);
+        const endTime = Math.floor(Date.now() / 1000) + TIME_LIMIT;
+        saveTimerState(endTime);
+        startTimer(endTime);
     }
 
     function initTimer() {
@@ -109,11 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (timeLeft > 0) {
                 startTimer(endTime);
             } else {
-                localStorage.removeItem(STORAGE_KEY);
                 updateButtonState(true, 'Отправить ещё раз');
+                localStorage.removeItem(STORAGE_KEY);
             }
         } else {
-            startNewTimer();
+            startInitialTimer();
         }
     }
 
@@ -140,16 +139,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             
             if (data.status === 'success') {
-                startNewTimer();
+                startInitialTimer();
                 
                 if (data.message) {
+                    console.log(data.message);
                 }
             } else {
                 updateButtonState(true, 'Отправить ещё раз');
+                if (data.message) {
+                    alert(data.message);
+                }
             }
         } catch (error) {
             console.error('Ошибка при отправке кода:', error);
             updateButtonState(true, 'Отправить ещё раз');
+            alert('Произошла ошибка при отправке кода. Попробуйте позже.');
         }
     });
 
