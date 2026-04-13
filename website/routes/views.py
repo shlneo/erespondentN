@@ -443,7 +443,7 @@ def api_audit_data():
             if search_name:
                 match_name = search_name.lower() in report.organization.full_name.lower()
             if search_okpo:
-                match_okpo = search_okpo in str(report.okpo)
+                match_okpo = search_okpo in str(report.organization.okpo)
                 
             if match_name and match_okpo:
                 filtered_reports.append(report)
@@ -460,7 +460,7 @@ def api_audit_data():
                 'id': row.id,
                 'version_id': version.id,
                 'organization_name': row.organization.full_name,
-                'okpo': row.okpo,
+                'okpo': row.organization.okpo,
                 'year': row.year,
                 'quarter': row.quarter,
                 'sent_time': sent_date,

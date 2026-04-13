@@ -350,7 +350,6 @@ def create_new_report():
         
         if not has_report:
             new_report = Report(
-                okpo=organization.okpo,
                 org_id=organization.id,
                 year=year,
                 quarter=quarter,
@@ -594,7 +593,6 @@ def copy_structure_report():
             ).all()
             
             new_report = Report(
-                okpo=current_user.organization.okpo,
                 org_id=current_user.organization.id,
                 year=new_year,
                 quarter=new_quarter,
@@ -724,7 +722,7 @@ def add_section_param():
                         ).first()
 
                         if proverka_section and not note:
-                            flash('Такой вид продукции уже существует — поле "Примечание" обязательно для заполнения.', 'error')
+                            flash('"Примечание" обязательно для заполнения, так как такая продукция уже есть.', 'error')
                             return redirect(request.referrer)
 
                         new_section = Sections(
@@ -1274,7 +1272,7 @@ def print_version_tickets():
         c.drawString(100, 780, "Квитанции по отчету")
         
         c.setFont("MontserratRegular", 12)
-        c.drawString(100, 760, f"ОКПО: {report.okpo}")
+        c.drawString(100, 760, f"ОКПО: {report.organization.okpo}")
         c.drawString(100, 740, f"Год: {report.year}, Квартал: {report.quarter}")
         c.drawString(100, 720, f"Всего квитанций: {len(tickets)}")
         
@@ -1286,7 +1284,7 @@ def print_version_tickets():
                 c.setFont("MontserratBold", 16)
                 c.drawString(100, 780, "Квитанции по отчету (продолжение)")
                 c.setFont("MontserratRegular", 12)
-                c.drawString(100, 760, f"ОКПО: {report.okpo}")
+                c.drawString(100, 760, f"ОКПО: {report.organization.okpo}")
                 c.drawString(100, 740, f"Год: {report.year}, Квартал: {report.quarter}")
                 y_position = 700
 
@@ -1315,7 +1313,7 @@ def print_version_tickets():
 
         response = make_response(buffer.getvalue())
         response.headers['Content-Type'] = 'application/pdf'
-        response.headers['Content-Disposition'] = 'attachment; filename=' + f"kvitancii_{report.okpo}_{report.year}_{report.quarter}.pdf"
+        response.headers['Content-Disposition'] = 'attachment; filename=' + f"kvitancii_{report.organization.okpo}_{report.year}_{report.quarter}.pdf"
         
         return response
 
@@ -1349,10 +1347,10 @@ def create_xml_for_version(version):
     report_el = etree.SubElement(root, "REPORT")
 
     etree.SubElement(report_el, "DESCRIPTION_REPORT", attrib={
-        "CODE": str(report.okpo or ""),
+        "CODE": str(report.organization.okpo or ""),
         "NO": organization.full_name or "",
         "CODE_ENT": organization.full_name or "",
-        "OKPO": str(report.okpo or ""),
+        "OKPO": str(report.organization.okpo or ""),
         "UNP": str(organization.ynp or ""),
         "YEAR": str(report.year),
         "QUARTER": str(report.quarter),
@@ -1446,11 +1444,11 @@ def exportXML():
         ).all()
     else:
         versions = Version_report.query.options(
-            joinedload(Version_report.report),
+            joinedload(Version_report.report).joinedload(Report.organization),
             joinedload(Version_report.sections).joinedload(Sections.product)
-        ).join(Report).filter(
+        ).join(Report).join(Organization, Organization.id == Report.org_id).filter(
             Version_report.status == "Одобрен",
-            func.substr(func.cast(Report.okpo, String), func.length(Report.okpo) - 3, 1) == okpo_digit,
+            func.substr(func.cast(Organization.okpo, db.String), func.length(Organization.okpo) - 3, 1) == okpo_digit,
             *filters
         ).all()
     
@@ -1464,7 +1462,7 @@ def exportXML():
         for version in versions:
             report = version.report
             xml_data = create_xml_for_version(version)
-            file_name = f"{report.okpo}_{report.year}_{report.quarter}.xml"
+            file_name = f"{report.organization.okpo}_{report.year}_{report.quarter}.xml"
             zipf.writestr(file_name, xml_data)
     mem_zip.seek(0)
 

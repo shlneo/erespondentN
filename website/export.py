@@ -12,7 +12,7 @@ from website.report import EXCLUDED_OKPO_LISTS, SPECIAL_OKPO_LISTS
 
 from . import db
 from .models import (
-    Report, Version_report, Sections
+    Organization, Report, Version_report, Sections
 )
 
 from sqlalchemy import asc, case, func, desc, or_
@@ -205,7 +205,7 @@ def generate_excel_report(version_id):
             ws["B3"].font = regular_font_9
             ws["B3"].alignment = center 
                         
-            okpo = report.okpo
+            okpo = report.organization.okpo
             org_name = get_org_name_by_okpo(okpo)
             
             if org_name:
@@ -303,7 +303,7 @@ def generate_excel_report(version_id):
         ws["D18"].alignment = center     
                         
         ws.merge_cells("B20:P20")
-        ws["B20"].value = f"ОКПО: {report.okpo}".upper()
+        ws["B20"].value = f"ОКПО: {report.organization.okpo}".upper()
         ws["B20"].font = bold_font_13
         ws["B20"].alignment = center
         
@@ -470,7 +470,7 @@ def generate_excel_report(version_id):
     wb.save(file_stream)
     file_stream.seek(0)
 
-    return send_file(file_stream, as_attachment=True, download_name=f'{current_report.okpo}_{current_report.year}_{current_report.quarter}.xlsx', mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    return send_file(file_stream, as_attachment=True, download_name=f'{current_report.organization.okpo}_{current_report.year}_{current_report.quarter}.xlsx', mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
 def get_approved_reports(form_data):
     year_filter = form_data.get('year_filter')
@@ -498,26 +498,32 @@ def get_approved_reports(form_data):
         excluded_condition = True
 
     subquery = db.session.query(
-        Report.okpo,
+        Organization.okpo,
         Report.year,
         Report.quarter,
         func.max(Version_report.sent_time).label('max_sent_time')
     ).join(
-        Version_report, Version_report.report_id == Report.id
+        Report, Report.id == Version_report.report_id
+    ).join(
+        Organization, Organization.id == Report.org_id
     ).filter(
         Version_report.status == "Одобрен",
         *filters
     ).group_by(
-        Report.okpo, Report.year, Report.quarter
+        Organization.okpo, Report.year, Report.quarter
     ).subquery()
 
     query = Version_report.query.options(
         joinedload(Version_report.report),
         joinedload(Version_report.sections).joinedload(Sections.product)
-    ).join(Report).join(
+    ).join(
+        Report, Report.id == Version_report.report_id
+    ).join(
+        Organization, Organization.id == Report.org_id
+    ).join(
         subquery,
         db.and_(
-            Report.okpo == subquery.c.okpo,
+            Organization.okpo == subquery.c.okpo,
             Report.year == subquery.c.year,
             Report.quarter == subquery.c.quarter,
             Version_report.sent_time == subquery.c.max_sent_time
@@ -528,31 +534,30 @@ def get_approved_reports(form_data):
     )
 
     if not (current_user_type == "Администратор" or (current_user_type == "Аудитор" and okpo_digit == "8")):
-        digit_condition = func.substr(func.cast(Report.okpo, String), func.length(Report.okpo) - 3, 1) == okpo_digit
+        digit_condition = func.substr(func.cast(Organization.okpo, db.String), func.length(Organization.okpo) - 3, 1) == okpo_digit
         
         if special_condition and excluded_condition:
             query = query.filter(
                 or_(
                     digit_condition,
-                    Report.okpo.in_(SPECIAL_OKPO_LISTS[int(okpo_digit)])
+                    Organization.okpo.in_(SPECIAL_OKPO_LISTS[int(okpo_digit)])
                 ),
-                ~Report.okpo.in_(EXCLUDED_OKPO_LISTS[int(okpo_digit)])
+                ~Organization.okpo.in_(EXCLUDED_OKPO_LISTS[int(okpo_digit)])
             )
         elif special_condition:
             query = query.filter(
                 or_(
                     digit_condition,
-                    Report.okpo.in_(SPECIAL_OKPO_LISTS[int(okpo_digit)])
+                    Organization.okpo.in_(SPECIAL_OKPO_LISTS[int(okpo_digit)])
                 )
             )
         elif excluded_condition:
             query = query.filter(
                 digit_condition,
-                ~Report.okpo.in_(EXCLUDED_OKPO_LISTS[int(okpo_digit)])
+                ~Organization.okpo.in_(EXCLUDED_OKPO_LISTS[int(okpo_digit)])
             )
         else:
             query = query.filter(digit_condition)
-
     return query.all()
 
 def create_dbf_zip(versions):
@@ -562,7 +567,7 @@ def create_dbf_zip(versions):
             dbf_data = prepare_dbf_data(version)
             dbf_content = create_dbf_file(dbf_data, version.report)
             zip_file.writestr(
-                f'{version.report.okpo}_{version.report.year}_{version.report.quarter}.dbf',
+                f'{version.report.organization.okpo}_{version.report.year}_{version.report.quarter}.dbf',
                 dbf_content
             )
     
@@ -597,7 +602,7 @@ def create_dbf_row(report, version, section, product):
     return {
         'YEAR_': str(report.year) if report.year is not None else '',
         'KVARTAL': str(report.quarter) if report.quarter is not None else '',
-        'IDPREDPR': str(report.okpo) if report.okpo is not None else '',
+        'IDPREDPR': str(report.organization.okpo) if report.organization.okpo is not None else '',
         'DATERECEIV': version.sent_time.strftime('%d.%m.%Y') if version.sent_time else '',
         'EXCEED': '0,000',
         'SECTIONNUM': str(section.section_number) if section.section_number is not None else '',

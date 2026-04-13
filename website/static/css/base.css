@@ -763,6 +763,10 @@ header nav ul {
     animation: pulse-glow 10s infinite;
 }
 
+.header-center nav ul li.blinking-item:hover {
+    color: #0066b9;  
+}
+
 .admin-dropdown {
     position: relative;
 }
@@ -4691,7 +4695,8 @@ th .resizer {
     gap: 10px;
     color: rgb(0, 0, 0);
     padding: 6px 10px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    /* background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%); */
+    background-color: white;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     text-align: center;
@@ -9369,7 +9374,7 @@ th .resizer {
 
     .hellow_row_name,
     .hellow_row_dop_name{
-        font-size: 23px;
+        font-size: 21px;
     }
 
     .hellow_buttonarea {

@@ -104,7 +104,7 @@
 
                     <tr>
                         <td><span title = "Организация за которую отчитываются">Предприятие <span class="required-mark">&#42;</span></span></td>
-                        <td style = "display: flex; flex-direction: row;">
+                        <td style = "display: flex; flex-direction: row;" {%if count_reports == 0 and current_user.type != 'Аудитор'%}id = "link_chooseOrgModal"{%endif%}>
                             <input 
                                 class = "pred_name" type="text" style = "{%if count_reports == 0 and current_user.type != 'Аудитор'%}
                                 border-top-right-radius: 0;
@@ -114,7 +114,7 @@
                                 {%else%} {%endif%}" 
                                 placeholder="Наименование предприятия"  name = "full_name_common" value="{{ current_user.organization.full_name if current_user.organization else '' }}" readonly>
                                 {%if count_reports == 0 and current_user.type != 'Аудитор'%}
-                                    <a class="show_organiz" id = "link_chooseOrgModal"> 
+                                    <a class="show_organiz" > 
                                         <img class="" src="{{ url_for('static', filename='img/Search.svg')}}" alt="">
                                     </a>
                                 {%else%} {%endif%}
@@ -257,7 +257,6 @@
     const totalPagesEl = document.getElementById('totalPages');
 
     if (!searchInput || !tableBody || !chooseOrgModal || !linkChooseOrgModal || !closeChooseOrgModal) {
-        console.error("Ошибка: Один или несколько элементов не найдены.");
         return;
     }
 

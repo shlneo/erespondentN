@@ -8,9 +8,9 @@ class ReportView(ModelView):
     can_create = True
     can_edit = True
     can_export = True
-    column_list = ['id', 'okpo', 'org_id', 'year', 'quarter', 'user_id', 'time_of_receipt', 'versions']
+    column_list = ['id', 'org_id', 'year', 'quarter', 'user_id', 'time_of_receipt', 'versions']
     
-    column_searchable_list = ['okpo', 'org_id', 'id']
+    column_searchable_list = ['org_id', 'id']
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.type == "Администратор"
