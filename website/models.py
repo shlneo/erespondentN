@@ -7,7 +7,7 @@ from .time import current_utc_time
 class Message(db.Model):
     __tablename__ = 'message'
     id = db.Column(db.Integer, primary_key=True)
-    create_time = db.Column(db.DateTime, default=current_utc_time)
+    create_time = db.Column(db.DateTime, default=current_utc_time())
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     text = db.Column(db.String(500))
@@ -22,7 +22,7 @@ class User(db.Model, UserMixin):
     fio = db.Column(db.String(100))
     telephone = db.Column(db.String())
     password = db.Column(db.String())
-    last_active = db.Column(db.DateTime, nullable=False, default=current_utc_time)
+    last_active = db.Column(db.DateTime, nullable=False, default=current_utc_time())
     reports = db.relationship('Report', backref='user', lazy=True, cascade="all, delete-orphan")
     organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'))
     organization = db.relationship('Organization', backref='users')
@@ -51,21 +51,20 @@ class Organization(db.Model):
 class Report(db.Model):
     __tablename__ = 'report'
     id = db.Column(db.Integer, primary_key=True)
-    okpo = db.Column(db.String, default=None)
     org_id = db.Column(db.Integer, db.ForeignKey('organization.id'))  
     year = db.Column(db.Integer)
     quarter = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  
-    time_of_receipt = db.Column(db.Date) 
+    time_of_receipt = db.Column(db.DateTime) 
     versions = db.relationship('Version_report', backref='report', cascade="all, delete-orphan")
 
 class Version_report(db.Model):
     __tablename__ = 'version_report'
     id = db.Column(db.Integer, primary_key=True)
-    begin_time = db.Column(db.Date, default=current_utc_time)
-    change_time = db.Column(db.Date)
-    sent_time = db.Column(db.Date)
-    audit_time = db.Column(db.Date)
+    begin_time = db.Column(db.DateTime, default=current_utc_time())
+    change_time = db.Column(db.DateTime)
+    sent_time = db.Column(db.DateTime)
+    audit_time = db.Column(db.DateTime)
     status = db.Column(db.String(20))
     fio = db.Column(db.String(100))
     telephone = db.Column(db.String())    
@@ -78,7 +77,7 @@ class Version_report(db.Model):
 class Ticket(db.Model):
     __tablename__ = 'ticket'
     id = db.Column(db.Integer, primary_key=True)
-    begin_time = db.Column(db.Date, default=current_utc_time)
+    begin_time = db.Column(db.DateTime, default=current_utc_time())
     luck = db.Column(db.Boolean, default=False)
     note = db.Column(db.String(500))
     version_report_id = db.Column(db.Integer, db.ForeignKey('version_report.id'))
@@ -102,8 +101,8 @@ class DirProduct(db.Model):
     IsHeat = db.Column(db.Boolean) 
     IsElectro = db.Column(db.Boolean)
     IdUnit = db.Column(db.Integer, db.ForeignKey('DirUnit.IdUnit'))
-    DateStart = db.Column(db.Date)
-    DateEnd = db.Column(db.Date)
+    DateStart = db.Column(db.DateTime)
+    DateEnd = db.Column(db.DateTime)
     unit = relationship("DirUnit", foreign_keys=[IdUnit], backref="products")
 
     def __repr__(self):
@@ -132,4 +131,4 @@ class News(db.Model):
     title = db.Column(db.String(100))
     text = db.Column(db.String(4000))
     img_name = db.Column(db.String(20))
-    created_time = db.Column(db.DateTime, nullable=False, default=current_utc_time)
+    created_time = db.Column(db.DateTime, nullable=False, default=current_utc_time())

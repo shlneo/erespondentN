@@ -70,6 +70,13 @@
         </form>
     </div>
     #}
+
+    <div style="margin-top: 20px;">
+        <form action="{{ url_for('dbs.migrate_products_v2') }}" method="POST" target="_blank">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-primary">7000</button>
+        </form>
+    </div>
 </div>
 
 {% endblock %}

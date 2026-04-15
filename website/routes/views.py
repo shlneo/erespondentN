@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask import Blueprint, current_app, render_template, redirect, url_for, flash, request, jsonify, session
 from flask_login import current_user, login_required
 
@@ -7,12 +6,10 @@ from ..email import send_email
 from website.sessions import session_required
 from ..models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News
 from .. import db
-from sqlalchemy import and_, asc, case, or_, desc
+from sqlalchemy import asc, case, desc
 from functools import wraps
-from sqlalchemy.sql import func, or_
-from sqlalchemy.types import String
 
-from ..time import get_previous_quarter, get_report_year, current_utc_time
+from ..time import get_previous_quarter, get_report_year
 
 views = Blueprint('views', __name__)
 

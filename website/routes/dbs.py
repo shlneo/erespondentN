@@ -4,7 +4,7 @@ from flask import (
     Blueprint, json, jsonify, make_response, request
 )
 
-from website.models import DirProduct, DirUnit
+from website.models import DirProduct, DirUnit, Sections
 from .. import db
 
 dbs = Blueprint('dbs', __name__)
@@ -482,4 +482,216 @@ def add_products():
         
     db.session.commit()
     return f"Successfully added {len(products_to_add)} products"
+
+
+@dbs.route('/migrate_products_v2', methods=['POST'])
+def migrate_products_v2():
+    """Упрощенная миграция: удаляем старый 7000, создаем 3 новых с кодом 7000, обновляем секции"""
+    try:
+        # Данные для новых продуктов (сразу с кодом 7000)
+        products_to_add = [
+            ('7000', 'Предельный уровень потребления (объекты непроизводственного характера, коммунально-бытового назначения и другие)', True, False, False, 53),
+            ('7000', 'Предельный уровень потребления (объекты непроизводственного характера, коммунально-бытового назначения и другие)', False, True, False, 2),
+            ('7000', 'Предельный уровень потребления (объекты непроизводственного характера, коммунально-бытового назначения и другие)', False, False, True, 1),
+        ]
         
+        date_start = datetime.now().date()
+        
+        # Находим старый продукт 7000 (True, True, True)
+        old_product = DirProduct.query.filter(
+            DirProduct.CodeProduct == '7000',
+            DirProduct.IsFuel == True,
+            DirProduct.IsHeat == True,
+            DirProduct.IsElectro == True,
+            DirProduct.DateEnd.is_(None)
+        ).first()
+        
+        if not old_product:
+            return jsonify({'error': 'Старый продукт 7000 не найден'}), 404
+        
+        # Запоминаем ID старого продукта
+        old_product_id = old_product.id
+        
+        # Удаляем старый продукт
+        db.session.delete(old_product)
+        
+        # Находим максимальный ID для новых продуктов
+        max_id = db.session.query(db.func.max(DirProduct.id)).scalar() or 0
+        
+        # Создаем 3 новых продукта
+        new_products = []
+        for i, prod_data in enumerate(products_to_add):
+            new_id = max_id + i + 1
+            product = DirProduct(
+                id=new_id,
+                CodeProduct=prod_data[0],
+                NameProduct=prod_data[1],
+                IsFuel=prod_data[2],
+                IsHeat=prod_data[3],
+                IsElectro=prod_data[4],
+                IdUnit=prod_data[5],
+                DateStart=date_start,
+                DateEnd=None
+            )
+            db.session.add(product)
+            new_products.append({
+                'id': new_id,
+                'type': 'fuel' if prod_data[2] else ('heat' if prod_data[3] else 'electro'),
+                'IsFuel': prod_data[2],
+                'IsHeat': prod_data[3],
+                'IsElectro': prod_data[4]
+            })
+        
+        db.session.flush()
+        
+        # Находим все секции, у которых id_product = None (были связаны со старым продуктом)
+        # или которые ссылались на старый продукт
+        sections_to_update = Sections.query.filter(
+            (Sections.id_product == old_product_id) | (Sections.id_product.is_(None))
+        ).all()
+        
+        if not sections_to_update:
+            db.session.commit()
+            return jsonify({
+                'success': True,
+                'message': 'Старый продукт удален, новые продукты созданы, но секции для обновления не найдены',
+                'new_products': new_products
+            }), 200
+        
+        updated_sections = []
+        
+        # Обновляем секции в зависимости от section_number
+        for section in sections_to_update:
+            new_product_id = None
+            product_type = None
+            
+            # Определяем какой продукт вставить в зависимости от номера секции
+            if section.section_number == 1:
+                # Секция 1 - топливо (Fuel)
+                for p in new_products:
+                    if p['IsFuel'] and not p['IsHeat'] and not p['IsElectro']:
+                        new_product_id = p['id']
+                        product_type = 'fuel'
+                        break
+            elif section.section_number == 2:
+                # Секция 2 - тепло (Heat)
+                for p in new_products:
+                    if not p['IsFuel'] and p['IsHeat'] and not p['IsElectro']:
+                        new_product_id = p['id']
+                        product_type = 'heat'
+                        break
+            elif section.section_number == 3:
+                # Секция 3 - электро (Electro)
+                for p in new_products:
+                    if not p['IsFuel'] and not p['IsHeat'] and p['IsElectro']:
+                        new_product_id = p['id']
+                        product_type = 'electro'
+                        break
+            else:
+                # Для других секций - пропускаем или можно назначить первый продукт
+                continue
+            
+            if new_product_id:
+                section.id_product = new_product_id
+                section.code_product = '7000'
+                updated_sections.append({
+                    'section_id': section.id,
+                    'section_number': section.section_number,
+                    'new_product_id': new_product_id,
+                    'product_type': product_type
+                })
+        
+        db.session.commit()
+        
+        # Формируем ответ
+        html = f"""
+        <html>
+            <head>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 20px; }}
+                    h1 {{ color: green; }}
+                    .success {{ color: green; }}
+                    .info {{ color: blue; }}
+                    table {{ border-collapse: collapse; width: 100%; margin-top: 20px; }}
+                    th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; }}
+                    th {{ background-color: #f2f2f2; }}
+                </style>
+            </head>
+            <body>
+                <h1>Миграция завершена успешно!</h1>
+                <p class="success">Старый продукт 7000 (True, True, True) удален</p>
+                <p class="info">Создано новых продуктов: {len(new_products)}</p>
+                <p class="info">Обновлено секций: {len(updated_sections)}</p>
+                
+                <h2>Новые продукты (код 7000):</h2>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Тип</th>
+                        <th>IsFuel</th>
+                        <th>IsHeat</th>
+                        <th>IsElectro</th>
+                        <th>Unit ID</th>
+                    </tr>
+        """
+        for p in new_products:
+            html += f"""
+                    <tr>
+                        <td>{p['id']}</td>
+                        <td>{p['type']}</td>
+                        <td>{p['IsFuel']}</td>
+                        <td>{p['IsHeat']}</td>
+                        <td>{p['IsElectro']}</td>
+                        <td>{53 if p['IsFuel'] else (2 if p['IsHeat'] else 1)}</td>
+                    </tr>
+            """
+        
+        html += """
+                </table>
+                
+                <h2>Обновленные секции:</h2>
+                <table>
+                    <tr>
+                        <th>ID секции</th>
+                        <th>Номер секции</th>
+                        <th>Тип продукта</th>
+                        <th>Новый Product ID</th>
+                    </tr>
+        """
+        for s in updated_sections:
+            html += f"""
+                    <tr>
+                        <td>{s['section_id']}</td>
+                        <td>{s['section_number']}</td>
+                        <td>{s['product_type']}</td>
+                        <td>{s['new_product_id']}</td>
+                    </tr>
+            """
+        
+        html += """
+                </table>
+                
+                <br>
+                <a href="/" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Вернуться на главную</a>
+                <button onclick="window.close()" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">Закрыть окно</button>
+            </body>
+        </html>
+        """
+        
+        return html
+        
+    except Exception as e:
+        db.session.rollback()
+        error_html = f"""
+        <html>
+            <body style="font-family: Arial, sans-serif; margin: 20px;">
+                <h1 style="color: red;">Ошибка при миграции</h1>
+                <p><strong>Ошибка:</strong> {str(e)}</p>
+                <p><strong>Тип ошибки:</strong> {type(e).__name__}</p>
+                <a href="javascript:history.back()" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Вернуться назад</a>
+                <br><br>
+                <button onclick="window.close()" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">Закрыть окно</button>
+            </body>
+        </html>
+        """
+        return error_html, 500

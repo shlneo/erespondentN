@@ -272,7 +272,7 @@
                             type = "text"
                             class = "product-cod_fuel" 
                             name = "product-cod_fuel"
-                            value = "{{ row.code_product }}" 
+                            value = "{{ row.product.CodeProduct }}" 
                             readonly
                         >
                     </td>
@@ -419,7 +419,7 @@
                     <div class="detail-label">Начало заполнения</div>
                     <div class="detail-value">
                         {% if current_version.begin_time %}
-                            {{ current_version.begin_time.strftime('%d.%m.%Y') }}
+                            {{ current_version.begin_time.strftime('%d.%m.%Y %H:%M') }}
                         {% else %}
                             Не указано
                         {% endif %}</div>
@@ -433,9 +433,9 @@
                     <div class="detail-label">Последнее изменение</div>
                     <div class="detail-value">
                         {% if current_version.change_time %}
-                            {{ current_version.change_time.strftime('%d.%m.%Y') }}
+                            {{ current_version.change_time.strftime('%d.%m.%Y %H:%M') }}
                         {% else %}
-                            {{ current_version.begin_time.strftime('%d.%m.%Y') if current_version.begin_time else 'Не изменялся' }}
+                            -
                         {% endif %}</div>
                 </div>
             </div>
@@ -447,7 +447,7 @@
                     <div class="detail-label">Дата отправки</div>
                     <div class="detail-value">
                         {% if current_version.sent_time %}
-                            {{ current_version.sent_time.strftime('%d.%m.%Y') }}
+                            {{ current_version.sent_time.strftime('%d.%m.%Y %H:%M') }}
                         {% else %}
                             -
                         {% endif %}</div>
@@ -462,7 +462,7 @@
                     <div class="detail-label">Дата проверки</div>
                     <div class="detail-value">
                         {% if current_version.audit_time %}
-                            {{ current_version.audit_time.strftime('%d.%m.%Y') }}
+                            {{ current_version.audit_time.strftime('%d.%m.%Y %H:%M') }}
                         {% else %}
                             -
                         {% endif %}</div>

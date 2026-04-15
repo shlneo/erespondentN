@@ -597,13 +597,13 @@ def prepare_dbf_data(version):
 
 def create_dbf_row(report, version, section, product):
     unit_code = str(product.unit.CodeUnit) if (product and hasattr(product, 'unit') and product.unit) else ''
-    code_product_str = str(section.code_product) if section.code_product else ''
+    code_product_str = str(section.product.CodeProduct) if section.product.CodeProduct else ''
     
     return {
         'YEAR_': str(report.year) if report.year is not None else '',
         'KVARTAL': str(report.quarter) if report.quarter is not None else '',
         'IDPREDPR': str(report.organization.okpo) if report.organization.okpo is not None else '',
-        'DATERECEIV': version.sent_time.strftime('%d.%m.%Y') if version.sent_time else '',
+        'DATERECEIV': version.sent_time.strftime('%d.%m.%Y %H:%M') if version.sent_time else '',
         'EXCEED': '0,000',
         'SECTIONNUM': str(section.section_number) if section.section_number is not None else '',
         'CODEPROD': code_product_str,

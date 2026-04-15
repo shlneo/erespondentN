@@ -10,7 +10,6 @@ import string
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
-import requests
 from lxml import etree
 
 from openpyxl import Workbook
@@ -27,12 +26,10 @@ from flask_login import (
     login_required, LoginManager
 )
 
-from sqlalchemy import func, desc
+from sqlalchemy import func
 from sqlalchemy.orm import joinedload
-from sqlalchemy.types import String
 from ..export import generate_excel_report
 from werkzeug.security import check_password_hash, generate_password_hash
-from user_agents import parse
 
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
@@ -46,7 +43,7 @@ from ..models import (
 )
 
 from website.ecp import check_certificate_expiry
-from website.sessions import clear_session_cookie, create_login_response, create_session_token, force_logout, get_current_user, SESSION_COOKIE_NAME, session_required
+from website.sessions import clear_session_cookie, create_login_response, session_required
 from ..time import current_utc_time
 from ..email import send_email
 
@@ -613,7 +610,7 @@ def copy_structure_report():
             db.session.flush()
             
             for section in original_sections:
-                if section.code_product == '9100':
+                if section.product.CodeProduct == '9100':
                     continue
                 
                 current_product = DirProduct.query.filter_by(CodeProduct=section.code_product, DateEnd = None).first()
@@ -746,7 +743,7 @@ def add_section_param():
                             section_number=section_number
                         ).first()
 
-                        if current_section.code_product == "7000":
+                        if current_section.product.CodeProduct == "7000":
                             current_section.total_differents = current_section.Consumed_Total_Fact - current_section.Consumed_Total_Quota
                             db.session.commit()
                         else:
@@ -852,7 +849,7 @@ def change_section():
         if current_version:
             if current_version.status != 'Отправлен' and current_version.status != 'Одобрен':
                 if current_section:
-                    if current_section.code_product == "7000":
+                    if current_section.product.CodeProduct == "7000":
                         current_section.Consumed_Total_Quota = Consumed_Total_Quota
                         current_section.Consumed_Total_Fact = Consumed_Total_Fact
                         current_section.note = note
@@ -1111,7 +1108,7 @@ def change_category_report():
             elif action == 'to_download':
                 status_itog = 'Одобрен'
                 ticket_message = Ticket(
-                    note="Ошибок нет, отчет передан в следующую стадию проверки.",
+                    note="Ошибок нет, отчет одобрен.",
                     luck=True,
                     version_report_id=current_version.id
                 )
