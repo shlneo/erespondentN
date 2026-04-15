@@ -1292,7 +1292,7 @@ def print_version_tickets():
             c.setFont("MontserratBold", 12)
             c.drawString(100, y_position, "Результат:")
             c.setFont("MontserratRegular", 12)
-            result = "Отчет принят в обработку" if ticket.luck else "Отчет не принят в обработку"
+            result = "Отчет одобрен, ошибок нет" if ticket.luck else "Отчет не принят в обработку"
             c.drawString(180, y_position, result)
             y_position -= 20
             
