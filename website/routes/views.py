@@ -350,6 +350,37 @@ def report_area():
                            reportAreaInfoModal = True
                            )
 
+def get_auditor_info_by_user(current_user):
+    if not current_user.organization or not current_user.organization.okpo:
+        return None
+    okpo_str = str(current_user.organization.okpo)
+    
+    if len(okpo_str) < 4:
+        return None
+    
+    fourth_digit = okpo_str[-4]
+    
+    auditor_okpo = fourth_digit + '000'
+    
+    auditor_org = Organization.query.filter_by(okpo=auditor_okpo).first()
+    
+    if not auditor_org:
+        return None
+    
+    auditor = User.query.filter(
+        User.type == 'Аудитор',
+        User.organization_id == auditor_org.id
+    ).first()
+    
+    if not auditor:
+        return None
+    
+    return {
+        'fio': auditor.fio or 'Не указано',
+        # 'telephone': auditor.telephone or 'Не указан',
+        'organization': auditor_org.full_name or 'Не указано',
+    }
+
 @views.route('/report-area/<string:report_type>/<int:id>', methods=['GET'])
 @profile_complete
 @login_required
@@ -358,6 +389,9 @@ def report_area():
 def report_section(report_type, id):
     current_version = Version_report.query.filter_by(id=id).first()
     current_report = Report.query.filter_by(id=current_version.report_id).first()
+    
+    auditor_info = get_auditor_info_by_user(current_user)
+    
     report_config = {
         'fuel': {'section_number': 1, 'product_filter': DirProduct.IsFuel},
         'heat': {'section_number': 2, 'product_filter': DirProduct.IsHeat},
@@ -396,7 +430,8 @@ def report_section(report_type, id):
         current_report=current_report,
         current_version=current_version,
         SentModal = True,
-        reportAreaReportInfoModal = True
+        reportAreaReportInfoModal = True,
+        auditor_info=auditor_info
     )
 
 @views.route('/audit-area/<status>', methods=['GET'])

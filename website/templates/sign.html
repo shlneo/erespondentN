@@ -107,9 +107,10 @@
                         <img src="/static/img/Sign.svg" alt="" class="button-icon">
                         <span>Зарегистрироваться</span>
                     </button>
-                    <div class="forgot_cont">
+                    <div class="under-link">
                         <a onclick="window.location.href='/login'">Есть аккаунт?</a>
                     </div>
+                    {#
                     <hr style = "border: none; border-bottom: 1px solid rgb(56, 56, 56); width: 100%;"/> 
                     <div class = "log_with"> 
                         <button type="button" class="google_button" onclick="window.location.href='{{ url_for('login_google') }}'" title="Войти с помощью google">
@@ -120,7 +121,7 @@
                         <button type="button" class="google_button" onclick="window.location.href=''" title="Войти с помощью ...">
                     
                         </button>
-                    </div>
+                    </div>#}
                 </div>
             </form>
         </div>
