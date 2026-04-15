@@ -97,6 +97,9 @@
                     <li data-question="8">
                         <a href="javascript:void(0)">- Особенности заполнения формы отчета</a>
                     </li>
+                    <li data-question="19">
+                        <a href="javascript:void(0)">- Как пройти контроль отчета?</a>
+                    </li>
                     <li data-question="18">
                         <a href="javascript:void(0)">- Как отменить отправку отчета?</a>
                     </li>
@@ -1604,7 +1607,84 @@
                         </div>
                     </div>
                 </div>
-            </div> 
+            </div>
+            <div class="info_page info_faq" data-question-id="19" style="display: none;">
+                <div class="faq_question_info">
+                    <div class="info_page_name">
+                        <h1>Как пройти контроль отчета?</h1>
+                    </div>
+                    <div class="infos">
+                        <div class="answer-highlight-second">
+                            <div class="highlight-icon">✅</div>
+                            <div>
+                                <p><strong>Условие успешного контроля:</strong> Для успешного прохождения автоматической проверки (контроля) отчета необходимо заполнить обязательные поля в служебных строках.</p>
+                            </div>
+                        </div>
+
+                        <p>Для успешного прохождения контроля необходимо заполнить <strong>поле «Примечание»</strong> в строке <strong>«Прочее потребление» (код 9010)</strong> для каждого из разделов отчета:</p>
+                 
+                        <div class="nav-links" style = "margin-bottom: 20px;">
+                            <li class="nav-link">Тепло</li>
+                            <li class="nav-link">Топливо</li>
+                            <li class="nav-link">Электричество</li>
+                        </div>
+
+                        <div class="opred-text">
+                            <strong>«Прочее потребление» 9010</strong> — учет энергоресурсов, израсходованных на нужды, не связанные напрямую с выпуском основной нормируемой продукции (например, ремонт, наладка оборудования, хознужды).
+                        </div>
+
+                        <h3>Инструкция по заполнению:</h3>
+                        <ol class="steps-list">
+                            <li>
+                                <strong>Найдите строку «Прочее потребление» (код 9010)</strong> в любом из разделов (Тепло/Топливо/Электричество).
+                                <div class="p_img">
+                                    <img src="{{ url_for('static', filename='img/post/table-report.png') }}" alt="Строка 'Прочее потребление' в таблице отчета">
+                                    <span>Рисунок 1 - Строка «Прочее потребление» в таблице</span>
+                                </div>
+                            </li>
+                            <li>
+                                <strong>Кликните по строке правой кнопкой мыши</strong>, чтобы открыть контекстное меню.
+                            </li>
+                            <li>
+                                В появившемся меню выберите пункт <strong>«Редактировать»</strong>.
+                                <div class="p_img">
+                                    <img src="{{ url_for('static', filename='img/post/adit-prochee.png') }}" alt="Контекстное меню с кнопкой 'Редактировать'">
+                                    <span>Рисунок 2 - Выбор действия «Редактировать»</span>
+                                </div>
+                            </li>
+                            <li>
+                                <strong>В открывшемся модальном окне найдите поле «Примечание»</strong>.
+                                <div class="p_img">
+                                    <img src="{{ url_for('static', filename='img/post/primechanie-prochee.png') }}" alt="Модальное окно редактирования с полем 'Примечание'">
+                                    <span>Рисунок 3 - Поле «Примечание» в окне редактирования</span>
+                                </div>
+                            </li>
+                            <li>
+                                <strong>Заполните поле «Примечание»</strong>, указав причину расхода по ненормируемому потреблению (например: «Ремонт оборудования» или «Хозяйственные нужды», а если нет такого потребления - «Не было» или «Отсутствует»).
+                            </li>
+                            <li>
+                                <strong>Нажмите кнопку «Применить изменения»</strong> для сохранения.
+                            </li>
+                        </ol>
+
+                        <div class="answer-highlight-second" style = "margin-top: 50px;">
+                            <div class="highlight-icon">ℹ️</div>
+                            <div>
+                                <p><strong>Важно знать:</strong></p>
+                                <ol>
+                                    <li>Поле «Примечание» должно быть заполнено <strong>для каждого раздела</strong> отчета (Тепло, Топливо, Электричество).</li>
+                                    <li>Без заполнения этого поля <strong>контроль отчета не будет пройден</strong>, и вы не сможете отправить его на проверку.</li>
+                                    <li>Если прочего потребления не было, укажите в примечании: «Не было» или «Отсутствует».</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="answer-highlight-note">
+                            <strong>Примечание:</strong> Строка «Прочее потребление» является служебной и не подлежит удалению.
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
