@@ -63,7 +63,7 @@ def get_reports_by_status(status, year=None, quarter=None):
     if okpo_digit.isdigit() and int(okpo_digit) in EXCLUDED_OKPO_LISTS:
         excluded_condition = True
 
-    if user_type == "Администратор" or (user_type == "Аудитор" and okpo_digit == "8"):
+    if user_type == "Администратор" or user_type == "Смотрящий":
         if status == 'all_reports':
             return Report.query.join(Version_report).filter(
                 or_(*[Version_report.status == s for s in statuses]),

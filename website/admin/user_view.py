@@ -3,12 +3,15 @@ from wtforms.validators import Email
 from werkzeug.security import generate_password_hash
 from flask import redirect, url_for
 from flask_login import current_user
+from wtforms import PasswordField
+
+from website.models import User
 
 class UserView(ModelView):
     column_display_pk = True
-    column_list = ['id', 'type', 'email', 'password', 'fio', 'telephone', 'password', 'reports', 'organization', 'last_active']
+    column_list = ['id', 'type', 'email', 'fio', 'telephone', 'reports', 'organization', 'last_active']
     column_default_sort = ('id', True)
-    column_sortable_list = ('id', 'type', 'email', 'password', 'fio', 'telephone', 'password', 'reports', 'organization', 'last_active')
+    column_sortable_list = ('id', 'type', 'email', 'fio', 'telephone', 'reports', 'organization', 'last_active')
     
     can_delete = True
     can_create = True
@@ -19,15 +22,18 @@ class UserView(ModelView):
     export_types = ['csv']
     
     form_args = {
-        # 'fio': dict(label='fio', validators = [DataRequired()]),
-        'email': dict(label='email', validators = [Email()])
+        'email': dict(label='email', validators=[Email()]),
     }
     
+    # Поле пароля показываем только при создании
+    form_create_rules = ('type', 'email', 'fio', 'telephone', 'password', 'organization')
+    form_edit_rules = ('type', 'email', 'fio', 'telephone', 'organization')
+    
     AVAILABLE_USER_TYPES = [
-        (u'Респондент', u'Респондент'),
-        (u'Аудитор', u'Аудитор'),
-        (u'Администратор', u'Администратор'),
-        (u'Смотрящий', u'Смотрящий'),
+        ('Респондент', 'Респондент'),
+        ('Аудитор', 'Аудитор'),
+        ('Администратор', 'Администратор'),
+        ('Смотрящий', 'Смотрящий'),
     ]
     
     form_choices = {
@@ -36,14 +42,27 @@ class UserView(ModelView):
     
     column_exclude_list = ['password']
     column_searchable_list = ['email', 'fio', 'telephone', 'id']
-    column_filters = ['id','email', 'fio']
+    column_filters = ['id', 'email', 'fio']
     column_editable_list = ['email', 'fio', 'type']
     
     create_modal = True
     edit_modal = True
     
+    def scaffold_form(self):
+        form_class = super(UserView, self).scaffold_form()
+        form_class.password = PasswordField('Пароль', description='Введите пароль для нового пользователя')
+        return form_class
+    
     def on_model_change(self, view, model, is_created):
-        model.password = generate_password_hash(model.password)
+        if is_created:
+            if model.password:
+                model.password = generate_password_hash(model.password)
+            else:
+                model.password = generate_password_hash('')
+        else:
+            original = self.session.query(User).get(model.id)
+            if original:
+                model.password = original.password
         
     def is_accessible(self):
         return current_user.is_authenticated and current_user.type == "Администратор"

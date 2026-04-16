@@ -675,9 +675,17 @@ def delete_report(report_id):
         return redirect(url_for('views.report_area'))
 
 def to_decimal(value):
-    if not value:
-        return Decimal(0)
-    return Decimal(value.replace(',', '.'))
+    if not value and value != 0:
+        return Decimal('0.00')
+    try:
+        if isinstance(value, Decimal):
+            return value
+        if isinstance(value, (int, float)):
+            return Decimal(str(value))
+        cleaned = str(value).replace(',', '.').strip()
+        return Decimal(cleaned)
+    except (ValueError, InvalidOperation, TypeError, AttributeError):
+        return Decimal('0.00')
 
 @auth.route('/add-section-param', methods=['POST'])
 @login_required 
@@ -1080,6 +1088,10 @@ def cancle_sent_version(id):
 @login_required 
 @session_required
 def change_category_report():
+    if current_user.type == "Смотрящий":
+        flash('У вас нет доступа к этому действию.', 'error')
+        return redirect(request.referrer)
+    
     action = request.form.get('action')
     report_id = request.form.get('reportId')
     status_itog = None
@@ -1090,11 +1102,10 @@ def change_category_report():
         if current_version is not None:
             recipient_user = User.query.filter_by(email=current_version.email).first()
             
-            # Получаем организацию из отчёта
             report = Report.query.filter_by(id=current_version.report_id).first()
             organization_name = report.organization.full_name if report and report.organization else "Неизвестная организация"
             
-            user = User.query.filter_by(email=current_version.email).first()
+            # user = User.query.filter_by(email=current_version.email).first()
             
             if not current_version.hasNot and action != 'to_download':
                 flash('Необходимо уточнить о каких ошибках идет речь.', 'error')
@@ -1141,7 +1152,11 @@ def change_category_report():
 @login_required 
 @session_required
 def rollbackreport(id):
-    if request.method == 'POST':
+    if request.method == 'POST':        
+        if current_user.type == "Смотрящий":
+            flash('У вас нет доступа к этому действию.', 'error')
+            return redirect(request.referrer)
+        
         current_version = Version_report.query.filter_by(id=id).first()
         recipient_user = User.query.filter_by(email=current_version.email).first()    
         if current_version:
@@ -1184,7 +1199,11 @@ def rollbackreport(id):
 @login_required 
 @session_required
 def send_comment():
-    if request.method == 'POST':
+    if request.method == 'POST':        
+        if current_user.type == "Смотрящий":
+            flash('У вас нет доступа к этому действию.', 'error')
+            return redirect(request.referrer)
+        
         version_id = request.form.get('version_id')
         text = request.form.get('text')
 

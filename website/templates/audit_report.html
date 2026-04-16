@@ -782,10 +782,14 @@
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <input type="hidden" name="version_id" value="{{current_version.id}}">
                                 <div class="model_but_area right">
-                                    <button type="submit" class="blue_btn {% if current_version.status in ['Одобрен', 'Готов к удалению', 'Есть замечания'] %}disabled{% endif %}"> 
+                                    <button type="submit" 
+                                        class="blue_btn {% if current_version.status in ['Одобрен', 'Готов к удалению', 'Есть замечания'] or current_user.type == 'Смотрящий' %}disabled{% endif %}"
+                                        {% if current_version.status in ['Одобрен', 'Готов к удалению', 'Есть замечания'] or current_user.type == 'Смотрящий' %}
+                                            disabled
+                                        {% endif %}>
                                         <img src="/static/img/Send.svg" alt="" class="button-icon">
                                         <span>Отправить сообщение</span>
-                                    </button> 
+                                    </button>
                                 </div>
                             </div>
                         </div>

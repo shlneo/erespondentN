@@ -55,6 +55,19 @@ def auditors_only(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def respondent_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.type not in ['Респондент', 'Администратор' ]:
+            flash('У вас нет прав доступа', 'error')
+            return redirect(url_for('views.profile_common'))
+        if not current_user.fio or not current_user.telephone:
+            flash('Пожалуйста, заполните ФИО и номер телефона в профиле', 'error')
+            return redirect(url_for('views.profile_common'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @views.route('/', methods=['GET'])
 def beginPage():
     user_data = User.query.filter_by(type="Респондент").count()
@@ -324,6 +337,7 @@ def profile_password():
 @views.route('/report-area', methods=['GET'])
 @profile_complete
 @login_required
+@respondent_only
 @session_required
 def report_area():
     report = Report.query.filter_by(user_id=current_user.id).order_by(
@@ -386,6 +400,7 @@ def get_auditor_info_by_user(current_user):
 @login_required
 @session_required
 @owner_only
+@respondent_only
 def report_section(report_type, id):
     current_version = Version_report.query.filter_by(id=id).first()
     current_report = Report.query.filter_by(id=current_version.report_id).first()
@@ -464,14 +479,11 @@ def api_audit_data():
     search_name = request.args.get('search_name')
     search_okpo = request.args.get('search_okpo')
     
-    # Получаем параметры пагинации
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 50, type=int)
     
-    # Получаем все отчёты
     reports = get_reports_by_status(status, year_filter, quarter_filter)
     
-    # Применяем фильтрацию по имени и ОКПО
     if search_name or search_okpo:
         filtered_reports = []
         for report in reports:
@@ -487,15 +499,11 @@ def api_audit_data():
                 filtered_reports.append(report)
         reports = filtered_reports
     
-    # Сохраняем общее количество ДО пагинации
     total_count = len(reports)
-    
-    # Применяем пагинацию
     start = (page - 1) * per_page
     end = start + per_page
     paginated_reports = reports[start:end]
     
-    # Формируем данные для JSON
     reports_data = []
     for row in paginated_reports:
         for version in row.versions:
@@ -511,7 +519,6 @@ def api_audit_data():
                 'status': version.status,
                 'has_not': version.hasNot if hasattr(version, 'hasNot') else False
             })
-    
 
     stats = {
         'not_viewed': len(get_reports_by_status('not_viewed', year_filter, quarter_filter)),
