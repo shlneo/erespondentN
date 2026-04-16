@@ -1,25 +1,17 @@
-from datetime import datetime
-from flask import Blueprint, current_app, render_template, redirect, url_for, flash, request, jsonify, session
-from flask_login import current_user, login_required
-from .email import send_email
-from website.sessions import session_required
+from flask import redirect, flash, request
+from flask_login import current_user
+# from .email import send_email
 
-from sqlalchemy import and_, asc, case, or_, desc
-from functools import wraps
+from sqlalchemy import and_, or_
 from sqlalchemy.sql import func, or_
-from sqlalchemy.types import String
-from collections import defaultdict
 
-from .time import get_previous_quarter, get_report_year, current_utc_time
-
-from .models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News
+from .models import Organization, Report, Version_report
 from . import db
 
 def cancel_sending(id):
     current_version = Version_report.query.filter_by(id=id).first()
     if current_version.status == 'Отправлен':
         current_version.status = 'Заполнение'
-        # current_version.sent_time = None
         db.session.commit()
         flash('Отправка отчета была отменена! Новый статус отчета - "Заполнение".', 'succes')
     else:
@@ -76,14 +68,14 @@ def get_reports_by_status(status, year=None, quarter=None):
             return Report.query.join(Version_report).filter(
                 or_(*[Version_report.status == s for s in statuses]),
                 *filters
-            ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all() 
+            ).order_by().all() 
         else:
             trans_status = translate_status(status)
             if trans_status:
                 return Report.query.join(Version_report).filter(
                     Version_report.status == trans_status,
                     *filters
-                ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
+                ).order_by().all()
             else:
                 return []
     else:
@@ -104,7 +96,7 @@ def get_reports_by_status(status, year=None, quarter=None):
                     ),
                     ~Organization.okpo.in_(EXCLUDED_OKPO_LISTS[int(okpo_digit)]),
                     *filters
-                ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
+                ).order_by().all()
             elif special_condition:
                 return query.filter(
                     or_(
@@ -118,20 +110,20 @@ def get_reports_by_status(status, year=None, quarter=None):
                         )
                     ),
                     *filters
-                ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
+                ).order_by().all()
             elif excluded_condition:
                 return query.filter(
                     or_(*[Version_report.status == s for s in statuses]),
                     *filters,
                     func.substr(Organization.okpo, func.length(Organization.okpo) - 3, 1) == okpo_digit,
                     ~Organization.okpo.in_(EXCLUDED_OKPO_LISTS[int(okpo_digit)])
-                ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
+                ).order_by().all()
             else:
                 return query.filter(
                     or_(*[Version_report.status == s for s in statuses]),
                     *filters,
                     func.substr(Organization.okpo, func.length(Organization.okpo) - 3, 1) == okpo_digit
-                ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
+                ).order_by().all()
         else:
             trans_status = translate_status(status)
             if trans_status:
@@ -151,7 +143,7 @@ def get_reports_by_status(status, year=None, quarter=None):
                         ),
                         ~Organization.okpo.in_(EXCLUDED_OKPO_LISTS[int(okpo_digit)]),
                         *filters
-                    ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
+                    ).order_by().all()
                 elif special_condition:
                     return query.filter(
                         or_(
@@ -165,42 +157,19 @@ def get_reports_by_status(status, year=None, quarter=None):
                             )
                         ),
                         *filters
-                    ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
+                    ).order_by().all()
                 elif excluded_condition:
                     return query.filter(
                         Version_report.status == trans_status,
                         *filters,
                         func.substr(Organization.okpo, func.length(Organization.okpo) - 3, 1) == okpo_digit,
                         ~Organization.okpo.in_(EXCLUDED_OKPO_LISTS[int(okpo_digit)])
-                    ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
+                    ).order_by().all()
                 else:
                     return query.filter(
                         Version_report.status == trans_status,
                         *filters,
                         func.substr(Organization.okpo, func.length(Organization.okpo) - 3, 1) == okpo_digit
-                    ).order_by(Report.year.asc(), Report.quarter.asc(), Version_report.sent_time.desc()).all()
+                    ).order_by().all()
             else:
                 return []
-
-
-# def swap_products_for_same_section():
-#     groups = defaultdict(list)
-#     sections = Sections.query.all()
-    
-#     for section in sections:
-#         key = (section.section_number, section.id_version)
-#         groups[key].append(section)
-    
-#     for key, group_sections in groups.items():
-#         if len(group_sections) > 1:
-#             print(f"Обрабатываю группу: section_number={key[0]}, id_version={key[1]}, записей: {len(group_sections)}")
-
-#             product_ids = [section.id_product for section in group_sections]
-            
-#             for i, section in enumerate(group_sections):
-#                 next_id = product_ids[(i + 1) % len(product_ids)]
-#                 section.id_product = next_id
-#                 print(f"  Запись {section.id}: id_product изменен на {next_id}")
-    
-#     db.session.commit()
-#     print("Все изменения сохранены")

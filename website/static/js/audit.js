@@ -9,7 +9,23 @@ class AuditModule {
         this.longPressTimer = null;
         this.LONG_PRESS_DELAY = 500;
         this.isLongPress = false;
+        
+        // Новые свойства для пагинации
+        this.currentPage = 1;
+        this.pageSize = 50;
+        this.hasMore = true;
+        this.isLoading = false;
+        this.allReports = [];
+        this.totalReports = 0;
+        this.intersectionObserver = null;
+        
         this.init();
+    }
+
+    async init() {
+        await this.loadData();
+        this.attachEventListeners();
+        this.attachGlobalEventListeners();
     }
 
     async init() {
@@ -47,21 +63,73 @@ class AuditModule {
         if (emptyState) emptyState.style.display = 'none';
 
         this.animateStatsLoading();
+        
+        this.currentPage = 1;
+        this.hasMore = true;
+        this.allReports = [];
 
         try {
-            const data = await this.fetchAuditData();
+            const data = await this.fetchAuditData(1, false);
             if (data.success) {
                 this.updateStatsWithAnimation(data.stats);
-                this.renderReports(data.reports);
+                this.renderReports(this.allReports);
                 
                 if (loadingSpinner) loadingSpinner.style.display = 'none';
                 
                 this.attachRowEventListeners();
+                this.setupInfiniteScroll();
             }
         } catch (error) {
             console.error('Error loading data:', error);
             if (loadingSpinner) loadingSpinner.style.display = 'none';
             this.showError('Ошибка загрузки данных');
+        }
+    }
+
+    setupInfiniteScroll() {
+        const trigger = document.getElementById('infinite-scroll-trigger');
+        if (!trigger) return;
+
+        if (this.intersectionObserver) {
+            this.intersectionObserver.disconnect();
+        }
+
+        this.intersectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && this.hasMore && !this.isLoading) {
+                    this.loadMoreReports();
+                }
+            });
+        }, { 
+            threshold: 0.1,
+            rootMargin: '0px 0px 100px 0px'
+        });
+
+        this.intersectionObserver.observe(trigger);
+    }
+
+    async loadMoreReports() {
+        if (this.isLoading || !this.hasMore) return;
+        
+        this.isLoading = true;
+        const loadingMore = document.getElementById('loading-more');
+        if (loadingMore) loadingMore.style.display = 'flex';
+        
+        try {
+            this.currentPage++;
+            const data = await this.fetchAuditData(this.currentPage, true);
+            
+            if (data.success) {
+                this.renderReports(this.allReports);
+                this.attachRowEventListeners();
+            }
+        } catch (error) {
+            console.error('Error loading more reports:', error);
+            this.hasMore = false;
+        } finally {
+            this.isLoading = false;
+            const loadingMore = document.getElementById('loading-more');
+            if (loadingMore) loadingMore.style.display = 'none';
         }
     }
 
@@ -420,15 +488,33 @@ class AuditModule {
         return urlParams.get(param) || '';
     }
 
-    async fetchAuditData() {
+        async fetchAuditData(page = 1, append = false) {
         const params = new URLSearchParams({
             status: this.currentStatus,
             year: this.yearFilter,
-            quarter: this.quarterFilter
+            quarter: this.quarterFilter,
+            page: page,
+            per_page: this.pageSize
         });
         
+        const searchName = document.getElementById('organization-filter')?.value;
+        const searchOkpo = document.getElementById('okpo-filter')?.value;
+        if (searchName) params.append('search_name', searchName);
+        if (searchOkpo) params.append('search_okpo', searchOkpo);
+        
         const response = await fetch(`/api/audit-data?${params}`);
-        return await response.json();
+        const data = await response.json();
+        
+        if (append) {
+            this.allReports = [...this.allReports, ...data.reports];
+        } else {
+            this.allReports = data.reports;
+        }
+        
+        this.totalReports = data.total;
+        this.hasMore = data.has_more;
+        
+        return data;
     }
 
     animateStatsLoading() {
@@ -528,9 +614,13 @@ class AuditModule {
         if (emptyState) emptyState.style.display = 'none';
         if (reportsContent) reportsContent.style.display = 'block';
 
-        const groupedReports = this.groupReportsByVersion(reports);
-        tbody.innerHTML = this.generateReportsHTML(groupedReports);
+        const sortedReports = [...reports].sort((a, b) => {
+            return new Date(a.sent_datetime) - new Date(b.sent_datetime);
+        });
+        
+        tbody.innerHTML = sortedReports.map(report => this.getReportRowHTML(report)).join('');
     }
+
 
     groupReportsByVersion(reports) {
         const grouped = {};
@@ -552,21 +642,32 @@ class AuditModule {
 
     generateReportsHTML(groupedReports) {
         let html = '';
-        for (const row of Object.values(groupedReports)) {
-            for (const version of row.versions) {
-                html += this.getReportRowHTML(row, version);
-            }
+        const sortedReports = Object.values(groupedReports)
+            .map(row => {
+                const version = row.versions[0];
+                return {
+                    ...row,
+                    sent_time: version.sent_time
+                };
+            })
+            .sort((a, b) => {
+                return new Date(a.sent_time) - new Date(b.sent_time);
+            });
+        
+        for (const row of sortedReports) {
+            const version = row.versions[0];
+            html += this.getReportRowHTML(row, version);
         }
         return html;
     }
 
-    getReportRowHTML(row, version) {
+    getReportRowHTML(report) {
         return `
-            <tr class="report_row ${version.has_not ? 'hascomment-row' : ''}" data-id="${row.id}" draggable="true">
+            <tr class="report_row ${report.has_not ? 'hascomment-row' : ''}" data-id="${report.id}" draggable="true">
                 <td>
                 </td>
                 <td style="padding: 4px;">
-                    <button class="open-report-btn" onclick="window.location.href='/audit-area/report/${version.version_id}'">   
+                    <button class="open-report-btn" onclick="window.location.href='/audit-area/report/${report.version_id}'">   
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -575,25 +676,25 @@ class AuditModule {
                     </button>
                 </td>
                 <td style="display: none;">
-                    <input type="text" id="report_id" value="${row.id}" readonly>
+                    <input type="text" id="report_id" value="${report.id}" readonly>
                 </td>
                 <td>
-                    <input type="text" id="report_organization_name" value='${this.escapeHtml(row.organization_name).toUpperCase()}' readonly style="width: 100%; border: none; background: transparent; text-transform: uppercase;">
+                    <input type="text" value='${this.escapeHtml(report.organization_name).toUpperCase()}' readonly style="width: 100%; border: none; background: transparent; text-transform: uppercase;">
                 </td>
                 <td>
-                    <input type="text" id="report_okpo" value="${row.okpo}" readonly style="width: 100%; border: none; background: transparent;">
+                    <input type="text" value="${report.okpo}" readonly style="width: 100%; border: none; background: transparent;">
                 </td>
                 <td>
-                    <input type="text" id="report_year" value="${row.year}" readonly style="width: 100%; border: none; background: transparent;">
+                    <input type="text" value="${report.year}" readonly style="width: 100%; border: none; background: transparent;">
                 </td>
                 <td>
-                    <input type="text" id="report_quarter" value="${row.quarter}" readonly style="width: 100%; border: none; background: transparent;">
+                    <input type="text" value="${report.quarter}" readonly style="width: 100%; border: none; background: transparent;">
                 </td>
                 <td>
-                    <input type="text" value="${version.sent_time}" readonly style="width: 100%; border: none; background: transparent;">
+                    <input type="text" value="${report.sent_time}" readonly style="width: 100%; border: none; background: transparent;">
                 </td>
                 <td>
-                    ${this.getStatusBadge(version.status)}
+                    ${this.getStatusBadge(report.status)}
                 </td>
                 <td>
                 </td>
@@ -651,24 +752,36 @@ class AuditModule {
         if (reportsContent) reportsContent.style.display = 'none';
         if (emptyState) emptyState.style.display = 'none';
 
+        // Сброс пагинации при фильтрации
+        this.currentPage = 1;
+        this.hasMore = true;
+        this.allReports = [];
+
         try {
             const params = new URLSearchParams({
                 status: this.currentStatus,
                 year: this.yearFilter,
                 quarter: this.quarterFilter,
                 search_name: searchName,
-                search_okpo: searchOkpo
+                search_okpo: searchOkpo,
+                page: 1,
+                per_page: this.pageSize
             });
             
             const response = await fetch(`/api/audit-data?${params}`);
             const data = await response.json();
             
             if (data.success) {
-                this.renderReports(data.reports);
+                this.allReports = data.reports;
+                this.totalReports = data.total;
+                this.hasMore = data.has_more;
+                
+                this.renderReports(this.allReports);
                 
                 if (loadingSpinner) loadingSpinner.style.display = 'none';
                 
                 this.attachRowEventListeners();
+                this.setupInfiniteScroll();
             }
         } catch (error) {
             console.error('Error filtering reports:', error);

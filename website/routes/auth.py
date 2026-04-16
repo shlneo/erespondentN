@@ -1092,15 +1092,23 @@ def change_category_report():
     action = request.form.get('action')
     report_id = request.form.get('reportId')
     status_itog = None
+    
     if request.method == 'POST':
         current_version = Version_report.query.filter_by(id=report_id).first()
-        recipient_user = User.query.filter_by(email=current_version.email).first()
-
-        if current_version is not None: 
+        
+        if current_version is not None:
+            recipient_user = User.query.filter_by(email=current_version.email).first()
+            
+            # Получаем организацию из отчёта
+            report = Report.query.filter_by(id=current_version.report_id).first()
+            organization_name = report.organization.full_name if report and report.organization else "Неизвестная организация"
+            
             user = User.query.filter_by(email=current_version.email).first()
+            
             if not current_version.hasNot and action != 'to_download':
                 flash('Необходимо уточнить о каких ошибках идет речь.', 'error')
                 return redirect(url_for('views.audit_report', id=current_version.id, tickets_cont='true'))
+            
             if action == 'not_viewed':
                 status_itog = 'Отправлен'
             elif action == 'remarks':
@@ -1123,19 +1131,17 @@ def change_category_report():
             current_version.status = status_itog
             current_version.audit_time = current_utc_time()
             db.session.commit()
-
+            
             user_message = Message(
-                text = f"Статус вашего отчета был изменен на {status_itog}. Дополнительные сведения можно просмотреть в квитанции.",
-                sender_id = current_user.id,          
-                recipient_id = recipient_user.id
+                text=f"Статус вашего отчета за {report.year} год {report.quarter} квартал был изменен на {status_itog}. Дополнительные сведения можно просмотреть в квитанции.",
+                sender_id=current_user.id,
+                recipient_id=recipient_user.id
             )
             db.session.add(user_message)
             db.session.commit()
-    
-            # send_email(status_itog, user.email, 'status')
 
-            flash(f'Статус отчета был изменен на «{status_itog}».', 'success')
-            return redirect(request.referrer) 
+            flash(f'Статус отчета "{organization_name}" за {report.year} год {report.quarter} квартал был изменен на «{status_itog}».', 'success')
+            return redirect(request.referrer)
         else:
             flash('Отчет не найден.', 'error')
             return "Version not found", 404
@@ -1259,51 +1265,86 @@ def print_version_tickets():
 
         buffer = BytesIO()
         c = canvas.Canvas(buffer, pagesize=letter)
+        
+        left_margin = 72
+        right_margin = 72
+        page_width = letter[0]
+        max_text_width = page_width - left_margin - right_margin
 
         font_path_bold = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'fonts', 'Montserrat-Bold.ttf')
         font_path_regular = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'fonts', 'Montserrat-Regular.ttf')
         pdfmetrics.registerFont(TTFont('MontserratBold', font_path_bold))
         pdfmetrics.registerFont(TTFont('MontserratRegular', font_path_regular))
 
+        def draw_wrapped_text(c, text, x, y, font_name, font_size, max_width):
+            c.setFont(font_name, font_size)
+            lines = []
+            words = text.split(' ')
+            current_line = []
+            
+            for word in words:
+                test_line = ' '.join(current_line + [word])
+                if c.stringWidth(test_line, font_name, font_size) <= max_width:
+                    current_line.append(word)
+                else:
+                    if current_line:
+                        lines.append(' '.join(current_line))
+                    current_line = [word]
+            
+            if current_line:
+                lines.append(' '.join(current_line))
+            
+            for line in lines:
+                if y < 50:
+                    c.showPage()
+                    y = 750
+                c.drawString(x, y, line)
+                y -= font_size + 4
+            
+            return y
+
         c.setFont("MontserratBold", 16)
-        c.drawString(100, 780, "Квитанции по отчету")
+        c.drawString(left_margin, 750, "Квитанции по отчету")
         
         c.setFont("MontserratRegular", 12)
-        c.drawString(100, 760, f"ОКПО: {report.organization.okpo}")
-        c.drawString(100, 740, f"Год: {report.year}, Квартал: {report.quarter}")
-        c.drawString(100, 720, f"Всего квитанций: {len(tickets)}")
+        c.drawString(left_margin, 725, f"ОКПО: {report.organization.okpo}")
+        c.drawString(left_margin, 705, f"Год: {report.year}, Квартал: {report.quarter}")
+        c.drawString(left_margin, 685, f"Всего квитанций: {len(tickets)}")
         
-        y_position = 680
+        y_position = 640
 
-        for ticket in tickets:
-            if y_position < 100:
+        for idx, ticket in enumerate(tickets):
+            if y_position < 120:
                 c.showPage()
                 c.setFont("MontserratBold", 16)
-                c.drawString(100, 780, "Квитанции по отчету (продолжение)")
+                c.drawString(left_margin, 750, "Квитанции по отчету (продолжение)")
                 c.setFont("MontserratRegular", 12)
-                c.drawString(100, 760, f"ОКПО: {report.organization.okpo}")
-                c.drawString(100, 740, f"Год: {report.year}, Квартал: {report.quarter}")
-                y_position = 700
+                c.drawString(left_margin, 725, f"ОКПО: {report.organization.okpo}")
+                c.drawString(left_margin, 705, f"Год: {report.year}, Квартал: {report.quarter}")
+                y_position = 680
 
             c.setFont("MontserratBold", 12)
-            c.drawString(100, y_position, f"Дата обработки: {ticket.begin_time.strftime('%Y-%m-%d %H:%M')}")
+            c.drawString(left_margin, y_position, f"Квитанция #{idx + 1}")
+            y_position -= 20
+            
+            c.setFont("MontserratRegular", 10)
+            c.drawString(left_margin, y_position, f"Дата обработки: {ticket.begin_time.strftime('%Y-%m-%d %H:%M') if ticket.begin_time else 'Не указана'}")
             y_position -= 20
             
             c.setFont("MontserratBold", 12)
-            c.drawString(100, y_position, "Результат:")
+            c.drawString(left_margin, y_position, "Результат:")
             c.setFont("MontserratRegular", 12)
             result = "Отчет одобрен, ошибок нет" if ticket.luck else "Отчет не принят в обработку"
-            c.drawString(180, y_position, result)
+            c.drawString(left_margin + 70, y_position, result)
             y_position -= 20
             
-            if not ticket.luck:
+            if not ticket.luck and ticket.note:
                 c.setFont("MontserratBold", 12)
-                c.drawString(100, y_position, "Причина:")
+                c.drawString(left_margin, y_position, "Причина:")
                 c.setFont("MontserratRegular", 12)
-                c.drawString(180, y_position, ticket.note if ticket.note else "")
-                y_position -= 20
+                y_position = draw_wrapped_text(c, ticket.note, left_margin + 65, y_position, "MontserratRegular", 11, max_text_width - 65)
             
-            y_position -= 20
+            y_position -= 25
 
         c.save()
         buffer.seek(0)

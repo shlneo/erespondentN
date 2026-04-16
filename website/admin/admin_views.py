@@ -1,16 +1,11 @@
 from flask_admin import AdminIndexView, expose
 from flask_login import current_user
-from ..models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, Message, News, current_utc_time
+from ..models import User, Organization, Report, Version_report, Ticket, DirUnit, DirProduct, Sections, current_utc_time
 from sqlalchemy.exc import SQLAlchemyError
 from flask_admin.contrib.sqla import ModelView
-import os
-import tempfile
-from flask import flash, redirect, request, url_for, send_file, current_app
+from flask import flash, redirect, url_for
 from functools import wraps
-import shutil
-from datetime import datetime, timedelta
-from collections import defaultdict
-from .. import db
+from datetime import timedelta
 
 def admin_only(f):
     @wraps(f)

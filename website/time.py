@@ -1,7 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+import zoneinfo
 
 def current_utc_time():
-    return datetime.utcnow() + timedelta(hours=3)
+    return datetime.now(zoneinfo.ZoneInfo('Europe/Minsk'))
 
 def get_previous_quarter():
     current_time = current_utc_time()

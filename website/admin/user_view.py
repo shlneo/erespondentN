@@ -1,8 +1,6 @@
-import bcrypt
 from flask_admin.contrib.sqla import ModelView
-from wtforms.validators import DataRequired, Email, Length
-from flask_bcrypt import Bcrypt
-from werkzeug.security import check_password_hash, generate_password_hash
+from wtforms.validators import Email
+from werkzeug.security import generate_password_hash
 from flask import redirect, url_for
 from flask_login import current_user
 

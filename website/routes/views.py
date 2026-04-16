@@ -224,10 +224,10 @@ def reply_to_message(message_id):
         db.session.add(reply_message)
         db.session.commit()
         
-        try:
-            send_email(reply_text, recipient.email, 'just_notif')
-        except Exception as e:
-            views.logger.error(f"Ошибка отправки email: {str(e)}")
+        # try:
+        #     send_email(reply_text, recipient.email, 'just_notif')
+        # except Exception as e:
+        #     views.logger.error(f"Ошибка отправки email: {str(e)}")
         
         return jsonify({
             'success': True,
@@ -464,8 +464,14 @@ def api_audit_data():
     search_name = request.args.get('search_name')
     search_okpo = request.args.get('search_okpo')
     
+    # Получаем параметры пагинации
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 50, type=int)
+    
+    # Получаем все отчёты
     reports = get_reports_by_status(status, year_filter, quarter_filter)
     
+    # Применяем фильтрацию по имени и ОКПО
     if search_name or search_okpo:
         filtered_reports = []
         for report in reports:
@@ -481,13 +487,18 @@ def api_audit_data():
                 filtered_reports.append(report)
         reports = filtered_reports
     
+    # Сохраняем общее количество ДО пагинации
+    total_count = len(reports)
+    
+    # Применяем пагинацию
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_reports = reports[start:end]
+    
+    # Формируем данные для JSON
     reports_data = []
-    for row in reports:
+    for row in paginated_reports:
         for version in row.versions:
-            sent_date = ''
-            if version.sent_time:
-                sent_date = version.sent_time.strftime('%Y-%m-%d')
-            
             reports_data.append({
                 'id': row.id,
                 'version_id': version.id,
@@ -495,12 +506,13 @@ def api_audit_data():
                 'okpo': row.organization.okpo,
                 'year': row.year,
                 'quarter': row.quarter,
-                'sent_time': sent_date,
+                'sent_time': version.sent_time.strftime('%Y-%m-%d') if version.sent_time else '',
                 'sent_datetime': version.sent_time.strftime('%Y-%m-%d %H:%M:%S') if version.sent_time else '',
                 'status': version.status,
                 'has_not': version.hasNot if hasattr(version, 'hasNot') else False
             })
     
+
     stats = {
         'not_viewed': len(get_reports_by_status('not_viewed', year_filter, quarter_filter)),
         'to_delete': len(get_reports_by_status('to_delete', year_filter, quarter_filter)),
@@ -513,6 +525,10 @@ def api_audit_data():
         'success': True,
         'reports': reports_data,
         'stats': stats,
+        'total': total_count,
+        'page': page,
+        'per_page': per_page,
+        'has_more': end < total_count,
         'count': len(reports_data)
     })
 

@@ -158,8 +158,9 @@
     </div>
     <div class="report-list">
         <div class="report-area">
-            <div id="loading-spinner" class="loading-spinner" style="display: flex;">
+            <div id="loading-spinner" class="loading-spinner" style="display: none;">
                 <div class="loader-pulse"></div>
+                <div class="loading-text">Загрузка отчётов...</div>
             </div>
             <div id="reports-content" style="display: none;">
                 <table class="table-report-area">
@@ -179,6 +180,11 @@
                     <tbody id="reports-tbody">
                     </tbody>
                 </table>
+                <div id="infinite-scroll-trigger" style="height: 20px;"></div>
+                <div id="loading-more" class="loading-more" style="display: none;">
+                    <div class="loader-pulse-small"></div>
+                    <div class="loading-text">Загрузка следующих отчётов...</div>
+                </div>
             </div>
             <div id="empty-state" class="empty-state-container" style="display: none;">
                 <div class="empty-state">
