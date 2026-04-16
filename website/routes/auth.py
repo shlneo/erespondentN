@@ -687,6 +687,8 @@ def to_decimal(value):
     except (ValueError, InvalidOperation, TypeError, AttributeError):
         return Decimal('0.00')
 
+import math
+
 @auth.route('/add-section-param', methods=['POST'])
 @login_required 
 @session_required
@@ -758,18 +760,22 @@ def add_section_param():
                             try:
                                 if current_section.produced != 0:
                                     if product_unit and (product_unit.NameUnit == '%' or product_unit.NameUnit == '% (включая покупную)'):
-                                        current_section.Consumed_Fact = math.ceil(((current_section.Consumed_Total_Fact / current_section.produced) * 100) * 100) / 100
+                                        current_section.Consumed_Fact = round(
+                                            (current_section.Consumed_Total_Fact / current_section.produced) * 100, 2)
                                     else:
-                                        current_section.Consumed_Fact = math.ceil(((current_section.Consumed_Total_Fact / current_section.produced) * 1000) * 100) / 100
+                                        current_section.Consumed_Fact = round(
+                                            (current_section.Consumed_Total_Fact / current_section.produced) * 1000, 2)
                                 else:
                                     current_section.Consumed_Fact = 0
 
                                 db.session.commit()
                                 if current_section.Consumed_Quota != 0:
                                     if product_unit and (product_unit.NameUnit == '%' or product_unit.NameUnit == '% (включая покупную)'):
-                                        current_section.Consumed_Total_Quota = math.ceil(((current_section.produced * current_section.Consumed_Quota) / 100) * 100) / 100
+                                        current_section.Consumed_Total_Quota = round(
+                                            (current_section.produced * current_section.Consumed_Quota) / 100, 2)
                                     else:
-                                        current_section.Consumed_Total_Quota = math.ceil(((current_section.produced * current_section.Consumed_Quota) / 1000) * 100) / 100
+                                        current_section.Consumed_Total_Quota = round(
+                                            (current_section.produced * current_section.Consumed_Quota) / 1000, 2)
                                 else:
                                     current_section.Consumed_Total_Quota = 0
                                 db.session.commit()
@@ -871,18 +877,22 @@ def change_section():
                         try:
                             if current_section.produced != 0:
                                 if product_unit and (product_unit.NameUnit == '%' or product_unit.NameUnit == '% (включая покупную)'):
-                                    current_section.Consumed_Fact = math.ceil(((current_section.Consumed_Total_Fact / current_section.produced) * 100) * 100) / 100
+                                    current_section.Consumed_Fact = round(
+                                        (current_section.Consumed_Total_Fact / current_section.produced) * 100, 2)
                                 else:
-                                    current_section.Consumed_Fact = math.ceil(((current_section.Consumed_Total_Fact / current_section.produced) * 1000) * 100) / 100
+                                    current_section.Consumed_Fact = round(
+                                        (current_section.Consumed_Total_Fact / current_section.produced) * 1000, 2)
                             else:
                                 current_section.Consumed_Fact = 0
 
                             db.session.commit()
                             if current_section.Consumed_Quota != 0:
                                 if product_unit and (product_unit.NameUnit == '%' or product_unit.NameUnit == '% (включая покупную)'):
-                                    current_section.Consumed_Total_Quota = math.ceil(((current_section.produced * current_section.Consumed_Quota) / 100) * 100) / 100
+                                    current_section.Consumed_Total_Quota = round(
+                                        (current_section.produced * current_section.Consumed_Quota) / 100, 2)
                                 else:
-                                    current_section.Consumed_Total_Quota = math.ceil(((current_section.produced * current_section.Consumed_Quota) / 1000) * 100) / 100
+                                    current_section.Consumed_Total_Quota = round(
+                                        (current_section.produced * current_section.Consumed_Quota) / 1000, 2)
                             else:
                                 current_section.Consumed_Total_Quota = 0
                             db.session.commit()
@@ -935,7 +945,6 @@ def change_section():
             return redirect(url_for('views.report_section', report_type='heat', id=id_version))
         elif(current_section.section_number == 3):
             return redirect(url_for('views.report_section', report_type='electro', id=id_version))
-
 
 @auth.route('/remove_section/<id>', methods=['POST'])
 @login_required 
