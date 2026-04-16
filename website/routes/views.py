@@ -46,7 +46,7 @@ def profile_complete(f):
 def auditors_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if current_user.type not in ['Аудитор', 'Администратор']:
+        if current_user.type not in ['Аудитор', 'Администратор', 'Смотрящий' ]:
             flash('У вас нет прав доступа', 'error')
             return redirect(url_for('views.profile_common'))
         if not current_user.fio or not current_user.telephone:

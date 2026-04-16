@@ -17,7 +17,7 @@
                             <img src="/static/img/Add.svg" alt="" class="button-icon">
                             <span>Подать отчет</span>
                         </button> 
-                    {% elif user.type == 'Аудитор' %}
+                    {% elif user.type == 'Аудитор' or user.type == 'Смотрящий'  %}
                         <button onclick="window.location.href='/audit-area/not_viewed?year={{previous_year}}&quarter={{previous_quarter}}';" class = "blue_btn">
                             <img src="/static/img/Search.svg" alt="" class="button-icon">
                             <span>Просмотр отчетов</span>
