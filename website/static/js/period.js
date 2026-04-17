@@ -4,11 +4,9 @@
             this.container = document.getElementById(selectorId);
             if (!this.container) return;
             
-            // Получаем начальные значения из hidden полей или используем текущую дату
             const hiddenYear = options.hiddenYearInput;
             const hiddenQuarter = options.hiddenQuarterInput;
             
-            // Определяем начальный год
             let initialYear;
             if (hiddenYear && hiddenYear.value && !isNaN(parseInt(hiddenYear.value))) {
                 initialYear = parseInt(hiddenYear.value);
@@ -16,7 +14,6 @@
                 initialYear = new Date().getFullYear();
             }
             
-            // Определяем начальный квартал
             let initialQuarter = null;
             if (hiddenQuarter && hiddenQuarter.value && !isNaN(parseInt(hiddenQuarter.value))) {
                 initialQuarter = hiddenQuarter.value;
@@ -39,7 +36,6 @@
             this.downArrow = this.container.querySelector('.down-arrow');
             this.quarterCells = this.container.querySelectorAll('.q-cell');
             
-            // Устанавливаем отображение года из hidden поля
             if (this.yearDisplay) {
                 this.yearDisplay.textContent = this.currentYear;
             }
@@ -48,7 +44,6 @@
             this.updateInfoDisplay();
             this.addEventListeners();
             
-            // Если есть активный квартал из hidden поля, выделяем его
             if (this.activeQuarter) {
                 const initialCell = this.container.querySelector(`.q-cell[data-q="${this.activeQuarter}"]`);
                 if (initialCell) {

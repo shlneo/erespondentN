@@ -94,20 +94,102 @@
         <div class="askquestion-row">
             <div class="askquestion_form">
                 <div class="askquestion_name">Форма обратной связи</div>
-                <form action="/sent_for_admin" method="POST" id = "askquestion-form">
+                <form action="/sent_for_admin" method="POST" id="askquestion-form">
                     <select name="askquestion_type" id="questionType" required>
                         <option value="">Выберите тип вопроса</option>
                         <option value="organization-none">Нет организации в списке</option>
+                        <option value="organization-edit">Изменить данные организации</option>
                         <option value="other">Другое</option>
                     </select>
-                    <textarea type="text" name="organization_name" placeholder="Введите полное наименование предприятия" maxlength="150" value = "" required></textarea>
-                    <input type="text" name="organization_ynp" placeholder="Введите код УНП" minlength="9" maxlength="9" required id="ynpInput">
-                    <input type="text" name="organization_okpo" placeholder="Введите код ОКПО" minlength="12" maxlength="12" required id="okpoInput">
-                    <textarea type="text" name="problem_description" placeholder="Напишите ваш вопрос" maxlength="300" value = "" required></textarea>
-                    <input type="text" name="email" value = "{{current_user.email}}" readonly>
+
+                    <div id="organizationSearchBlock" style="display: none;">
+                        <div class="search-org-container">
+                            <input type="text" id="organizationSearch" placeholder="Поиск организации по названию или ОКПО..." autocomplete="off">
+                            <div id="searchResults" class="search-results-dropdown"></div>
+                        </div>
+                    </div>
+
+                    <div id="comparisonBlock" style="display: none;">
+                        <div class="comparison-container">
+                            <div class="comparison-header">
+                                <div class="comparison-title">Сравнение данных организации</div>
+                                <div class="comparison-subtitle">Проверьте изменения перед отправкой</div>
+                            </div>
+                            
+                            <div class="comparison-table">
+                                <div class="comparison-row header">
+                                    <div class="comparison-field">Поле</div>
+                                    <div class="comparison-old">Текущие данные</div>
+                                    <div class="comparison-new">Новые данные</div>
+                                    <div class="comparison-status">Статус</div>
+                                </div>
+                                
+                                <div class="comparison-row">
+                                    <div class="comparison-field">
+                                        <span class="field-icon">🏢</span>
+                                        <span>Наименование</span>
+                                    </div>
+                                    <div class="comparison-old" id="oldNameValue"></div>
+                                    <div class="comparison-new">
+                                        <span id="newNameValue" class="new-value"></span>
+                                    </div>
+                                    <div class="comparison-status" id="nameStatus"></div>
+                                </div>
+                                
+                                <div class="comparison-row">
+                                    <div class="comparison-field">
+                                        <span class="field-icon">🔢</span>
+                                        <span>ОКПО</span>
+                                    </div>
+                                    <div class="comparison-old" id="oldOkpoValue"></div>
+                                    <div class="comparison-new">
+                                        <span id="newOkpoValue" class="new-value"></span>
+                                    </div>
+                                    <div class="comparison-status" id="okpoStatus"></div>
+                                </div>
+                                
+                                <div class="comparison-row">
+                                    <div class="comparison-field">
+                                        <span class="field-icon">🆔</span>
+                                        <span>УНП</span>
+                                    </div>
+                                    <div class="comparison-old" id="oldYnpValue"></div>
+                                    <div class="comparison-new">
+                                        <span id="newYnpValue" class="new-value"></span>
+                                    </div>
+                                    <div class="comparison-status" id="ynpStatus"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="newOrgData" style="display: none;">
+                        <div class="new-org-data">
+                            <div class="info-title">✏️ Новые данные организации:</div>
+                            <textarea name="new_organization_name" id="newOrganizationName" placeholder="Новое наименование организации" maxlength="150"></textarea>
+                            <input type="text" name="new_organization_ynp" id="newOrganizationYnp" placeholder="Новый код УНП" maxlength="9">
+                            <input type="text" name="new_organization_okpo" id="newOrganizationOkpo" placeholder="Новый код ОКПО" maxlength="12">
+                        </div>
+                    </div>
+
+                    <div id="addOrgFields">
+                        <textarea type="text" name="organization_name" id="organizationName" placeholder="Введите полное наименование предприятия" maxlength="150"></textarea>
+                        <input type="text" name="organization_ynp" id="organizationYnp" placeholder="Введите код УНП" maxlength="9">
+                        <input type="text" name="organization_okpo" id="organizationOkpo" placeholder="Введите код ОКПО" maxlength="12">
+                    </div>
+
+                    <textarea type="text" name="problem_description" id="problemDescription" placeholder="Напишите ваш вопрос" maxlength="300"></textarea>
+                    
+                    <input type="text" name="email" value="{{current_user.email}}" readonly>
+
+                    <input type="hidden" name="selected_org_id" id="selectedOrgId">
+                    <input type="hidden" name="organization_old_okpo" id="organizationOldOkpo">
+                    <input type="hidden" name="organization_old_ynp" id="organizationOldYnp">
+                    <input type="hidden" name="organization_old_name" id="organizationOldName">
 
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type = "submit" class="blue_btn" id = "send-btn">
+                    
+                    <button type="submit" class="blue_btn" id="send-btn">
                         <img src="/static/img/Send.svg" alt="" class="button-icon">
                         <span>Отправить вопрос</span>
                     </button>
@@ -117,187 +199,5 @@
     {%else%}
     {%endif%}
 </div>
-<script>
-
-document.addEventListener('DOMContentLoaded', function() {
-    const questionTypeSelect = document.getElementById('questionType');
-    const form = document.getElementById('askquestion-form');
-    const nameInput = form.querySelector('textarea[name="organization_name"]');
-    const okpoInput = form.querySelector('input[name="organization_okpo"]');
-    const ynpInput = form.querySelector('input[name="organization_ynp"]');
-    const textarea = form.querySelector('textarea[name="problem_description"]');
-    const submitButton = document.getElementById('send-btn');
-
-    function checkOkpoValidity(value) {
-        if (value.length === 0) return true;
-        if (value.length !== 12) return false;
-        const fourthFromEnd = value[value.length - 4];
-        const allowedDigits = ['1', '2', '3', '4', '5', '6', '7'];
-        return allowedDigits.includes(fourthFromEnd);
-    }
-
-    function checkYnpValidity(value) {
-        if (value.length === 0) return true;
-        return value.length === 9;
-    }
-
-    function updateOkpoError() {
-        const value = okpoInput.value;
-        const existingError = document.getElementById('okpoError');
-        if (existingError) existingError.remove();
-        
-        if (value.length === 0) {
-            okpoInput.classList.remove('input-error');
-            return;
-        }
-        
-        if (value.length !== 12) {
-            okpoInput.classList.add('input-error');
-            const errorDiv = document.createElement('div');
-            errorDiv.id = 'okpoError';
-            errorDiv.style.color = 'red';
-            errorDiv.style.fontSize = '12px';
-            errorDiv.style.marginBottom = '15px';
-            errorDiv.textContent = 'ОКПО должен содержать 12 цифр, 9-ая цифра отражает регион остальные могут быть 0';
-            okpoInput.parentNode.insertBefore(errorDiv, okpoInput.nextSibling);
-            return;
-        }
-        
-        const fourthFromEnd = value[value.length - 4];
-        const allowedDigits = ['1', '2', '3', '4', '5', '6', '7'];
-        
-        if (!allowedDigits.includes(fourthFromEnd)) {
-            okpoInput.classList.add('input-error');
-            const errorDiv = document.createElement('div');
-            errorDiv.id = 'okpoError';
-            errorDiv.style.color = 'red';
-            errorDiv.style.fontSize = '12px';
-            errorDiv.style.marginBottom = '15px';
-            errorDiv.textContent = '4-я цифра с конца в коде ОКПО отражает регион, она должна быть от 1 до 7';
-            okpoInput.parentNode.insertBefore(errorDiv, okpoInput.nextSibling);
-            return;
-        }
-        
-        okpoInput.classList.remove('input-error');
-    }
-
-    function updateYnpError() {
-        const value = ynpInput.value;
-        const existingError = document.getElementById('ynpError');
-        if (existingError) existingError.remove();
-        
-        if (value.length === 0) {
-            ynpInput.classList.remove('input-error');
-            return;
-        }
-        
-        if (value.length !== 9) {
-            ynpInput.classList.add('input-error');
-            const errorDiv = document.createElement('div');
-            errorDiv.id = 'ynpError';
-            errorDiv.style.color = 'red';
-            errorDiv.style.fontSize = '12px';
-            errorDiv.style.marginBottom = '15px';
-            errorDiv.textContent = 'УНП должен содержать ровно 9 цифр';
-            ynpInput.parentNode.insertBefore(errorDiv, ynpInput.nextSibling);
-            return;
-        }
-        
-        ynpInput.classList.remove('input-error');
-    }
-
-    document.getElementById('ynpInput').addEventListener('input', function(e) {
-        let value = this.value.replace(/[^\d]/g, '');
-        if (value.length > 9) {
-            value = value.slice(0, 9);
-        }
-        this.value = value;
-        updateYnpError();
-        validateForm();
-    });
-
-    document.getElementById('okpoInput').addEventListener('input', function(e) {
-        let value = this.value.replace(/[^\d]/g, '');
-        if (value.length > 12) {
-            value = value.slice(0, 12);
-        }
-        this.value = value;
-        updateOkpoError();
-        validateForm();
-    });
-
-    function validateForm() {
-        const selectedValue = questionTypeSelect.value;
-        
-        if (selectedValue === '') {
-            submitButton.disabled = true;
-            submitButton.style.display = 'none';
-            return;
-        } else {
-            submitButton.style.display = 'flex';
-        }
-        
-        if (selectedValue === 'organization-none') {
-            const nameValid = nameInput.value.trim() !== '';
-            const okpoValid = okpoInput.value.length === 12 && checkOkpoValidity(okpoInput.value);
-            const ynpValid = ynpInput.value.length === 9;
-            
-            if (nameValid && okpoValid && ynpValid) {
-                submitButton.disabled = false;
-            } else {
-                submitButton.disabled = true;
-            }
-        } else if (selectedValue === 'other') {
-            const textareaValid = textarea.value.trim() !== '';
-            submitButton.disabled = !textareaValid;
-        }
-    }
-
-    function updateFieldsVisibility() {
-        const selectedValue = questionTypeSelect.value;
-        
-        if (selectedValue === '') {
-            nameInput.style.display = 'none';
-            okpoInput.style.display = 'none';
-            ynpInput.style.display = 'none';
-            textarea.style.display = 'block';
-            submitButton.disabled = true;
-            submitButton.style.display = 'none';
-            nameInput.required = false;
-            okpoInput.required = false;
-            ynpInput.required = false;
-            textarea.required = true;
-        } else if (selectedValue === 'organization-none') {
-            nameInput.style.display = 'block';
-            okpoInput.style.display = 'block';
-            ynpInput.style.display = 'block';
-            textarea.style.display = 'none';
-            submitButton.style.display = 'flex';
-            nameInput.required = true;
-            okpoInput.required = true;
-            ynpInput.required = true;
-            textarea.required = false;
-            validateForm();
-        } else if (selectedValue === 'other') {
-            nameInput.style.display = 'none';
-            okpoInput.style.display = 'none';
-            ynpInput.style.display = 'none';
-            textarea.style.display = 'block';
-            submitButton.style.display = 'flex';
-            nameInput.required = false;
-            okpoInput.required = false;
-            ynpInput.required = false;
-            textarea.required = true;
-            validateForm();
-        }
-    }
-    
-    nameInput.addEventListener('input', validateForm);
-    ynpInput.addEventListener('input', validateForm);
-    textarea.addEventListener('input', validateForm);
-    questionTypeSelect.addEventListener('change', updateFieldsVisibility);
-    updateFieldsVisibility();
-});
-</script>
-
+<script src="{{ url_for('static', filename='js/question_form.js') }}"></script>
 {% endblock %}

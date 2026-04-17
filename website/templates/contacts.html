@@ -23,6 +23,11 @@
         <div class="contact-glass">
             <h2 class="contact-title">Контакты</h2>
             <div class="contact-methods">
+                {% if not current_user.is_authenticated%}
+   
+                {% else %}
+
+                {% endif %}
                 <div class="contact-method">
                     <div class="contact-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -35,7 +40,21 @@
                         <div class="contact-value">Пн-Пт: 9:00 - 16:00 <br><span style="font-size:12px;">Перерыв: 12:00 - 13:00</span></div>
                     </div>
                 </div>
-                
+
+                <a href="/#news_row" class="contact-method support-link" id="supportLink">
+                    <div class="contact-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        
+                        </svg>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-type">Онлайн техподдержка</div>
+                        <div class="contact-value link">Перейти к форме связи</div>
+                    </div>
+                </a>
+
                 <a href="tel:+375172315563" class="contact-method">
                     <div class="contact-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -48,8 +67,8 @@
                         <div class="contact-type">Телефон техподдержки</div>
                         <div class="contact-value">+375 17 365-04-33</div>
                     </div>
-                </a>
-                
+                </a> 
+
                 <a href="tel:+375173385051" class="contact-method">
                     <div class="contact-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -92,5 +111,32 @@
             </div>
         </div>
     </section>
+
+    <section class="map-section">
+        <div id="map" style="width: 100%; height: 450px;"></div>
+    </section>
 </div>
+
+<script src="https://api-maps.yandex.ru/2.1/?apikey=ваш_api_ключ&lang=ru_RU"></script>
+<script>
+    ymaps.ready(init);
+    function init() {
+        var myMap = new ymaps.Map("map", {
+            center: [53.904676, 27.553450],
+            zoom: 16,
+            controls: ['zoomControl', 'fullscreenControl']
+        });
+
+        var myPlacemark = new ymaps.Placemark([53.904676, 27.553450], {
+            hintContent: 'Государственный комитет по стандартизации',
+            balloonContent: '<strong>Госстандарт</strong><br/>пл. Свободы 17, Минск<br/>Телефон: +375 17 338-50-51'
+        }, {
+            preset: 'islands#redDotIcon',
+            balloonOffset: [0, -30]
+        });
+
+        myMap.geoObjects.add(myPlacemark);
+    }
+</script>
+
 {% endblock %}

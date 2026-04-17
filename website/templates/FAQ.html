@@ -359,7 +359,7 @@
                         <p><strong>Разработчик:</strong> Научно-производственное республиканское унитарное предприятие<a class = "instruction-link" href="https://kvant-as.by/" style = "font-weight: 600;"> «Квант-АС»</a>.</p>
                         <p><strong>Исполнители / Администраторы (тел. 8 017 365-04-33):</strong> </p>
                         <div class = "opred-text fit">
-                            <strong>Санников Вячеслав Степанович</strong> — начальник отдела разработки информационнх систем
+                            <strong>Санников Вячеслав Степанович</strong> — начальник отдела разработки информационных систем
                         </div>
                         <div class = "opred-text fit">
                             <strong title="https://github.com/shlneo">Сидоров Максим Андреевич</strong> — разработчик-программист
@@ -1132,63 +1132,100 @@
             <div class="info_page info_faq" data-question-id="15" style="display: none;">
                 <div class="faq_question_info">
                     <div class="info_page_name">
-                        <h1>Что делать если нет моей организации в списке?</h1>
+                        <h1>Что делать, если моей организации нет в списке?</h1>
                     </div>
                     <div class="infos">
-                    
-                        <div class="p_img">
-                            <img src="{{ url_for('static', filename='img/post/no-org.png') }}" alt="">
-                            <span>Рисунок 42 - Нет организации в списке</span>
-                        </div>
-
+                        
                         <div class="answer-highlight-second">
                             <div class="highlight-icon">💡</div>
                             <div>
-                                <p><strong>Сначала нужно зарегистрироваться и войти в свой аккаунт.</strong> Без этого добавить организацию не получится.</p>
+                                <p><strong>Важное условие:</strong> Для добавления организации необходимо быть <strong>авторизованным</strong> в системе. Сначала зарегистрируйтесь и войдите в свой аккаунт.</p>
                             </div>
-                        </div>
-                        
-                        <ol class="steps-list">
-                            <li><strong>Перейдите</strong> на <a class = "instruction-link" href = "/">главную страницу</a> сайта ErespondentN.</li>
-                            <li><strong>Прокрутите страницу вниз до самого конца.</strong> Сделать это можно колесиком мыши или нажав на кнопку со знаком вопроса <strong>«?»</strong> в правом нижнем углу экрана (см. рисунок №43).</li>
-                        </ol>
-                        
-                        <div class="p_img">
-                            <img src="{{ url_for('static', filename='img/post/66.jpg') }}" alt="Кнопка со знаком вопроса для перехода вниз страницы">
-                            <span>Рисунок 43 - Кнопка «?» для прокрутки вниз</span>
-                        </div>
-                        <p>Вы автоматически попадете на <a class = "instruction-link" href="/#toadmin">форму обратной связи</a>, где вам нужно будет:</p>
-                        
-                        <ol class="steps-list">
-                            <li>Выбрать тип вопроса - <strong>Нет организации в списке</strong>.</li>
-                            <li>Написать <strong>полное наименование</strong> организации.</li>
-                            <li>Написать полный <strong>код ОКПО</strong> - 12 цифр.</li>
-                            <li>Написать <strong>код УНП</strong> - 9 цифр.</li>
-                            <li>Нажать на кнопку <strong>"Отправить вопрос"</strong>.</li>
-                            <li>Вам придет уведомление о том что ваше сообщение было отправлено, а через пару минут ответ (рисунок 45).</li>
-                        </ol>
-                        
-                        <div class="answer-highlight-second" style = "margin-top: 50px;">
-                            <div class="highlight-icon">📊</div>
-                            <div>
-                                <p><strong>Необходимые парамметры организации:</strong></p>
-                                <ol>
-                                    <li><strong>Полное официальное наименование вашей организации.</strong></li>
-                                    <li><strong>Код ОКПО вашей организации</strong> (4-ая цифра с конца "1-7" должна отображать ваш регион).</li>
-                                    <li><strong>Код УНП вашей организации</strong>.</li>
-                                </ol>
-                            </div>
-                        <div class="answer-highlight-note">Указывайте <strong>полный</strong> код ОКПО: <strong>12</strong> цифр, к примеру: <strong>000226976000</strong> (4-ая цифра с конца 1 соответственно Минская область). Если код будет неудовлетворительным, вашу организацию не смогут добавить.</div>
                         </div>
 
                         <div class="p_img">
-                            <img src="{{ url_for('static', filename='img/post/askquestion-form.png') }}" alt="Форма для добавления новой организации">
-                            <span>Рисунок 44 - Форма для заполнения данных организации</span>
+                            <img src="{{ url_for('static', filename='img/post/no-org.png') }}" alt="Сообщение об отсутствии организации в списке">
+                            <span>Рисунок 1 - Сообщение "Нет организации в списке"</span>
                         </div>
+
+                        <h3>Инструкция по добавлению организации:</h3>
+                        
+                        <ol class="steps-list">
+                            <li>Перейдите на <a class="instruction-link" href="/">главную страницу</a> сайта ErespondentN.</li>
+                            <li>Прокрутите страницу вниз до формы обратной связи или нажмите на кнопку со знаком вопроса <strong>«?»</strong> в правом нижнем углу.</li>
+                        </ol>
+
                         <div class="p_img">
-                            <img src="{{ url_for('static', filename='img/post/notif-add-org.png') }}" alt="">
-                            <span>Рисунок 45 - Уведомление</span>
+                            <img src="{{ url_for('static', filename='img/post/66.jpg') }}" alt="Кнопка со знаком вопроса">
+                            <span>Рисунок 2 - Кнопка «?» для быстрой прокрутки вниз</span>
                         </div>
+
+                        <p>В форме обратной связи заполните следующие поля:</p>
+
+                        <ol class="steps-list" start="3">
+                            <li>Выберите тип вопроса — <strong>«Нет организации в списке»</strong>.</li>
+                            <li>Укажите <strong>полное наименование</strong> организации.</li>
+                            <li>Введите <strong>код ОКПО</strong> (12 цифр).</li>
+                            <li>Введите <strong>код УНП</strong> (9 цифр).</li>
+                            <li>Нажмите кнопку <strong>«Отправить вопрос»</strong>.</li>
+                        </ol>
+
+                        <div class="p_img">
+                            <img src="{{ url_for('static', filename='img/post/askquestion-form.png') }}" alt="Форма для добавления организации">
+                            <span>Рисунок 3 - Форма обратной связи для добавления организации</span>
+                        </div>
+
+                        <div class="answer-highlight-second">
+                            <div class="highlight-icon">🗺️</div>
+                            <div>
+                                <p><strong>Как определить регион по коду ОКПО:</strong></p>
+                                <p>9-я цифра в 12-значном коде ОКПО указывает на регион организации.</p>
+                            </div>
+                        </div>
+
+                        <table class="region-table">
+                            <thead>
+                                <tr>
+                                    <th>Регион</th>
+                                    <th>9-ая цифра в коде ОКПО</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Брестское областное управление</td><td>1</td></tr>
+                                <tr><td>Витебское областное управление</td><td>2</td></tr>
+                                <tr><td>Гомельское областное управление</td><td>3</td></tr>
+                                <tr><td>Гродненское областное управление</td><td>4</td></tr>
+                                <tr><td>Управление г. Минск</td><td>5</td></tr>
+                                <tr><td>Минское областное управление</td><td>6</td></tr>
+                                <tr><td>Могилевское областное управление</td><td>7</td></tr>
+                            </tbody>
+                        </table>
+
+                   
+                        <p><strong>Пример:</strong> Код ОКПО <strong>000226971000</strong> — 9-я цифра равна <strong>1</strong>, что соответствует <strong>Брестскому областному управлению</strong>.</p>
+                
+
+                        <div class="answer-highlight-second" style="margin-top: 30px;">
+                            <div class="highlight-icon">✅</div>
+                            <div>
+                                <p><strong>После отправки заявки:</strong></p>
+                                <ol>
+                                    <li>Вы получите уведомление о том, что сообщение отправлено.</li>
+                                    <li>В течение некоторого времени администратор добавит организацию.</li>
+                                    <li>На указанную почту придет подтверждение (рисунок 4).</li>
+                                </ol>
+                            </div>
+                            <div class="answer-highlight-note">
+                                <strong>⚠️ Важно:</strong> Указывайте <strong>полный</strong> 12-значный код ОКПО. 9-я цифра должна соответствовать вашему региону (1-7). Если код будет указан неверно, организация не сможет быть добавлена.
+                            </div>
+                        </div>
+
+                        <div class="p_img">
+                            <img src="{{ url_for('static', filename='img/post/notif-add-org.png') }}" alt="Уведомление об успешной отправке">
+                            <span>Рисунок 4 - Уведомление об отправке заявки</span>
+                        </div>
+
+                        
                     </div>
                 </div>
             </div>
@@ -1204,16 +1241,16 @@
                         </div>
                         <p><strong>Возможные действия</strong> для решения проблемы:</p>
                         <ol class="steps-list">
-                            <li>Проверьте <strong>правильно ли вы ввели</strong> свою электронную почту.</li>
+                            <li>Проверьте <strong>правильно ли вы ввели</strong> свою электронную почту. Чтобы полностью удостовериться в этом, советуем зайти на свой электронный ящик и скопировать адрес отуда.</li>
                             <li>Проверьте <strong>СПАМ</strong>, нежелательные массово рассылаемые электронные сообщения.</li>
                             <li>Попробуйте через отложенное время кликнуть на <strong>Отправить ещё раз</strong> - вам должен будет прийти <strong>новый</strong> код активации.</li>
-                            <li><strong>В случае неудачи</strong> пунктов выше - обратитесь в <a href="/contacts" class = "instruction-link">техническую поддержку</a>.</li>
+                            <li>Ваша почта может с задрежкой принимать сообщения от отправителей, из-за чего вы можете не успевать вводить код активации. В этом случае попробуйте зарегистрироваться ещё раз но, указать другой электронный адрес к примеру почту gmail.</li>
                         </ol>
                     </div>
                     <div class="answer-highlight-second" style = "margin-top: 60px;">
                         <div class="highlight-icon">💡</div>
                         <div>
-                            <p>Все уведомления, отправляемые порталом <a href="/" class = "instruction-link">erespondentn.energoeffect.gov.by</a>, генерируются с адреса электронной почты <strong>admin@kvant-as.by</strong></p>
+                            <p>Все уведомления, отправляемые порталом <a class = "instruction-link">erespondentn.energoeffect.gov.by</a>, генерируются с адреса электронной почты <strong>admin@kvant-as.by</strong></p>
                         </div>
                     </div>
                 </div>
