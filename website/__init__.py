@@ -56,14 +56,14 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
     app.config['TESTING'] = False
-    oauth = OAuth(app)
-    google = oauth.register(
-        name='google',
-        client_id=os.getenv('CLIENT_ID'),
-        client_secret=os.getenv('CLIENT_SECRET'),
-        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-        client_kwargs={'scope': 'openid profile email'}
-    )
+    # oauth = OAuth(app)
+    # google = oauth.register(
+    #     name='google',
+    #     client_id=os.getenv('CLIENT_ID'),
+    #     client_secret=os.getenv('CLIENT_SECRET'),
+    #     server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    #     client_kwargs={'scope': 'openid profile email'}
+    # )
 
     db.init_app(app)
     babel.init_app(app)
@@ -98,7 +98,7 @@ def create_app():
     from website.admin.message_view import MessageView
     from website.admin.news_view import NewsView
     
-    admin = Admin(app, 'Вернуться', index_view=MyMainView(), template_mode='bootstrap4', url='/account')
+    admin = Admin(app, 'Вернуться', index_view=MyMainView(), template_mode='bootstrap4', url='/profile')
     admin.add_view(UserView(User, db.session))
     admin.add_view(OrganizationView(Organization, db.session))
     admin.add_view(ReportView(Report, db.session))
@@ -165,7 +165,7 @@ def create_app():
             session['username'] = username
             session['oauth_token'] = token
 
-            response = redirect(url_for('views.account'))
+            response = redirect(url_for('views.profile'))
             response.set_cookie('session_token', session_token, httponly=True, samesite='Lax')
 
             flash('Добро пожаловать!', 'success')

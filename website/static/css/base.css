@@ -173,6 +173,10 @@ body.dimmed {
     animation: fade-text 1.5s infinite;
 }
 
+.message-loader {
+    animation: fadeIn 0.3s ease;
+}
+
 @keyframes load-pulse {
     0%, 100% {
         transform: scale(0.8);

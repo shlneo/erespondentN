@@ -111,17 +111,47 @@ def test():
     return render_template('test.html', user=current_user
             )
 
-@views.route('/account', methods=['GET'])
+@views.route('/profile', methods=['GET'])
 @login_required
 @session_required
-def account():
-    messages = Message.query.filter_by(recipient=current_user).order_by(Message.id.desc()).all()
-    return render_template('account.html', 
+def profile():
+    return render_template('profile.html', 
                            previous_quarter = get_previous_quarter(),
                            previous_year=get_report_year(),
                            current_user=current_user, 
-                           messages=messages,
                            accwelcomeModal = True)
+
+@views.route('/api/messages', methods=['GET'])
+@login_required
+def get_messages_api():
+    try:
+        messages = Message.query.filter_by(recipient_id=current_user.id).order_by(Message.id.desc()).all()
+        
+        messages_data = []
+        for msg in messages:
+            messages_data.append({
+                'id': msg.id,
+                'create_time': msg.create_time.strftime('%d.%m.%Y %H:%M'),
+                'text': msg.text,
+                'sender_id': msg.sender_id,
+                'sender_email': msg.sender.email if msg.sender else None,
+                'sender_type': msg.sender.type if msg.sender else None,
+                'can_reply': current_user.type == "Администратор" and msg.sender_id != current_user.id and msg.sender_id is not None
+            })
+        
+        return jsonify({
+            'success': True,
+            'messages': messages_data,
+            'count': len(messages_data)
+        })
+        
+    except Exception as e:
+        current_app.logger.error(f"Ошибка при получении сообщений: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': 'Ошибка при загрузке сообщений'
+        }), 500
+
 
 @views.route('/delete_message/<int:message_id>', methods=['DELETE'])
 @login_required
@@ -166,7 +196,7 @@ def delete_all_message():
         
         if not messages:
             flash('Нет сообщений для удаления.', 'error')
-            return redirect(url_for('views.account'))
+            return redirect(url_for('views.profile'))
         
         for message in messages:
             db.session.delete(message)
@@ -180,7 +210,7 @@ def delete_all_message():
         current_app.logger.error(f"Ошибка при удалении сообщений: {str(e)}")
         flash('Ошибка при удалении сообщений', 'error')
         
-    return redirect(url_for('views.account'))
+    return redirect(url_for('views.profile'))
 
 @views.route('/get_messages_count')
 @login_required

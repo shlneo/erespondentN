@@ -1868,7 +1868,7 @@ def send_for_admin():
             return redirect(url_for('views.beginPage'))
         flash('Ваш вопрос был отправлен.', 'succes')
         
-    return redirect(url_for('views.account'))
+    return redirect(url_for('views.profile'))
 
 def get_organizations_with_reports_excel_xlsx(year: int, quarter: int, statuses: list) -> bytes:
     status_filter = 'all_reports' if not statuses else statuses[0] if len(statuses) == 1 else 'all_reports'

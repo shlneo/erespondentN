@@ -72,7 +72,7 @@ def set_session_cookie(response, token):
     )
     return response
 
-# def create_login_response(user, redirect_endpoint='views.account'):
+# def create_login_response(user, redirect_endpoint='views.profile'):
 #     token = create_session_token(user)
     
 #     # Создаем HTML с немедленным редиректом через мета-тег
@@ -94,7 +94,7 @@ def set_session_cookie(response, token):
 #     return response, token
 
 
-def create_login_response(user, redirect_endpoint='views.account'):
+def create_login_response(user, redirect_endpoint='views.profile'):
     return redirect(url_for(redirect_endpoint))
 
 def verify_session_token(token):

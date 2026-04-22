@@ -30,7 +30,7 @@ window.initCookieBanner = function() {
         },
         'system-welcome-modal-acc': { 
             cookieName: 'welcome-modal-account',
-            pages: ['/account'],
+            pages: ['/profile'],
             hasSlides: true,
             delay: 300
         },
