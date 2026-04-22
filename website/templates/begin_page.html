@@ -91,113 +91,106 @@
     {%else%}
     {%endif%}
     {%if current_user.is_authenticated%}
-        <div class="askquestion-row">
-            <div class="askquestion_form">
-                <div class="askquestion_name">Форма обратной связи</div>
-                <form action="/sent_for_admin" method="POST" id="askquestion-form">
+    <div class="askquestion-row">
+        <div class="askquestion_form">
+            <div class="askquestion_name">Форма обратной связи</div>
+            <form action="/send_for_admin" method="POST" id="askquestion-form">
+                <div class="form-group">
+                 
                     <select name="askquestion_type" id="questionType" required>
                         <option value="">Выберите тип вопроса</option>
                         <option value="organization-none">Нет организации в списке</option>
                         <option value="organization-edit">Изменить данные организации</option>
                         <option value="other">Другое</option>
                     </select>
+                </div>
 
-                    <div id="organizationSearchBlock" style="display: none;">
-                        <div class="search-org-container">
-                            <input type="text" id="organizationSearch" placeholder="Поиск организации по названию или ОКПО..." autocomplete="off">
-                            <div id="searchResults" class="search-results-dropdown"></div>
-                        </div>
+                <div id="organizationSearchBlock" class="search-org-container" style="display: none;">
+                    <div class="form-group">
+                        <label for="organizationSearch">Поиск организации</label>
+                        <textarea type="text" id="organizationSearch" placeholder="Поиск организации по названию или ОКПО" autocomplete="off" maxlength="150"></textarea>
                     </div>
+                    <div id="searchResults" class="search-results-dropdown"></div>
+                </div>
 
-                    <div id="comparisonBlock" style="display: none;">
-                        <div class="comparison-container">
-                            <div class="comparison-header">
-                                <div class="comparison-title">Сравнение данных организации</div>
-                                <div class="comparison-subtitle">Проверьте изменения перед отправкой</div>
-                            </div>
-                            
-                            <div class="comparison-table">
-                                <div class="comparison-row header">
-                                    <div class="comparison-field">Поле</div>
-                                    <div class="comparison-old">Текущие данные</div>
-                                    <div class="comparison-new">Новые данные</div>
-                                    <div class="comparison-status">Статус</div>
-                                </div>
-                                
-                                <div class="comparison-row">
-                                    <div class="comparison-field">
-                                        <span class="field-icon">🏢</span>
-                                        <span>Наименование</span>
-                                    </div>
-                                    <div class="comparison-old" id="oldNameValue"></div>
-                                    <div class="comparison-new">
-                                        <span id="newNameValue" class="new-value"></span>
-                                    </div>
-                                    <div class="comparison-status" id="nameStatus"></div>
-                                </div>
-                                
-                                <div class="comparison-row">
-                                    <div class="comparison-field">
-                                        <span class="field-icon">🔢</span>
-                                        <span>ОКПО</span>
-                                    </div>
-                                    <div class="comparison-old" id="oldOkpoValue"></div>
-                                    <div class="comparison-new">
-                                        <span id="newOkpoValue" class="new-value"></span>
-                                    </div>
-                                    <div class="comparison-status" id="okpoStatus"></div>
-                                </div>
-                                
-                                <div class="comparison-row">
-                                    <div class="comparison-field">
-                                        <span class="field-icon">🆔</span>
-                                        <span>УНП</span>
-                                    </div>
-                                    <div class="comparison-old" id="oldYnpValue"></div>
-                                    <div class="comparison-new">
-                                        <span id="newYnpValue" class="new-value"></span>
-                                    </div>
-                                    <div class="comparison-status" id="ynpStatus"></div>
-                                </div>
+                <div id="newOrgData" style="display: none;">
+                    <div class="new-org-data">
+                        <div class="info-title">
+                            <div class="answer-highlight-second">
+                                <div class="highlight-icon">💡</div> 
+                                <p>Отредактируйте реквизиты организации, заменив устаревшие данные на текущие.</p>
                             </div>
                         </div>
-                    </div>
-
-                    <div id="newOrgData" style="display: none;">
-                        <div class="new-org-data">
-                            <div class="info-title">✏️ Новые данные организации:</div>
+                        
+                        <div class="form-group comparison-field-group">
+                            <label for="newOrganizationName">
+                                Новое наименование организации
+                            </label>
                             <textarea name="new_organization_name" id="newOrganizationName" placeholder="Новое наименование организации" maxlength="150"></textarea>
+                            <span class="old-data-hint" id="oldNameHint"></span>
+                            <div class="comparison-status-inline" id="nameStatusInline"></div>
+                        </div>
+                        
+                        <div class="form-group comparison-field-group">
+                            <label for="newOrganizationYnp">
+                                Новый код УНП
+                            </label>
                             <input type="text" name="new_organization_ynp" id="newOrganizationYnp" placeholder="Новый код УНП" maxlength="9">
+                            <span class="old-data-hint" id="oldYnpHint"></span>
+                            <div class="comparison-status-inline" id="ynpStatusInline"></div>
+                        </div>
+                        
+                        <div class="form-group comparison-field-group">
+                            <label for="newOrganizationOkpo">
+                                Новый код ОКПО
+                            </label>
                             <input type="text" name="new_organization_okpo" id="newOrganizationOkpo" placeholder="Новый код ОКПО" maxlength="12">
+                            <span class="old-data-hint" id="oldOkpoHint"></span>
+                            <div class="comparison-status-inline" id="okpoStatusInline"></div>
                         </div>
                     </div>
+                </div>
 
-                    <div id="addOrgFields">
+                <div id="addOrgFields">
+                    <div class="form-group">
+                        <label for="organizationName">Наименование предприятия</label>
                         <textarea type="text" name="organization_name" id="organizationName" placeholder="Введите полное наименование предприятия" maxlength="150"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="organizationYnp">Код УНП</label>
                         <input type="text" name="organization_ynp" id="organizationYnp" placeholder="Введите код УНП" maxlength="9">
+                    </div>
+                    <div class="form-group">
+                        <label for="organizationOkpo">Код ОКПО</label>
                         <input type="text" name="organization_okpo" id="organizationOkpo" placeholder="Введите код ОКПО" maxlength="12">
                     </div>
+                </div>
 
+                <div class="form-group">
+                    <label for="problemDescription">Ваш вопрос</label>
                     <textarea type="text" name="problem_description" id="problemDescription" placeholder="Напишите ваш вопрос" maxlength="300"></textarea>
-                    
-                    <input type="text" name="email" value="{{current_user.email}}" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" name="email" id="email" value="{{current_user.email}}" readonly>
+                </div>
 
-                    <input type="hidden" name="selected_org_id" id="selectedOrgId">
-                    <input type="hidden" name="organization_old_okpo" id="organizationOldOkpo">
-                    <input type="hidden" name="organization_old_ynp" id="organizationOldYnp">
-                    <input type="hidden" name="organization_old_name" id="organizationOldName">
+                <input type="hidden" name="selected_org_id" id="selectedOrgId">
+                <input type="hidden" name="organization_old_okpo" id="organizationOldOkpo">
+                <input type="hidden" name="organization_old_ynp" id="organizationOldYnp">
+                <input type="hidden" name="organization_old_name" id="organizationOldName">
 
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    
-                    <button type="submit" class="blue_btn" id="send-btn">
-                        <img src="/static/img/Send.svg" alt="" class="button-icon">
-                        <span>Отправить вопрос</span>
-                    </button>
-                </form>
-            </div>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <button type="submit" class="blue_btn" id="send-btn">
+                    <img src="/static/img/Send.svg" alt="" class="button-icon">
+                    <span>Отправить вопрос</span>
+                </button>
+            </form>
         </div>
+    </div>
     {%else%}
     {%endif%}
-</div>
 <script src="{{ url_for('static', filename='js/question_form.js') }}"></script>
 {% endblock %}

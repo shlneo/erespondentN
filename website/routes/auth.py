@@ -1563,17 +1563,149 @@ def send_delayed_response(user_id, text, delay_seconds=10):
         new_message = Message(
             text=text,
             recipient_id=user_id,
+            create_time = current_utc_time()
         )
         db.session.add(new_message)
         db.session.commit()
+        current_app.logger.error("Сообщение отправлено пользователю.")
 
     thread = threading.Thread(target=send_message)
     thread.daemon = True
     thread.start()
     current_app.logger.error("Сообщение в обработке.")
 
+def validate_okpo(okpo):
+    if len(okpo) != 12:
+        return False, "ОКПО должен содержать 12 цифр"
+    fourth_from_end = okpo[-4]
+    allowed_digits = ['1', '2', '3', '4', '5', '6', '7']
+    if fourth_from_end not in allowed_digits:
+        return False, "4-я цифра с конца в коде ОКПО должна быть от 1 до 7"
+    return True, ""
+
+def validate_ynp(ynp):
+    if len(ynp) != 9:
+        return False, "УНП должен содержать ровно 9 цифр"
+    return True, ""
+
+def update_organization_data_with_delay(organization_id, new_name=None, new_okpo=None, new_ynp=None, user_id=None, delay_seconds=10):
+    @copy_current_request_context
+    def update_task():
+        time.sleep(delay_seconds)
+        
+        from website.models import Organization, User, Message, Report, Version_report, db
+        
+        organization = Organization.query.get(organization_id)
+        if not organization:
+            current_app.logger.error(f"Организация с ID {organization_id} не найдена.")
+            return
+        
+        user = User.query.get(user_id) if user_id else None
+        if not user:
+            current_app.logger.error(f"Пользователь с ID {user_id} не найден.")
+            return
+        
+        if user.organization_id != organization.id:
+            current_app.logger.error(f"Пользователь {user.email} не привязан к организации {organization.id}")
+            send_delayed_response(
+                user.id,
+                "Ошибка: вы не привязаны к этой организации. Изменения не применены.",
+                delay_seconds=2
+            )
+            return
+        
+        has_approved_reports = Report.query.join(Version_report).filter(
+            Report.org_id == organization.id,
+            Version_report.status == 'Одобрено'
+        ).first()
+        
+        if has_approved_reports:
+            current_app.logger.error(f"У организации {organization.id} есть одобренные отчеты. Редактирование запрещено.")
+            send_delayed_response(
+                user.id,
+                "Ошибка: нельзя изменить данные организации, так как есть одобренные отчеты.",
+                delay_seconds=2
+            )
+            return
+        
+        changes = []
+        
+        if new_name and new_name.strip() and new_name != organization.full_name:
+            changes.append(f"Наименование: '{organization.full_name}' → '{new_name}'")
+            organization.full_name = new_name.strip()
+        
+        if new_okpo and new_okpo.strip() and new_okpo != organization.okpo:
+            is_valid, error_msg = validate_okpo(new_okpo)
+            if not is_valid:
+                current_app.logger.error(f"Неверный ОКПО: {error_msg}")
+                send_delayed_response(user.id, f"Ошибка: {error_msg}. Изменения не применены.", delay_seconds=2)
+                return
+            
+            existing_org = Organization.query.filter_by(okpo=new_okpo).first()
+            if existing_org and existing_org.id != organization.id:
+                current_app.logger.error(f"ОКПО {new_okpo} уже существует у другой организации")
+                send_delayed_response(user.id, "Ошибка: организация с таким ОКПО уже существует. Изменения не применены.", delay_seconds=2)
+                return
+            
+            changes.append(f"ОКПО: '{organization.okpo}' → '{new_okpo}'")
+            organization.okpo = new_okpo.strip()
+        
+        if new_ynp and new_ynp.strip() and new_ynp != organization.ynp:
+            is_valid, error_msg = validate_ynp(new_ynp)
+            if not is_valid:
+                current_app.logger.error(f"Неверный УНП: {error_msg}")
+                send_delayed_response(user.id, f"Ошибка: {error_msg}. Изменения не применены.", delay_seconds=2)
+                return
+            
+            changes.append(f"УНП: '{organization.ynp}' → '{new_ynp}'")
+            organization.ynp = new_ynp.strip()
+        
+        db.session.commit()
+        
+        # user_message = Message(
+        #     text=f"Ваши данные организации были изменены:\n" + "\n".join(changes),
+        #     recipient_id=user.id,
+        # )
+        # db.session.add(user_message)
+        # db.session.commit()
+        
+        send_delayed_response(
+            user.id,
+            "Данные вашей организации успешно обновлены.",
+            delay_seconds=2
+        )
+        
+        # admins = User.query.filter_by(type="Администратор").all()
+        # if admins:
+        #     full_message = f"Изменены данные организации (ID: {organization_id})\n"
+        #     full_message += "\n".join(changes)
+        #     full_message += f"\n\nПользователь: {user.email}"
+            
+        #     for admin in admins:
+        #         admin_message = Message(
+        #             sender_id=user.id,
+        #             text=full_message,
+        #             recipient_id=admin.id
+        #         )
+        #         db.session.add(admin_message)
+        #     db.session.commit()
+        
+        current_app.logger.debug(f"Данные организации ID {organization_id} были изменены.")
+    
+    thread = threading.Thread(target=update_task)
+    thread.daemon = True
+    thread.start()
+    current_app.logger.info(f"Изменение организации ID {organization_id} запланировано через {delay_seconds} секунд.")
+    return thread
+
 def create_new_organization(organization_name, organization_okpo, organization_ynp, sender):
-    from website.models import Organization, Message, db
+    new_message = Message(
+        text=f"Ваше сообщение на добавление организации '{organization_name}' было отправлено.",
+        recipient_id=current_user.id,
+        create_time = current_utc_time()
+    )
+    db.session.add(new_message)
+    db.session.commit()
     
     existing_org = Organization.query.filter_by(okpo=organization_okpo).first()
     if existing_org:
@@ -1597,19 +1729,24 @@ def create_new_organization(organization_name, organization_okpo, organization_y
         "Ответ на ваше сообщение. Ваша организация была добавлена."
     )
     
-    current_app.logger.error("Организация создана.")
+    current_app.logger.debug(f"Организация '{organization_name}' была создана.")
     return new_organization
 
-@auth.route('/sent_for_admin', methods=['POST'])
+@auth.route('/send_for_admin', methods=['POST'])
 @login_required 
 @session_required
-def sent_for_admin():
+def send_for_admin():
     if request.method == 'POST':
         question_type = request.form.get('askquestion_type')
         problem_description = request.form.get('problem_description', '')
         organization_name = request.form.get('organization_name', '')
         organization_okpo = request.form.get('organization_okpo', '')
         organization_ynp = request.form.get('organization_ynp', '')
+        
+        new_organization_name = request.form.get('new_organization_name', '')
+        new_organization_okpo = request.form.get('new_organization_okpo', '')
+        new_organization_ynp = request.form.get('new_organization_ynp', '')
+        selected_org_id = request.form.get('selected_org_id', '')
         
         if not question_type:
             flash('Выберите тип вопроса.', 'error')
@@ -1630,43 +1767,106 @@ def sent_for_admin():
                 flash(ynp_error, 'error')
                 return redirect(url_for('views.beginPage'))
             
-            full_message = f"Нет организации.\n"
-            full_message += f"Название организации: {organization_name}\n"
-            full_message += f"ОКПО: {organization_okpo}\n"
-            full_message += f"УНП: {organization_ynp}\n"
+            create_new_organization(organization_name, organization_okpo, organization_ynp, current_user)
+            
+        elif question_type == 'organization-edit':
+            if not selected_org_id:
+                flash('Выберите организацию из списка.', 'error')
+                return redirect(url_for('views.beginPage'))
+            
+            organization = Organization.query.get(selected_org_id)
+            if not organization:
+                flash('Организация не найдена.', 'error')
+                return redirect(url_for('views.beginPage'))
+            
+            if current_user.organization_id != organization.id:
+                flash('Вы можете изменять данные только своей организации.', 'error')
+                return redirect(url_for('views.beginPage'))
+            
+            has_approved_reports = Report.query.join(Version_report).filter(
+                Report.org_id == organization.id,
+                Version_report.status == 'Одобрено'
+            ).first()
+            
+            if has_approved_reports:
+                flash('Нельзя изменить данные организации, так как есть одобренные отчеты.', 'error')
+                return redirect(url_for('views.beginPage'))
+            
+            has_changes = False
+
+            if new_organization_okpo and new_organization_okpo != organization.okpo:
+                is_valid, error_msg = validate_okpo(new_organization_okpo)
+                if not is_valid:
+                    flash(error_msg, 'error')
+                    return redirect(url_for('views.beginPage'))
+                
+                existing_org = Organization.query.filter_by(okpo=new_organization_okpo).first()
+                if existing_org and existing_org.id != organization.id:
+                    flash('Организация с таким ОКПО уже существует.', 'error')
+                    return redirect(url_for('views.beginPage'))
+                has_changes = True
+                
+            if new_organization_ynp and new_organization_ynp != organization.ynp:
+                is_valid, error_msg = validate_ynp(new_organization_ynp)
+                if not is_valid:
+                    flash(error_msg, 'error')
+                    return redirect(url_for('views.beginPage'))
+                has_changes = True
+            
+            if new_organization_name and new_organization_name != organization.full_name:
+                has_changes = True
+            
+            if not has_changes:
+                flash('Не обнаружено изменений в данных организации.', 'error')
+                return redirect(url_for('views.beginPage'))
+            
+            new_message = Message(
+                text=f"Ваше сообщение на редактирование организации было отправлено.",
+                recipient_id=current_user.id,
+                create_time = current_utc_time()
+            )
+            db.session.add(new_message)
+            db.session.commit()
+            
+            update_organization_data_with_delay(
+                organization_id=organization.id,
+                new_name=new_organization_name if new_organization_name else None,
+                new_okpo=new_organization_okpo if new_organization_okpo else None,
+                new_ynp=new_organization_ynp if new_organization_ynp else None,
+                user_id=current_user.id
+            )
             
         elif question_type == 'other':
             if not problem_description:
-                flash('Опишите проблему.', 'error')
+                flash('Опишите ваш вопрос.', 'error')
                 return redirect(url_for('views.beginPage'))
-            full_message = f"{problem_description}"
-        else:
-            flash('Неверный тип вопроса.', 'error')
-            return redirect(url_for('views.beginPage'))
-
-        new_message = Message(
-            text=f"Ваше сообщение было отправлено. Текст сообщения: {full_message}",
-            recipient_id=current_user.id,
-        )
-        db.session.add(new_message)
-        db.session.commit()
-        if question_type != 'organization-none':
+            
             admins = User.query.filter_by(type="Администратор").all()
             if admins:
                 for admin in admins:
                     new_message = Message(
                         sender_id=current_user.id,
-                        text=full_message,
-                        recipient_id=admin.id
+                        text=problem_description,
+                        recipient_id=admin.id,
+                        create_time = current_utc_time()
                     )
                     db.session.add(new_message)
                 db.session.commit()
-                flash('Сообщение отправлено.', 'success')
+                flash('Сообщение отправлено администратору.', 'success')
             else:
-                flash('Администраторов нет.', 'error')
-        
-        if question_type == 'organization-none':
-            create_new_organization(organization_name, organization_okpo, organization_ynp, current_user)
+                flash('Администраторы не найдены.', 'error')
+                
+            new_message = Message(
+                text=f"Ваше сообщение '{problem_description}' было отправлено.",
+                recipient_id=current_user.id,
+                create_time = current_utc_time()
+            )
+            db.session.add(new_message)
+            db.session.commit()
+        else:
+            flash('Неверный тип вопроса.', 'error')
+            return redirect(url_for('views.beginPage'))
+        flash('Ваш вопрос был отправлен.', 'succes')
         
     return redirect(url_for('views.account'))
 

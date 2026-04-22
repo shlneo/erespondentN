@@ -64,6 +64,9 @@
                     <li data-question="15">
                         <a href="javascript:void(0)">- Нет моей организации в списке</a> 
                     </li>
+                    <li data-question="20">
+                        <a href="javascript:void(0)">- Как отредактировать данные организации?</a> 
+                    </li>
                 </ul> 
               
                 <li data-content="profile_faq"> 
@@ -1210,13 +1213,13 @@
                             <div>
                                 <p><strong>После отправки заявки:</strong></p>
                                 <ol>
-                                    <li>Вы получите уведомление о том, что сообщение отправлено.</li>
+                                    <li>Вы получите уведомление в профиле о том, что сообщение отправлено.</li>
                                     <li>В течение некоторого времени администратор добавит организацию.</li>
                                     <li>На указанную почту придет подтверждение (рисунок 4).</li>
                                 </ol>
                             </div>
                             <div class="answer-highlight-note">
-                                <strong>⚠️ Важно:</strong> Указывайте <strong>полный</strong> 12-значный код ОКПО. 9-я цифра должна соответствовать вашему региону (1-7). Если код будет указан неверно, организация не сможет быть добавлена.
+                                Указывайте <strong>полный</strong> 12-значный код ОКПО. 9-я цифра должна соответствовать вашему региону (1-7). Если код будет указан неверно, отчет может быть отправлен не в ваше городское управление.
                             </div>
                         </div>
 
@@ -1722,6 +1725,90 @@
 
                         <div class="answer-highlight-note">
                             <strong>Примечание:</strong> Строка «Прочее потребление» является служебной и не подлежит удалению.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="info_page info_faq" data-question-id="20" style="display: none;">
+                <div class="faq_question_info">
+                    <div class="info_page_name">
+                        <h1>Как отредактировать данные организации</h1>
+                    </div>
+                    <div class="infos">
+                        <div class="answer-highlight-second">
+                            <div class="highlight-icon">💡</div>
+                            <div>
+                                <p><strong>Важное условие:</strong> Для редактирования данных организации необходимо быть <strong>авторизованным</strong> в системе и иметь <strong>привязанную организацию</strong> в профиле.</p>
+                            </div>
+                        </div>
+
+                        <p>Если данные вашей организации изменились (наименование, ОКПО или УНП), вы можете отправить запрос на их обновление.</p>
+
+                        <p><strong>Инструкция по редактированию данных организации:</strong></p>
+
+                        <ol class="steps-list">
+                            <li>Перейдите на <a class="instruction-link" href="/">главную страницу</a> сайта ErespondentN.</li>
+                            <li>Прокрутите страницу вниз до <strong>формы обратной связи</strong>.</li>
+                            <li>В поле <strong>«Выберите тип вопроса»</strong> выберите значение <strong>«Изменить данные организации»</strong>.</li>
+                        </ol>
+
+                        <div class="p_img">
+                            <img src="{{ url_for('static', filename='img/post/edit-org-select.png') }}" alt="Выбор типа вопроса 'Изменить данные организации'">
+                            <span>Рисунок 1 - Выбор типа вопроса для редактирования организации</span>
+                        </div>
+
+                        <ol class="steps-list" style="counter-reset: step-counter 3;">
+                            <li>В появившемся поле <strong>«Поиск организации»</strong> начните вводить название вашей организации или код ОКПО.</li>
+                            <li>Из выпадающего списка <strong>выберите вашу организацию</strong>.</li>
+                        </ol>
+
+                        <div class="p_img">
+                            <img src="{{ url_for('static', filename='img/post/edit-org-search.png') }}" alt="Поиск организации">
+                            <span>Рисунок 2 - Поиск и выбор организации</span>
+                        </div>
+
+                        <ol class="steps-list"  style="counter-reset: step-counter 5;">
+                            <li>После выбора организации появятся поля для редактирования:</li>
+                        </ol>
+                        <div class="opred-text fit">
+                            <strong>Новое наименование организации</strong> — укажите актуальное полное наименование
+                        </div>
+                        <div class="opred-text fit">
+                            <strong>Новый код УНП</strong> — укажите актуальное код УНП (состоящий из 9-ти цифр)
+                        </div>
+                        <div class="opred-text fit">
+                            <strong>Новый код ОКПО</strong> — укажите актуальное код ОКПО (состоящий из 12-ти цифр, 9-я цифра должна соответствовать региону)
+                        </div>
+ 
+                        <div class="p_img">
+                            <img src="{{ url_for('static', filename='img/post/edit-org-fields.png') }}" alt="Поля для редактирования данных организации">
+                            <span>Рисунок 3 - Поля для ввода новых данных организации</span>
+                        </div>
+
+                        <ol class="steps-list" style="counter-reset: step-counter 6;">
+                            <li>Заполните <strong>только те поля, которые необходимо изменить</strong>. Если поле оставить пустым — данные в нем останутся прежними.</li> 
+                            <li>Нажмите кнопку <strong>«Отправить вопрос»</strong>.</li>
+                        </ol>
+
+                        <div class="answer-highlight-second" style = "margin-top: 40px;">
+                            <div class="highlight-icon">✅</div>
+                            <div>
+                                <p><strong>Что произойдет после отправки:</strong></p>
+                                <ol>
+                                    <li>Вы получите уведомление в профиле о том, что запрос отправлен</li>
+                                    <li>Изменения будут применены через некоторое время</li>
+                                    <li>На указанную почту придет подтверждение об обновлении данных</li>
+                                </ol>
+                            </div>
+                            <div class="answer-highlight-note">
+                                <strong>Важно:</strong> Редактирование данных организации <strong>невозможно</strong>, если у вас есть отчеты со статусом <strong>«Одобрено»</strong>. В этом случае для изменения данных необходимо обратиться к администратору.
+                            </div>
+                        </div>
+
+                        
+                        <div class="p_img">
+                            <img src="{{ url_for('static', filename='img/post/edit-org-success.png') }}" alt="Успешная отправка запроса">
+                            <span>Рисунок 4 - Уведомление об отправке запроса на изменение данных</span>
                         </div>
                     </div>
                 </div>
