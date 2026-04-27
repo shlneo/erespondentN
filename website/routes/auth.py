@@ -1785,11 +1785,11 @@ def send_for_admin():
             
             has_approved_reports = Report.query.join(Version_report).filter(
                 Report.org_id == organization.id,
-                Version_report.status == 'Одобрено'
+                Version_report.status.in_(["Отправлен", "Одобрен", "Есть замечания", "Готов к удалению"])
             ).first()
             
             if has_approved_reports:
-                flash('Нельзя изменить данные организации, так как есть одобренные отчеты.', 'error')
+                flash('Нельзя изменить данные организации, так как есть отправленные отчеты.', 'error')
                 return redirect(url_for('views.beginPage'))
             
             has_changes = False

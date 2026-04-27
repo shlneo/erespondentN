@@ -14,7 +14,7 @@
                 {% if current_user.is_authenticated%}
                     {% if user.type == 'Респондент' or user.type == 'Администратор'%}
                         <button onclick="window.location.href='/report-area'" class="blue_btn">
-                            <img src="/static/img/Add.svg" alt="" class="button-icon">
+                            {{ icons.icon_reports() }}
                             <span>Подать отчет</span>
                         </button> 
                     {% elif user.type == 'Аудитор' or user.type == 'Смотрящий'  %}
@@ -33,9 +33,9 @@
                 {% endif %}
             </div>
         </div>    
-        <div class= "hellow_row_right">
+        {#<div class= "hellow_row_right">
             
-        </div> 
+        </div>#} 
         <div class="scroll-to-down">
             {%if current_user.is_authenticated%}
                 <button onclick="scrollToAdmin()">
@@ -44,9 +44,9 @@
             {% endif %}
         </div>
     </div>
-    <div class="statistics-row">
+</div><div class="statistics-row">
         <div class="statistics-row-left">
-            <img src="{{ url_for('static', filename='img/stats.jpg')}}" alt="">
+            <img src="{{ url_for('static', filename='img/stats.png')}}" alt="">
         </div>
         <div class="statistics-row-right">
             <div class="item_stat">  
@@ -71,6 +71,8 @@
             </div>
         </div>
     </div>
+<div class="begin-page">
+    
     {%if latest_news%}
         <div class="news-row" id = "news_row">
             <div class = "news-row-left">
@@ -192,5 +194,6 @@
     </div>
     {%else%}
     {%endif%}
+</div>
 <script src="{{ url_for('static', filename='js/question_form.js') }}"></script>
 {% endblock %}

@@ -563,116 +563,129 @@
             </table>        
         </div>
     </div>
-    <section class="report-dop-info">
-        <div class="report-details">
-            <div class="detail-item">
-                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                </svg>
-                <div class="detail-content">
-                    <div class="detail-label">Предприятие</div>
-                    <div class="detail-value">{{current_report.organization.full_name}}</div>
+    <div class="ticket-area" id = "report-info-area">
+        <div class="ticket-header">
+            <div class="messages-container">
+                <div class="messages-header">
+                    <div class="messages-header__left">
+                        <h2 class="messages-header__title">
+                            {{ icons.icon_reports() }}
+                            <span>Данные отчета</span>
+                        </h2>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="detail-item">
-                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
-                </svg>
-                <div class="detail-content">
-                    <div class="detail-label">ОКПО</div>
-                    <div class="detail-value">{{current_report.organization.okpo}}</div>
-                </div>
-            </div>
-            
-            <div class="detail-item">
-                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <div class="detail-content">
-                    <div class="detail-label">Год</div>
-                    <div class="detail-value">{{current_report.year}}</div>
-                </div>
-            </div>
-            
-            <div class="detail-item">
-                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
-                <div class="detail-content">
-                    <div class="detail-label">Квартал</div>
-                    <div class="detail-value">{{current_report.quarter}}</div>
-                </div>
+                <section class="report-dop-info">
+                    <div class="report-details">
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                            <div class="detail-content">
+                                <div class="detail-label">Предприятие</div>
+                                <div class="detail-value">{{current_report.organization.full_name}}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                            </svg>
+                            <div class="detail-content">
+                                <div class="detail-label">ОКПО</div>
+                                <div class="detail-value">{{current_report.organization.okpo}}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <div class="detail-content">
+                                <div class="detail-label">Год</div>
+                                <div class="detail-value">{{current_report.year}}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <div class="detail-content">
+                                <div class="detail-label">Квартал</div>
+                                <div class="detail-value">{{current_report.quarter}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report-details">
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div class="detail-content">
+                                <div class="detail-label">Начало заполнения</div>
+                                <div class="detail-value">
+                                    {% if current_version.begin_time %}
+                                        {{ current_version.begin_time.strftime('%d.%m.%Y %H:%M') }}
+                                    {% else %}
+                                        Не указано
+                                    {% endif %}</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                            <div class="detail-content">
+                                <div class="detail-label">Последнее изменение</div>
+                                <div class="detail-value">
+                                    {% if current_version.change_time %}
+                                        {{ current_version.change_time.strftime('%d.%m.%Y %H:%M') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            </svg>
+                            <div class="detail-content">
+                                <div class="detail-label">Дата отправки</div>
+                                <div class="detail-value">
+                                    {% if current_version.sent_time %}
+                                        {{ current_version.sent_time.strftime('%d.%m.%Y %H:%M') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div class="detail-content">
+                                <div class="detail-label">Дата проверки</div>
+                                <div class="detail-value">
+                                    {% if current_version.audit_time %}
+                                        {{ current_version.audit_time.strftime('%d.%m.%Y %H:%M') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
-        <div class="report-details">
-            <div class="detail-item">
-                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div class="detail-content">
-                    <div class="detail-label">Начало заполнения</div>
-                    <div class="detail-value">
-                        {% if current_version.begin_time %}
-                            {{ current_version.begin_time.strftime('%d.%m.%Y %H:%M') }}
-                        {% else %}
-                            Не указано
-                        {% endif %}</div>
-                </div>
-            </div>
-            <div class="detail-item">
-                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-                <div class="detail-content">
-                    <div class="detail-label">Последнее изменение</div>
-                    <div class="detail-value">
-                        {% if current_version.change_time %}
-                            {{ current_version.change_time.strftime('%d.%m.%Y %H:%M') }}
-                        {% else %}
-                            -
-                        {% endif %}</div>
-                </div>
-            </div>
-            <div class="detail-item">
-                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-                <div class="detail-content">
-                    <div class="detail-label">Дата отправки</div>
-                    <div class="detail-value">
-                        {% if current_version.sent_time %}
-                            {{ current_version.sent_time.strftime('%d.%m.%Y %H:%M') }}
-                        {% else %}
-                            -
-                        {% endif %}</div>
-                </div>
-            </div>
-            <div class="detail-item">
-                <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div class="detail-content">
-                    <div class="detail-label">Дата проверки</div>
-                    <div class="detail-value">
-                        {% if current_version.audit_time %}
-                            {{ current_version.audit_time.strftime('%d.%m.%Y %H:%M') }}
-                        {% else %}
-                            -
-                        {% endif %}</div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
     <div class="ticket-area" id = "ticket-area">
         <div class="ticket-header">
             <div class="messages-container">
                 <div class="messages-header">
                     <div class="messages-header__left">
                         <h2 class="messages-header__title">
-                            <svg class="messages-header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="20" height="20">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/>
-                            </svg>
+                            {{ icons.icon_tickets() }}
                             <span>Квитанции отчета</span>
                         </h2>
                         <div class="messages-header__info">

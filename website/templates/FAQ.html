@@ -98,7 +98,7 @@
                         <a href="javascript:void(0)">- Процесс работы с отчетом</a>
                     </li>
                     <li data-question="8">
-                        <a href="javascript:void(0)">- Особенности заполнения формы отчета</a>
+                        <a href="javascript:void(0)">- Особенности заполнения отчета</a>
                     </li>
                     <li data-question="19">
                         <a href="javascript:void(0)">- Как пройти контроль отчета?</a>
@@ -500,7 +500,7 @@
             <div class="info_page info_faq" data-question-id="8" style="display: none;">
                 <div class="faq_question_info">
                     <div class="info_page_name">
-                        <h1>Особенности при заполнении отчета</h1>
+                        <h1>Особенности заполнения отчета</h1>
                     </div>
                     
                     <div class="faq-section-nav">
@@ -511,6 +511,9 @@
                             </a>
                             <a class="nav-link">
                                 <span class="nav-text">Прочее потребление код строки 9010</span>
+                            </a>
+                            <a class="nav-link">
+                                <span class="nav-text">Дублирование вида продукции</span>
                             </a>
                             <a class="nav-link">
                                 <span class="nav-text">Коды строки 0020–0031</span>
@@ -574,6 +577,18 @@
                             <li>Нажмите кнопку <strong>«Применить изменения»</strong> для сохранения.</li>
                         </ol>
                
+                        <div id="section-double-product" class="title-section">Дублирование вида продукции</div>
+                        <div class="answer-highlight-second">
+                            <div class="highlight-icon">⚠️</div>
+                            <div>
+                                <p>Если вид продукции уже присутствует в отчёте, его повторное добавление возможно только при условии заполнения поля <strong>«Примечание»</strong> с указанием уточняющей информации</p>
+                            </div>
+                        </div>
+                        <div class="p_img">
+                            <img src="{{ url_for('static', filename='img/post/double-prod.png') }}" alt="">
+                            <span>Рисунок 11 - Заполнение примечания</span>
+                        </div>
+
 
                         <div id="section-0020–0031" class="title-section">Особенности заполнения строк c кодами 0020–0031 </div>
                         <div class="answer-highlight-second">
