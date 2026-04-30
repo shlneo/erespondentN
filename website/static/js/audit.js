@@ -1,4 +1,3 @@
-// static/js/audit_module.js
 class AuditModule {
     constructor() {
         this.currentStatus = document.getElementById('current-status')?.value || 'all_reports';
@@ -10,7 +9,6 @@ class AuditModule {
         this.LONG_PRESS_DELAY = 500;
         this.isLongPress = false;
         
-        // Новые свойства для пагинации
         this.currentPage = 1;
         this.pageSize = 50;
         this.hasMore = true;

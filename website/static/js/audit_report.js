@@ -36,33 +36,12 @@ function scrollToTickets() {
     }
 }
 
-
 document.addEventListener('DOMContentLoaded', function() {
     var urladdComment_modal = new URLSearchParams(window.location.search);
     if (urladdComment_modal.get('tickets_cont') === 'true') {
         if (document.getElementById('ticket-area')) {
             scrollToTickets();
         }
-    }
-
-    function handleModal(modalElement, openLink, closeLink) {
-        openLink.addEventListener('click', function(event) {
-            if (openLink.style.opacity === '0.5') {
-                event.preventDefault();
-            } else {
-                modalElement.classList.add('active');
-            }
-        });
-
-        closeLink.addEventListener('click', function() {
-            modalElement.classList.remove('active');
-        });
-
-        window.addEventListener('click', function(event) {
-            if (event.target === modalElement) {
-                modalElement.classList.remove('active');
-            }
-        });
     }
     
     const sectionLinks = document.querySelectorAll('[data-section]');

@@ -96,7 +96,7 @@ window.initCookieBanner = function() {
                 }, 10);
             }, config.delay || 500);
             
-            const closeBtn = modal.querySelector('.circle-close');
+            const closeBtn = modal.querySelector('.close');
             if (closeBtn) {
                 closeBtn.addEventListener('click', function() {
                     closeModal(modal);
@@ -105,7 +105,7 @@ window.initCookieBanner = function() {
             
             
 
-            const dontShowAgainBtn = modal.querySelector('.circle-close');
+            const dontShowAgainBtn = modal.querySelector('.close');
             if (dontShowAgainBtn) {
                 dontShowAgainBtn.addEventListener('click', function() {
                     setCookie(config.cookieName, 'shown', COOKIE_DAYS);

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="blurred-background"></div>
+{{ content.blurback() }}
 <div class="begin-page">
     <div class="hellow_row">
         <div class= "hellow_row_left">
@@ -14,7 +14,7 @@
                 {% if current_user.is_authenticated%}
                     {% if user.type == 'Респондент' or user.type == 'Администратор'%}
                         <button onclick="window.location.href='/report-area'" class="blue_btn">
-                            {{ icons.icon_reports() }}
+                            {{ icons.icon_add() }}
                             <span>Подать отчет</span>
                         </button> 
                     {% elif user.type == 'Аудитор' or user.type == 'Смотрящий'  %}
@@ -186,7 +186,7 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 
                 <button type="submit" class="blue_btn" id="send-btn">
-                    <img src="/static/img/Send.svg" alt="" class="button-icon">
+                    {{ icons.icon_email() }}
                     <span>Отправить вопрос</span>
                 </button>
             </form>

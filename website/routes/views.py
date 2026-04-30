@@ -444,7 +444,7 @@ def report_section(report_type, id):
     }
 
     if report_type not in report_config:
-        return render_template('views.not_found')
+        return render_template('404.html')
 
     config = report_config[report_type]
     section_number = config['section_number']
@@ -466,7 +466,7 @@ def report_section(report_type, id):
         ).asc(),
         desc(Sections.id)
     ).all()
-    return render_template('respondent_report.html', 
+    return render_template('report_table.html', 
         id_report = id,
         section_number=section_number,
         sections=sections,              
@@ -476,8 +476,31 @@ def report_section(report_type, id):
         current_version=current_version,
         SentModal = True,
         reportAreaReportInfoModal = True,
-        auditor_info=auditor_info
+        auditor_info=auditor_info,
+        report_type=report_type
     )
+
+@views.route('/report-area/tickets/<int:id>', methods=['GET'])
+@profile_complete
+@login_required
+@session_required
+@owner_only
+@respondent_only
+def report_info(id):
+    current_version = Version_report.query.filter_by(id=id).first()
+    current_report = Report.query.filter_by(id=current_version.report_id).first()
+    
+    auditor_info = get_auditor_info_by_user(current_user)
+    
+    return render_template('report_tickets.html', 
+        current_user=current_user, 
+        current_report=current_report,
+        current_version=current_version,
+        SentModal = True,
+        reportAreaReportInfoModal = True,
+        auditor_info=auditor_info,
+    )
+
 
 @views.route('/audit-area/<status>', methods=['GET'])
 @login_required

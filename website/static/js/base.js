@@ -1,24 +1,3 @@
-// const all_inputs = document.querySelectorAll('input');
-
-// const validateInput = (input) => {
-//     if (input.value.trim() === '') {
-//         input.classList.add('input-error');
-//     } else {
-//         input.classList.remove('input-error');
-//     }
-// };
-
-// all_inputs.forEach(input => {
-//     input.addEventListener('input', () => validateInput(input));
-//     input.addEventListener('blur', () => validateInput(input));
-//     input.addEventListener('focus', function() {
-//         if (this.value.trim() !== '') {
-//             this.classList.remove('input-error');
-//         }
-//     });
-// });
-
-
 function addCsrfTokenToForm(form) {
     var csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) return;
@@ -33,26 +12,17 @@ function addCsrfTokenToForm(form) {
     csrfInput.value = csrfToken;
 }
 
-
 function scrollToAdmin() {
     const formElement = document.getElementById('toadmin');
     if (formElement) {
         formElement.scrollIntoView({ behavior: 'smooth' });
     }
 }
-function scrollToTickets() {
-    const formElement = document.getElementById('ticket-area');
-    if (formElement) {
-        formElement.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
-let ticking = false;
 
 window.addEventListener('scroll', () => {
     const header = document.querySelector('.fixed-header');
     const scrollY = window.scrollY;
-    
+    let ticking = false;
     if (!ticking) {
         requestAnimationFrame(() => {
             if (scrollY > 50) {
@@ -72,7 +42,6 @@ window.addEventListener('scroll', () => {
             
             ticking = false;
         });
-        
         ticking = true;
     }
 });
@@ -98,7 +67,6 @@ window.addEventListener('resize', () => {
     }
 });
 
-
 const clearButtons = document.querySelectorAll('.clear-btn');
 clearButtons.forEach(btn => {
     btn.addEventListener('click', function() {
@@ -108,37 +76,6 @@ clearButtons.forEach(btn => {
         }
     });
 });
-
-function searchUnit() {
-    let input = document.getElementById('searchUnit').value.toLowerCase();
-    let rows = document.querySelectorAll('.table-report-area .dirUnit tr');
-
-    rows.forEach(row => {
-        let code = row.cells[0].querySelector('input').value.toLowerCase();
-        let name = row.cells[1].querySelector('input').value.toLowerCase();
-        
-        if (code.includes(input) || name.includes(input)) {
-            row.style.display = ''; 
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
-
-function searchUnitProduct() {
-    let input = document.getElementById('searchUnitProduct').value.toLowerCase();
-    let rows = document.querySelectorAll('.dirUnitProduct tr');
-
-    rows.forEach(row => {
-        let code = row.cells[0].querySelector('input').value.toLowerCase();
-        let name = row.cells[1].querySelector('input').value.toLowerCase();
-        if (code.includes(input) || name.includes(input)) {
-            row.style.display = '';  
-        } else {
-            row.style.display = 'none'; 
-        }
-    });
-}
 
 function setupPasswordToggle(passwordFieldId, showIconClass, hideIconClass) {
     const passwordField = document.querySelector(`#${passwordFieldId}`);
@@ -356,13 +293,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const usernavigation = document.getElementById('user-navigation');
     const overlay = document.querySelector('.overlay');
-    
-    /* show and hide buttons passwords */
+
     setupPasswordToggle('password-field', 'show-icon', 'hide-icon');
     setupPasswordToggle('password-field1', 'show-icon1', 'hide-icon1');
-    /* end show and hide buttons passwords */
 
-    /* hoveruser panel */
     const userImgs = document.querySelectorAll('.user-container');
     let timeoutId;
     
@@ -520,23 +454,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     /*end*/
 
-    
-
     if(document.getElementById('add_report_modal')){
-        handleModal(document.getElementById('add_report_modal'), document.getElementById('link_add_report'), document.getElementById('close_add_report_modal'));
+        handleModal(document.getElementById('add_report_modal'), document.getElementById('link_add_report'));
     }
     if(document.getElementById('SentModal')){
-        handleModal(document.getElementById('SentModal'), document.getElementById('sentVersionButton'), SentModal.querySelector('.close'));
+        handleModal(document.getElementById('SentModal'), document.getElementById('sentVersionButton'));
     }
     if(document.getElementById('change_period_report_modal')){
-        handleModal(document.getElementById('change_period_report_modal'), document.getElementById('link_change_report'), document.getElementById('close_change_period_report_modal'));
+        handleModal(document.getElementById('change_period_report_modal'), document.getElementById('link_change_report'));
     }
     if(document.getElementById('copy_report_modal')){
-        handleModal(document.getElementById('copy_report_modal'), document.getElementById('link_coppy_report'), copy_report_modal.querySelector('.close'));
+        handleModal(document.getElementById('copy_report_modal'), document.getElementById('link_coppy_report'));
     }
 
     link_change_report = document.getElementById('link_change_report')
-
     link_change_report.addEventListener('click', function(event) {
         event.preventDefault();
         var reportRow = document.querySelector('.report_row.active-report');
@@ -599,7 +530,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    
     const agreedVersionButton = document.getElementById('agreedVersionButton');
     const controlVersionButton = document.getElementById('control_versionButton');
     const sentVersionButton = document.getElementById('sentVersionButton');
@@ -717,7 +647,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (activeRow !== null) {
             var id = activeRow.dataset.versionId;
             if (id) {
-                window.location.href = '/report-area/fuel/' + id + '#ticket-area';
+                window.location.href = '/report-area/tickets/' + id;
             }
         } else {
             event.preventDefault();
@@ -833,97 +763,33 @@ document.addEventListener('DOMContentLoaded', (event) => {
     /* end change pozition modal */
 });
 
-/* sort table by tt dif */
-let sortOrder = 'asc';
-
-function sortTable() {
-    var table, rows, switching, i, x, y, shouldSwitch;
-    table = document.querySelector(".table-report-area tbody");
-    
-    if (!table) return;
-
-    var has9100 = Array.from(table.rows).some(row => {
-        var input = row.querySelector('input[name="product-cod_fuel"]');
-        return input && input.value === "9100";
-    });
-
-    var rowsToSkip = has9100 ? 3 : 2;
-    var maxSortIndex = table.rows.length - rowsToSkip;
-    
-    switching = true;
-    
-    while (switching) {
-        switching = false;
-        rows = table.rows;
-        
-        for (i = 0; i < maxSortIndex - 1; i++) {
-            var input1 = rows[i].querySelector('input[name="product-cod_fuel"]');
-            var input2 = rows[i + 1].querySelector('input[name="product-cod_fuel"]');
-            
-            if (!input1 || !input2) continue;
-            
-            x = input1.value;
-            y = input2.value;
-
-            if (x === "9100" || y === "9100") {
-                continue;
-            }
-
-            var numX = parseFloat(x) || 0;
-            var numY = parseFloat(y) || 0;
-            
-            shouldSwitch = false;
-            
-            if (sortOrder === 'asc') {
-                if (numX > numY) {
-                    shouldSwitch = true;
-                }
+function handleModal(modalId, linkId) {
+    const modal = modalId;
+    const openLink = linkId;
+    if (modal && openLink) {
+        const closeBtn = modal.querySelector('.close');
+        openLink.addEventListener('click', (event) => {
+            if (openLink.style.opacity === '0.5') {
+                event.preventDefault();
             } else {
-                if (numX < numY) {
-                    shouldSwitch = true;
-                }
+                modal.classList.add('active');
             }
-            
-            if (shouldSwitch) {
-                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                switching = true;
-                break;
+        });
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+        }
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.classList.remove('active');
             }
-        }
-
-        if (!switching) {
-            sortOrder = (sortOrder === 'asc') ? 'desc' : 'asc';
-        }
+        });
     }
 }
-/* end sort tablel by tt dif */
 
-function handleModal(modalElement, openLink, closeLink) {
-    openLink.addEventListener('click', function(event) {
-        if (openLink.style.opacity === '0.5') {
-            event.preventDefault();
-        } else {
-            modalElement.classList.add('active');
-        }
-    });
-
-    closeLink.addEventListener('click', function() {
-        modalElement.classList.remove('active');
-    });
-
-    window.addEventListener('click', function(event) {
-        if (event.target === modalElement) {
-            modalElement.classList.remove('active');
-        }
-    });
-}
 if (document.getElementById('link_stats')) {
-    handleModal(document.getElementById('load_stats_modal'), document.getElementById('link_stats'), load_stats_modal.querySelector('.close'));
-}
-
-
-function flashNotification(message, type = 'info') {
-    console.log(`${type}: ${message}`);
+    handleModal(document.getElementById('load_stats_modal'), document.getElementById('link_stats'));
 }
 
 function getCookie(name) {
@@ -967,6 +833,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
 (function() {
     const rollers = document.querySelectorAll('.counter-roller');
     if (!rollers.length) return;

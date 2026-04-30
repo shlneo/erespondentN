@@ -8,7 +8,9 @@
     <div class="rotation-fromareas">
         <div class="rotation-fromareas_info"> 
             <span><a class="back_orbital" href="/">ErespondentN</a></span>
-            <span><img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt=""></span>
+            <span class = "svg-arr">
+                {{ icons.icon_arrow_right() }}
+            </span>
             <span><a href="/FAQ" style = "color: black;">Помощь</a></span>
         </div>
     </div>
@@ -144,9 +146,15 @@
         </nav>
         
         <div class="faq-content-container" id="faqContent">
-            <div class="faq-content-placeholder">
-                <h2>Выберите вопрос из списка</h2>
-                <p>Кликните на любой вопрос в меню, чтобы увидеть его содержимое.</p>
+            <div class="faq-content-placeholder modern">
+                <div class="placeholder-icon">
+                    {{ icons.icon_faq() }}
+                </div>
+                <h2>
+              
+                    Выберите вопрос из списка
+                </h2>
+                <p>Кликните на любой вопрос в меню, чтобы увидеть ответ</p>
             </div>
             <div class="info_page info_faq" data-question-id="1" style="display: none;">
                 <div class="faq_question_info">
@@ -709,11 +717,11 @@
                                             </div>
                                         </div>
                                         
-                                        <video class="media-video" preload="metadata" playsinline>
+                                        {# <video class="media-video" preload="metadata" playsinline>
                                             <source src="{{ url_for('static', filename='video/erespondentN.mp4') }}" type="video/mp4">
                                             Ваш браузер не поддерживает видео.
                                         </video>
-                                        {#
+                                       
                                         <div class="video-controls">
                                             <div class="progress-container">
                                                 <div class="progress-bar">

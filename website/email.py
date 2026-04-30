@@ -99,7 +99,7 @@ class Worker(Thread):
         )
 
     def send_email(self, to_email, subject, html, task_info):
-        ports_to_try = [465, 587]
+        ports_to_try = [993, 465, 587]
         last_error = None
 
         masked_to = safe_email_log(to_email)
@@ -246,7 +246,6 @@ class Worker(Thread):
                 consecutive_errors = 0
 
             self.queue.task_done()
-
 
 class EmailQueue:
     def __init__(self):

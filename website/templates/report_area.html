@@ -5,7 +5,7 @@
 <div class="report-area_page">
     <div class="report-area-menu">
         <div class="report-area_podmenu">
-            <div class="content-podmenu">
+            <div class="content-pod-menu">
                 <nav>
                     <ul>
                         <section>
@@ -47,24 +47,25 @@
                                     </a>
                                 </li>
                             </div>
+                            
                             <a class="functions_menu_name">
                                 Cтатус
                             </a>
                         </section>
                         <section>
                             <div class="functions_menu">
+                                <li id = "toTicketsBtn">
+                                    <img src="{{ url_for('static', filename='img/icon_print_file.png') }}" alt="">
+                                    <a class = "li-title">
+                                        <span>Квитанции</span>
+                                    </a>
+                                </li>
                                 <form id="export-version-form" action="/export-version/{{current_version}}" method="POST" style="display: none;">
                                 </form>    
                                 <li id="export_versionButton">
                                     <img src="{{ url_for('static', filename='img/icon_excel.png') }}" alt="">
                                     <a class = "li-title">
                                         <span>Экспорт</span>
-                                    </a>
-                                </li>
-                                <li id = "toTicketsBtn">
-                                    <img src="{{ url_for('static', filename='img/icon_print_file.png') }}" alt="">
-                                    <a class = "li-title">
-                                        <span>Квитанции</span>
                                     </a>
                                 </li>
                             </div>
@@ -80,17 +81,60 @@
 
     <div class="report-area">
         {%if report%}
-        <table class="table-report-area">
+        <table class="table-report-area"  id="report-table">
             <thead class="table-title">
                 <tr>
-                    <th></th>
-                    <th style = "white-space: nowrap;"></th>
-                    <th class="resizable" style="white-space: nowrap; min-width: 320px;">Наименование предприятия<div class="resizer"></div></th>
-                    <th class="resizable" style="min-width: 120px;">ОКПО<div class="resizer"></div></th>
-                    <th class="resizable" style="min-width: 80px;">Год<div class="resizer"></div></th>
-                    <th class="resizable" style="min-width: 80px;">Квартал<div class="resizer"></div></th>
-                    <th class="resizable" style="min-width: 140px;">Статус<div class="resizer"></div></th>
-                    <th></th>
+                    <th data-sortable="false" style="cursor: default;"></th>
+                    <th data-sortable="false" style="cursor: default;"></th>
+                    <th data-sortable="true" data-sort-type="string" style="white-space: nowrap; min-width: 320px;">
+                        <span class="sort-label">
+                            Наименование предприятия
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th data-sortable="true" data-sort-type="number" style="min-width: 120px;">
+                        <span class="sort-label">
+                            ОКПО
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th id="sort-year-header" class="sortable-header" data-sort-col="year" style="min-width: 80px;">
+                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                            Год
+                            <span class="sort-icon-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M7 17L12 22L17 17" />
+                                    <path d="M7 7L12 2L17 7" />
+                                </svg>
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th id="sort-quarter-header" class="sortable-header" data-sort-col="quarter" style="min-width: 80px;">
+                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                            Квартал
+                            <span class="sort-icon-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M7 17L12 22L17 17" />
+                                    <path d="M7 7L12 2L17 7" />
+                                </svg>
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th id="sort-status-header" class="sortable-header" data-sort-col="status" style="min-width: 140px;">
+                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                            Статус
+                            <span class="sort-icon-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M7 17L12 22L17 17" />
+                                    <path d="M7 7L12 2L17 7" />
+                                </svg>
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th data-sortable="false" style="cursor: default;"></th>
                 </tr>
             </thead>
             <tbody>
@@ -126,68 +170,7 @@
                     
                     {% if version %}
                         <td>
-                            {% if version.status == 'Контроль пройден' %}
-                                <span class="status-badge status-control">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                    </svg>
-                                    <span>Контроль пройден</span>
-                                </span>
-                                
-                            {% elif version.status == 'Согласовано'%}
-                                <span class="status-badge status-agreed">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5" />
-                                    </svg>
-                                    <span>Согласовано</span>
-                                </span>      
-                                
-                            {% elif version.status == 'Одобрен' %}
-                                <span class="status-badge status-approved">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <span>Одобрен</span>
-                                </span>      
-                                
-                                
-                            {% elif version.status == 'Отправлен' %}
-                                <span class="status-badge status-pending">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <span>На рассмотрении</span>
-                                </span>
-                                
-                            {% elif version.status == 'Есть замечания' %}
-                                <span class="status-badge status-warning">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                                    </svg>
-                                    <span>Есть замечания</span>
-                                </span>
-                                
-                            {% elif version.status == 'Готов к удалению' %}
-                                <span class="status-badge status-delete">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                    </svg>
-                                    <span>Готов к удалению</span>
-                                </span>
-                                
-                            {% elif version.status == 'Заполнение' %}
-                                <span class="status-badge status-draft">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                                    </svg>
-                                    <span>Заполнение</span>
-                                </span>
-                                
-                            {% else %}
-                                <span class="status-badge status-default">
-                                    <span>{{ version.status }}</span>
-                                </span>
-                            {% endif %}
+                            {{ content.status_report(version) }}
                         </td>
                     {% else %}
                         <td></td>
@@ -214,7 +197,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h3 class="change-position">Создание отчета</h3>
-            <img src="/static/img/Close.svg" id="close_add_report_modal" class="close" alt="">
+            {{ icons.icon_close() }}
         </div>
         <div class="answer-highlight-second">
             <div class="highlight-icon">💡</div>
@@ -272,9 +255,8 @@
     <div class="modal-content">
         <div class="modal-header">
             <h3 class="change-position">Редактирование периода отчета</h3>
-            <img src="{{ url_for('static', filename='img/Close.svg')}}" class="close" id="close_change_period_report_modal" alt="">
+            {{ icons.icon_close() }}
         </div>
-       
         <div class="answer-highlight-second">
             <div class="highlight-icon">💡</div>    
             <p>Выберите необходимый <strong>отчетный период</strong>.</p>
@@ -283,7 +265,6 @@
             <input type="hidden" name="modal_change_report_year" id="selected-year-change" value="">
             <input type="hidden" name="modal_change_report_quarter" id="selected-quarter-change" value="">
             <input type="hidden" name="modal_change_report_id" id="modal_change_report_id"  readonly>
-
             <div class="period-selector-advanced" id="change-period-selector">
                 <div class="selector-card">
                     <div class="selector-grid">
@@ -332,12 +313,11 @@
     <div class="modal-content">
         <div class="modal-header">
             <h3 class="change-position">Копирование отчета</h3>
-            <img src="{{ url_for('static', filename='img/Close.svg')}}" class="close" alt="">
+            {{ icons.icon_close() }}
         </div>
         <div class="answer-highlight-second" style="max-width: 550px;">
             <div class="highlight-icon">💡</div>
             <p>
-                {#<strong>Обычное копирование</strong> — создает точную копию отчета без заполненных данных.<br>#}
                 <strong>Неполное копирование</strong> — копирует все виды продукции без заполненных данных.
             </p>
         </div>
@@ -386,9 +366,6 @@
                     <img src="/static/img/Copy.svg" alt="" class="button-icon">
                     <span>Неполное копирование</span>
                 </button>
-                {#<button type="submit" formaction="/copy-full-report" class="invisible-btn">
-                    <span>Обычная копия</span>
-                </button>#}
             </div>
         </form> 
     </div>
@@ -396,24 +373,149 @@
 
 <div id="contextMenu_report" class="white-panel">
     <button id = "link_change_report">
-        <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <svg  viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
         </svg>
         <span>Редактировать период</span>
     </button>
     <button id = "link_coppy_report">
-        <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <svg  viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
         </svg>
-        <span>Копирование отчета</span>
+        <span>Скопировать</span>
     </button>
     <form id="deleteReport" method="POST" action="/delete-report/">
         <button type="submit" id="del_reportButton">
-            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <svg  viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
             <span>Удалить</span>
         </button>
     </form>
 </div>
+
+<script>
+    let currentSortColumn = null;
+    let currentSortDirection = 'asc';
+    
+    function getStatusOrder(statusText) {
+        const statusMap = {
+            'Контроль пройден': 1,
+            'Одобрен': 2,
+            'Согласовано': 3,
+            'На рассмотрении': 4,
+            'Есть замечания': 5,
+            'Заполнение': 6,
+            'Готов к удалению': 7
+        };
+        
+        for (const [key, value] of Object.entries(statusMap)) {
+            if (statusText.includes(key)) {
+                return value;
+            }
+        }
+        return 99;
+    }
+    
+    function getCellValueForSort(row, colName) {
+        if (colName === 'year') {
+            const yearCell = row.cells[4];
+            if (yearCell) {
+                const input = yearCell.querySelector('input');
+                if (input && input.value) {
+                    return parseInt(input.value, 10) || 0;
+                }
+                return parseInt(yearCell.innerText, 10) || 0;
+            }
+            return 0;
+        }
+        
+        if (colName === 'quarter') {
+            const quarterCell = row.cells[5];
+            if (quarterCell) {
+                const input = quarterCell.querySelector('input');
+                if (input && input.value) {
+                    return parseInt(input.value, 10) || 0;
+                }
+                return parseInt(quarterCell.innerText, 10) || 0;
+            }
+            return 0;
+        }
+        
+        if (colName === 'status') {
+            const statusCell = row.cells[6];
+            if (statusCell) {
+                let statusText = '';
+                const badge = statusCell.querySelector('.status-badge span:last-child');
+                if (badge) {
+                    statusText = badge.innerText;
+                } else {
+                    statusText = statusCell.innerText;
+                }
+                return getStatusOrder(statusText);
+            }
+            return 99;
+        }
+        
+        return 0;
+    }
+    
+    function sortTableByColumn(colName) {
+        const tbody = document.querySelector('#report-table tbody');
+        if (!tbody) return;
+        
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const isSameColumn = currentSortColumn === colName;
+        const newDirection = isSameColumn && currentSortDirection === 'asc' ? 'desc' : 'asc';
+        
+        rows.sort((a, b) => {
+            let valA = getCellValueForSort(a, colName);
+            let valB = getCellValueForSort(b, colName);
+            
+            if (newDirection === 'asc') {
+                return valA - valB;
+            } else {
+                return valB - valA;
+            }
+        });
+        
+        rows.forEach(row => tbody.appendChild(row));
+        
+        currentSortColumn = colName;
+        currentSortDirection = newDirection;
+        
+        const headers = document.querySelectorAll('.sortable-header');
+        headers.forEach(header => {
+            header.classList.remove('sort-active');
+            const headerCol = header.getAttribute('data-sort-col');
+            if (headerCol === colName) {
+                header.classList.add('sort-active');
+            }
+        });
+    }
+    
+    function initSorting() {
+        const yearHeader = document.querySelector('#sort-year-header');
+        const quarterHeader = document.querySelector('#sort-quarter-header');
+        const statusHeader = document.querySelector('#sort-status-header');
+        
+        if (yearHeader) {
+            yearHeader.addEventListener('click', () => sortTableByColumn('year'));
+        }
+        
+        if (quarterHeader) {
+            quarterHeader.addEventListener('click', () => sortTableByColumn('quarter'));
+        }
+        
+        if (statusHeader) {
+            statusHeader.addEventListener('click', () => sortTableByColumn('status'));
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSorting);
+    } else {
+        initSorting();
+    }
+</script>
 {% endblock %}

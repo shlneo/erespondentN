@@ -173,7 +173,7 @@
         }
     }
 </style>
-<div class="blurred-background"></div>
+{{ content.blurback() }}
 <div class="error-page">
     <svg class="floating-icon icon-1" width="120" height="120" viewBox="0 0 24 24" fill="white" stroke="black" stroke-width="1">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -192,9 +192,7 @@
         </p>
         <div class="button-group">
             <button type="button" class="blue_btn transp" onclick="window.history.back()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
+              
                 <span>Назад</span>
             </button>
             <button type="button" class="blue_btn" onclick="window.location.href='/'">

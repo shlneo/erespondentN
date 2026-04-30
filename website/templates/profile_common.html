@@ -8,8 +8,8 @@
             <span>
                 <a class = "back_orbital" href="/profile">Профиль</a>
             </span>
-            <span> 
-                <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
+            <span class = "svg-arr"> 
+                {{ icons.icon_arrow_right() }}
             </span>
             <span>
                 <a>Общее</a>
@@ -196,7 +196,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h3 class="change-position">Поиск организации</h3>
-            <img src="/static/img/Close.svg" class="close" alt="">
+            {{ icons.icon_close() }}
         </div>
         <div class="answer-highlight-second">
             <div class="highlight-icon">💡</div>

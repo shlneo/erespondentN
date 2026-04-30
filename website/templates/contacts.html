@@ -2,17 +2,16 @@
 {% block title %}Контакты - ErespondentN{% endblock %}
 {% block content %}
 
-<div class="blurred-background"></div>
+{{ content.blurback() }}
 
 <div class="contacts_page">
     <div class = "rotation-fromareas">
         <div class = "rotation-fromareas_info"> 
             <span>
-                <a class = "back_orbital" href="/">
-                    ErespondentN</a>
+                <a class = "back_orbital" href="/">ErespondentN</a>
             </span>
-            <span> 
-                <img src="{{ url_for('static', filename='img/icon_arroy.png')}}" alt="">
+            <span class = "svg-arr"> 
+                {{ icons.icon_arrow_right() }}
             </span>
             <span>
                 <a>Контакты</a>
@@ -23,45 +22,29 @@
         <div class="contact-glass">
             <h2 class="contact-title">Контакты</h2>
             <div class="contact-methods">
-                {% if not current_user.is_authenticated%}
-   
-                {% else %}
-
-                {% endif %}
                 <div class="contact-method">
                     <div class="contact-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                        {{ icons.icon_clock() }}
                     </div>
                     <div class="contact-info">
-                        <div class="contact-type">Часы работы <strong>техподдержки</strong></div>
-                        <div class="contact-value">Пн-Пт: 9:00 - 16:00 <br><span style="font-size:12px;">Перерыв: 12:00 - 13:00</span></div>
+                        <div class="contact-type">Часы работы</div>
+                        <div class="contact-value">Пн-Пт: 9:00 - 16:00</div>
                     </div>
                 </div>
-
+                {% if current_user.is_authenticated%}
                 <a href="/#news_row" class="contact-method support-link" id="supportLink">
                     <div class="contact-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        
-                        </svg>
+                        {{ icons.icon_profile() }}
                     </div>
                     <div class="contact-info">
                         <div class="contact-type">Онлайн техподдержка</div>
                         <div class="contact-value link">Перейти к форме связи</div>
                     </div>
                 </a>
-
+                {% endif %}
                 <a href="tel:+375172315563" class="contact-method">
                     <div class="contact-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="5" y="2" width="14" height="20" rx="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="12" cy="18" r="1" fill="currentColor"/>
-                            <path d="M9 5H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
+                        {{ icons.icon_smart_phone() }}
                     </div>
                     <div class="contact-info">
                         <div class="contact-type">Телефон техподдержки</div>
@@ -71,11 +54,7 @@
 
                 <a href="tel:+375173385051" class="contact-method">
                     <div class="contact-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="5" y="2" width="14" height="20" rx="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="12" cy="18" r="1" fill="currentColor"/>
-                            <path d="M9 5H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
+                        {{ icons.icon_smart_phone() }}
                     </div>
                     <div class="contact-info">
                         <div class="contact-type">Телефон приемной</div>
@@ -85,10 +64,7 @@
                 
                 <a href="mailto:energoeffect@gosstandart.gov.by" class="contact-method">
                     <div class="contact-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                        {{ icons.icon_email() }}
                     </div>
                     <div class="contact-info">
                         <div class="contact-type">Email</div>
@@ -111,11 +87,12 @@
             </div>
         </div>
     </section>
-
-    <section class="map-section">
-        <div id="map" style="width: 100%; height: 450px;"></div>
-    </section>
 </div>
+
+<section class="map-section">
+    <div id="map" style="width: 100%;"></div>
+</section>
+
 
 <script src="https://api-maps.yandex.ru/2.1/?apikey=ваш_api_ключ&lang=ru_RU"></script>
 <script>

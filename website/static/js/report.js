@@ -240,14 +240,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     if(document.getElementById('changefuel_modal')){
-        handleModal(document.getElementById('changefuel_modal'), document.getElementById('link_changefuel_modal'), changefuel_modal.querySelector('.close'));
+        handleModal(document.getElementById('changefuel_modal'), document.getElementById('link_changefuel_modal'));
     }
 
     if(document.getElementById('addSection_modal')){
-         handleModal(document.getElementById('addSection_modal'), document.querySelector('[data-action="link_addSection_modal"]'), addSection_modal.querySelector('.close'));
+         handleModal(document.getElementById('addSection_modal'), document.querySelector('[data-action="link_addSection_modal"]'));
     }
-
-   
 });
 
 
@@ -359,7 +357,7 @@ if(document.getElementById('agreed-report-btn')){
 }
 
 if(document.getElementById('sent-report-btn')){
-    handleModal(document.getElementById('SentModal'), document.getElementById('sent-report-btn'), SentModal.querySelector('.close'));
+    handleModal(document.getElementById('SentModal'), document.getElementById('sent-report-btn'));
 }
 
 if(cancel_send = document.getElementById('cancel-sending-bnt')){
@@ -372,23 +370,9 @@ document.getElementById('export-table-btn').addEventListener('click', function()
     document.getElementById('export-table-form').submit();
 });
 
-function handleModal(modalElement, openLink, closeLink) {
-    openLink.addEventListener('click', function(event) {
-        if (openLink.style.opacity === '0.5') {
-            event.preventDefault();
-        } else {
-            modalElement.classList.add('active');
-        }
-    });
-
-    closeLink.addEventListener('click', function() {
-        modalElement.classList.remove('active');
-    });
-
-    window.addEventListener('click', function(event) {
-        if (event.target === modalElement) {
-            modalElement.classList.remove('active');
-        }
-    });
+function scrollToTickets() {
+    const formElement = document.getElementById('ticket-area');
+    if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+    }
 }
-

@@ -8,7 +8,7 @@
     <div class="sticky_menu">
         <div class="report-area-menu">
             <div class="report-area_podmenu">
-                <div class="content-podmenu">
+                <div class="content-pod-menu">
                     <nav>
                         <ul>
                             <section>
@@ -202,7 +202,7 @@
     <form id="deleteReport" method="POST" action="/rollbackreport/">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" id="rollbackButton">
-            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <svg  viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
             <span>Отменить действие</span>
@@ -213,7 +213,7 @@
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Проверка отчетов</h3>
-            <img src="/static/img/Close.svg"class="close" alt="">
+            {{ icons.icon_close() }}
         </div>
         <div class="answer-highlight-second" style = "max-width: 510px;">
             <div class="highlight-icon">💡</div>
@@ -278,7 +278,7 @@
     <div class="modal-content">
         <div class = "modal-header">
             <h3 class = "change-position">Экспорт отчетов</h3>
-            <img src="/static/img/Close.svg"class="close" alt="">
+            {{ icons.icon_close() }}
         </div>
         <div class="answer-highlight-second" style = "max-width: 510px;">
             <div class="highlight-icon">💡</div>

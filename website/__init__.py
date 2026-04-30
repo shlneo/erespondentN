@@ -124,56 +124,56 @@ def create_app():
     def unauthorized_handler(error):
         return redirect(url_for("views.login", next=request.url))
  
-    @app.route('/login/google')
-    def login_google():
-        try:
-            redirect_uri = url_for('authorize_google', _external=True)
-            return google.authorize_redirect(redirect_uri)
-        except Exception as e:
-            app.logger.error(f'Error during login: {str(e)}')
-            return "Error occurred during login", 500
+    # @app.route('/login/google')
+    # def login_google():
+    #     try:
+    #         redirect_uri = url_for('authorize_google', _external=True)
+    #         return google.authorize_redirect(redirect_uri)
+    #     except Exception as e:
+    #         app.logger.error(f'Error during login: {str(e)}')
+    #         return "Error occurred during login", 500
 
-    @app.route('/authorize/google')
-    def authorize_google():
-        try:
-            token = google.authorize_access_token()
-            if not token:
-                return "Authorization failed", 400
+    # @app.route('/authorize/google')
+    # def authorize_google():
+    #     try:
+    #         token = google.authorize_access_token()
+    #         if not token:
+    #             return "Authorization failed", 400
             
-            userinfo_endpoint = google.server_metadata['userinfo_endpoint']
-            resp = google.get(userinfo_endpoint)
-            user_info = resp.json()
+    #         userinfo_endpoint = google.server_metadata['userinfo_endpoint']
+    #         resp = google.get(userinfo_endpoint)
+    #         user_info = resp.json()
 
-            if not user_info or 'email' not in user_info:
-                return "Failed to retrieve user info", 400
+    #         if not user_info or 'email' not in user_info:
+    #             return "Failed to retrieve user info", 400
 
-            username = user_info['email']
-            user = User.query.filter_by(email=username).first()
+    #         username = user_info['email']
+    #         user = User.query.filter_by(email=username).first()
 
-            if not user:
-                user = User(email=username)
-                db.session.add(user)
-                db.session.commit()
+    #         if not user:
+    #             user = User(email=username)
+    #             db.session.add(user)
+    #             db.session.commit()
 
-            from flask_login import login_user 
+    #         from flask_login import login_user 
 
-            login_user(user, remember=True)
+    #         login_user(user, remember=True)
 
-            from .sessions import create_user_session 
-            session_token = create_user_session(user.id)
+    #         from .sessions import create_user_session 
+    #         session_token = create_user_session(user.id)
 
-            session['username'] = username
-            session['oauth_token'] = token
+    #         session['username'] = username
+    #         session['oauth_token'] = token
 
-            response = redirect(url_for('views.profile'))
-            response.set_cookie('session_token', session_token, httponly=True, samesite='Lax')
+    #         response = redirect(url_for('views.profile'))
+    #         response.set_cookie('session_token', session_token, httponly=True, samesite='Lax')
 
-            flash('Добро пожаловать!', 'success')
-            return response
+    #         flash('Добро пожаловать!', 'success')
+    #         return response
 
-        except Exception as e:
-            app.logger.error(f'Error during authorization: {str(e)}')
-            return "Error occurred during authorization", 500
+    #     except Exception as e:
+    #         app.logger.error(f'Error during authorization: {str(e)}')
+    #         return "Error occurred during authorization", 500
         
     @login_manager.user_loader
     def load_user(user_id):

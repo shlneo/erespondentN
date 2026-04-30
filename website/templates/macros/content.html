@@ -1,0 +1,176 @@
+{% import 'macros/svg_icons.html' as icons %}
+{% macro blurback() %}
+<div class="blurred-background"></div>
+{% endmacro %}
+
+{% macro report_dop_info(report, version) %}
+<section class="report-dop-info">
+    <div class="report-details">
+        <div class="detail-item main-element">
+            {{ icons.icon_building() }}
+            <div class="detail-content">
+                <div class="detail-label">Предприятие</div>
+                <div class="detail-value">{{ report.organization.full_name }}</div>
+            </div>
+        </div>
+        <div class="detail-item main-element">
+            {{ icons.icon_okpo() }}
+            <div class="detail-content">
+                <div class="detail-label">ОКПО</div>
+                <div class="detail-value">{{ report.organization.okpo }}</div>
+            </div>
+        </div>
+        <div class="detail-item">
+            {{ icons.icon_calendar() }}
+            <div class="detail-content">
+                <div class="detail-label">Отчетный период</div>
+                <div class="detail-value">{{ report.year }} г. - {{ report.quarter|string + ' квартал' }}</div>
+            </div>
+        </div>
+        <div class="detail-item">
+            <svg  width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <div class="detail-content">
+                <div class="detail-label">Статус</div>
+                <div class="detail-value">{{ version.status }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="report-details">
+        <div class="detail-item">
+            {{ icons.icon_time() }}
+            <div class="detail-content">
+                <div class="detail-label">Начало заполнения</div>
+                <div class="detail-value">
+                    {% if version.begin_time %}
+                        {{ version.begin_time.strftime('%d.%m.%Y %H:%M') }}
+                    {% else %}
+                        Не указано
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="detail-item">
+            {{ icons.icon_edit() }}
+            <div class="detail-content">
+                <div class="detail-label">Последнее изменение</div>
+                <div class="detail-value">
+                    {% if version.change_time %}
+                        {{ version.change_time.strftime('%d.%m.%Y %H:%M') }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="detail-item">
+            {{ icons.icon_email() }}
+            <div class="detail-content">
+                <div class="detail-label">Дата отправки</div>
+                <div class="detail-value">
+                    {% if version.sent_time %}
+                        {{ version.sent_time.strftime('%d.%m.%Y %H:%M') }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="detail-item">
+            {{ icons.icon_time() }}
+            <div class="detail-content">
+                <div class="detail-label">Дата проверки</div>
+                <div class="detail-value">
+                    {% if version.audit_time %}
+                        {{ version.audit_time.strftime('%d.%m.%Y %H:%M') }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>  
+{% endmacro %}
+
+{% macro google_btn() %}
+    <hr style = "border: none; border-bottom: 1px solid rgb(56, 56, 56); width: 100%;"/> 
+    <div class = "log_with"> 
+        <button type="button" class="google_button" onclick="window.location.href='{{ url_for('login_google') }}'" title="Войти с помощью google">
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
+            </svg>
+        </button>
+        <button type="button" class="google_button" onclick="window.location.href=''" title="Войти с помощью ..."></button>
+{% endmacro %}
+
+{% macro status_report(version) %}
+    {% if version %}
+        {% if version.status == 'Контроль пройден' %}
+            <span class="status-badge status-control">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <span>Контроль пройден</span>
+            </span>
+            
+        {% elif version.status == 'Согласовано' %}
+            <span class="status-badge status-agreed">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5" />
+                </svg>
+                <span>Согласовано</span>
+            </span>
+            
+        {% elif version.status == 'Одобрен' %}
+            <span class="status-badge status-approved">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Одобрен</span>
+            </span>
+            
+        {% elif version.status == 'Отправлен' %}
+            <span class="status-badge status-pending">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>На рассмотрении</span>
+            </span>
+            
+        {% elif version.status == 'Есть замечания' %}
+            <span class="status-badge status-warning">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+                <span>Есть замечания</span>
+            </span>
+            
+        {% elif version.status == 'Готов к удалению' %}
+            <span class="status-badge status-delete">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                </svg>
+                <span>Готов к удалению</span>
+            </span>
+            
+        {% elif version.status == 'Заполнение' %}
+            <span class="status-badge status-draft">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                </svg>
+                <span>Заполнение</span>
+            </span>
+            
+        {% else %}
+            <span class="status-badge status-default">
+                <span>{{ version.status }}</span>
+            </span>
+        {% endif %}
+    {% else %}
+        <span class="status-badge status-default">
+            <span>Нет данных</span>
+        </span>
+    {% endif %}
+{% endmacro %}

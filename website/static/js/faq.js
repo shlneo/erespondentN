@@ -485,7 +485,6 @@ window.addEventListener('popstate', function(event) {
 document.addEventListener('DOMContentLoaded', function() {
     loadContentFromHash();
     
-    // Удаляем этот блок полностью - он очищает контент при клике на категорию
     // document.querySelectorAll('#status-faqlist li[data-content]').forEach(item => {
     //     item.addEventListener('click', function(e) {
     //         if (!e.target.closest('[data-question]')) {
