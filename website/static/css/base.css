@@ -118,7 +118,7 @@ body.dimmed {
     --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     --glow: 0 0 40px rgba(0, 0, 0, 0.15);
 
-    --message-header-back: #f5fbff;
+    --message-header-back: #f8fafc;
     --blue-txt: #007bff;
 
 }
@@ -2455,6 +2455,7 @@ main {
     text-shadow: 1px 1px 2px black;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.144);
     font-weight: 600;
+    border-radius: 12px;
 }
 
 .privetstvie_cont a {
@@ -2485,7 +2486,7 @@ main {
     display: flex;
     flex-direction: column;
     flex: 1;
-
+    gap: 10px;
     box-sizing: border-box;
 }
 
@@ -2526,7 +2527,7 @@ main {
     min-height: 72px;
     font-weight: 600;
     border-radius: 12px;
-    margin: 0 0 12px 0;
+    // margin: 0 0 12px 0;
     padding: 20px 24px;
     font-size: clamp(14px, 2vw, 15px);
     cursor: pointer;
@@ -2580,9 +2581,10 @@ main {
 }
 
 .account_buttons svg {
-    width: 7px;
-    height: 12px;
+    width: 15px;
+    height: 15px;
     flex-shrink: 0;
+    color: black;
     margin-left: 10px;
 }
 
@@ -2592,8 +2594,7 @@ main {
     align-items: center;
     justify-content: center;
     font-size: 15px;
-    min-height: 46px;
-    margin: 5px 0 15px 0;
+    height: 45px;
     color: white;
     margin-left: 20px;
     cursor: pointer;
@@ -2957,7 +2958,7 @@ main {
     }
     
     .acc-btn-otherbtn {
-        min-height: 52px;
+        height: 47px;
         font-size: 14px;
     }
     
@@ -3019,9 +3020,9 @@ main {
     
     
     .acc-btn-otherbtn {
-        min-height: 48px;
+        height: 41px;
         font-size: 13px;
-        margin: 0 0 12px 0;
+        margin: 0;
     }
     
     .acc-btn-otherbtn span:first-child {
@@ -4811,11 +4812,15 @@ main {
     text-align: center;
 }
 
-.activefunctions_menu{
+.active_functions_menu{
     border-radius: 5px;
     border: none;
     background-color:#c4e8ff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.active_functions_menu .li-title{
+    font-weight: 600;
 }
 
 .content-pod-menu nav ul li:hover{
@@ -4826,26 +4831,6 @@ main {
 .content-pod-menu nav ul li:hover img,
 .content-pod-menu nav ul li:hover svg {
     filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2));
-}
-
-#control_versionButton:hover{
-    background: rgba(96, 255, 228, 0.63);
-}
-
-#control-report-btn:hover{
-    background: rgba(96, 255, 228, 0.63);
-}
-
-#cancel-sending-bnt:hover{
-    background: rgb(255, 208, 208);
-}
-
-#agreedVersionButton:hover{
-    background: rgba(152, 255, 169, 0.63);
-}
-
-#sentVersionButton:hover{
-    background: rgba(96, 215, 255, 0.63);
 }
 
 .content-pod-menu nav ul li img{
@@ -5032,69 +5017,6 @@ main {
     }
 }
 
-
-/* .loading-spinner-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.96);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 0;
-}
-
-.loading-spinner {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    justify-content: center;
-}
-
-.spinner-ring {
-    width: 8px;
-    height: 8px;
-    background-color: #22a4e8;
-    border-radius: 50%;
-    animation: pulse 1.2s ease-in-out infinite;
-}
-
-.spinner-ring:nth-child(1) {
-    animation-delay: 0s;
-}
-
-.spinner-ring:nth-child(2) {
-    animation-delay: 0.2s;
-    background-color: #4cb7f0;
-}
-
-.spinner-ring:nth-child(3) {
-    animation-delay: 0.4s;
-    background-color: #7ac9f5;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(0.6);
-        opacity: 0.4;
-    }
-    50% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.loading-spinner-overlay p {
-    margin-top: 20px;
-    color: #5e6f8d;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.2px;
-} */
-
 .table-report-area {
     border: none;
     font-size: 12px;
@@ -5112,14 +5034,39 @@ main {
     background-color:rgb(243, 243, 243);
 }
 
+// .table-title tr th {
+//     padding: 10px 15px;
+//     text-align: center;
+//     font-size: 14px;
+//     position: relative;
+//     min-width: min-content;
+//     border: 1px solid var(--border-color);
+// }
+
 .table-title tr th {
-    padding: 10px 15px;
+    padding: 12px 16px;
     text-align: center;
     font-size: 14px;
+    font-weight: 700;
     position: relative;
     min-width: min-content;
-    border: 1px solid var(--border-color);
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    color: #0f172a;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, border-bottom 0.2s ease;
 }
+
+.table-title tr th:hover {
+    background-color: #f1f5f9;
+    transform: translateY(-1px);
+}
+
+.table-title tr th.sort-active {
+    background-color: #e0f2fe;
+    color: #0284c7;
+    border-bottom: 2px solid var(--blue-back);
+}
+
 
 .table-title tr th:first-child,
 .table-title tr td:first-child {
@@ -5145,8 +5092,10 @@ main {
     background-color: var(--comment-row);
 }
 
+
+// SORT AND RESIZE TABLE
 th .resizer {
-    position: absolute;
+    position: relative;
     top: 0;
     right: 0;
     width: 5px;
@@ -5156,37 +5105,48 @@ th .resizer {
     transition: background-color 0.2s;
 }
 
+th.resizable .resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+    background-color: transparent;
+    transition: background-color 0.2s;
+    z-index: 10;
+}
+
 .resizer:hover,
 .resizer.resizing {
     background-color: var(--blue-txt);
     opacity: 0.5;
 }
 
-.sortable-header {
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.2s;
-}
 
-.sortable-header:hover {
-    background-color: #eef2ff;
-}
-
-.sortable-header.sort-active {
-    background-color: #e0e7ff;
-    color: #4361ee;
+.sort-active .sort-icon-header {
+    opacity: 1;
+    visibility: visible;
 }
 
 .sort-icon-header {
     display: inline-flex;
     align-items: center;
     margin-left: 6px;
-    opacity: 0.4;
-    transition: opacity 0.2s;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
-.sortable-header:hover .sort-icon-header {
-    opacity: 0.8;
+.sort-label{
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.sort-label:hover .sort-icon-header {
+    opacity: 0.6;
+    visibility: visible;
 }
 
 .sort-active .sort-icon-header {
@@ -5198,11 +5158,15 @@ th .resizer {
     height: 12px;
     stroke: currentColor;
     stroke-width: 2;
+    transition: transform 0.2s ease;
 }
 
 .sort-icon-header svg:hover {
-    display: block;
+    transform: scale(1.1);
 }
+
+/*SORT AND RESIZE TABLE END*/
+
 
 .table-report-area input[type="text"] {            
     font-size: 13px;  
@@ -5246,12 +5210,14 @@ th .resizer {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
+    padding: 4px 12px;
     border-radius: 30px;
-    font-size: 14px !important;
+    font-size: 14px;
     font-weight: 500;
     line-height: 1;
-    white-space: nowrap;
+    white-space: nowrap;    
+    background: #e2e8f0;
+    color: #475569;
 }
 
 .status-badge svg {
@@ -6375,13 +6341,14 @@ th .resizer {
         justify-content: center;
     }
 }
+
 .messages-container {
-    background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
     position: relative;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .messages-timeline {
+    background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
     max-height: 300px;
     overflow-y: auto;
     padding: 24px;
@@ -6471,7 +6438,7 @@ th .resizer {
 
 .form-container {
     padding: 30px;
-    background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+    // background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
 }
 
 .comment-form__grid {
@@ -8874,16 +8841,6 @@ th .resizer {
     flex: 1;
 }
 
-.status-badge {
-    background: #e2e8f0;
-    white-space: nowrap;
-    color: #475569;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
 /* Особенности статуса */
 .status-features, .check-list {
     display: flex;
@@ -9370,7 +9327,7 @@ th .resizer {
 
 .media_illuminate img {
     width: 100%;
-    max-width: 500px;
+    max-height: 300px;
     height: auto;
     object-fit: cover;
     transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);

@@ -49,9 +49,9 @@ document.addEventListener('DOMContentLoaded', function() {
         link.addEventListener('click', function() {
             const sectionId = this.getAttribute('data-section').replace('link', 'table');
             sectionLinks.forEach(item => {
-                item.classList.remove('activefunctions_menu');
+                item.classList.remove('active_functions_menu');
             });
-            this.classList.add('activefunctions_menu');
+            this.classList.add('active_functions_menu');
 
             document.querySelectorAll('.report-area > div').forEach(div => {
                 div.style.display = 'none';

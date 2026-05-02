@@ -163,17 +163,65 @@
                 <div class="loading-text">Загрузка отчётов...</div>
             </div>
             <div id="reports-content" style="display: none;">
-                <table class="table-report-area">
+                <table class="table-report-area" id="report-table">
                     <thead class="table-title">
                         <tr>
                             <th></th>
                             <th></th>
-                            <th class="resizable" style="white-space: nowrap; min-width: 380px;">Предприятие<div class="resizer"></div></th>
-                            <th class="resizable" style="white-space: nowrap; min-width: 140px;">ОКПО<div class="resizer"></div></th>
-                            <th class="resizable" style="white-space: nowrap; min-width: 100px;">Год<div class="resizer"></div></th>
-                            <th class="resizable" style="white-space: nowrap; min-width: 100px;">Квартал<div class="resizer"></div></th>
-                            <th class="resizable" style="white-space: nowrap; min-width: 140px;">Дата поступления<div class="resizer"></div></th>
-                            <th class="resizable" style="white-space: nowrap; min-width: 140px;">Статус<div class="resizer"></div></th>
+                            <th class="resizable" data-sort-col="name" style="white-space: nowrap; min-width: 380px;">
+                                <span class="sort-label">
+                                    Предприятие
+                                    <span class="sort-icon-header">
+                                        {{ icons.icon_sort() }}
+                                    </span>
+                                </span>
+                                <div class="resizer"></div>
+                            </th>
+                            <th class="resizable" data-sort-col="okpo" style="white-space: nowrap; min-width: 140px;">
+                                <span class="sort-label">
+                                    ОКПО
+                                    <span class="sort-icon-header">
+                                        {{ icons.icon_sort() }}
+                                    </span>
+                                </span>
+                                <div class="resizer"></div>
+                            </th>
+                            <th class="resizable" data-sort-col="year" style="white-space: nowrap; min-width: 100px;">
+                                <span class="sort-label">
+                                    Год
+                                    <span class="sort-icon-header">
+                                        {{ icons.icon_sort() }}
+                                    </span>
+                                </span>
+                                <div class="resizer"></div>
+                            </th>
+                            <th class="resizable" data-sort-col="quarter" style="white-space: nowrap; min-width: 100px;">
+                                <span class="sort-label">
+                                    Квартал
+                                    <span class="sort-icon-header">
+                                        {{ icons.icon_sort() }}
+                                    </span>
+                                </span>
+                                <div class="resizer"></div>
+                            </th>
+                            <th class="resizable" data-sort-col="time" style="white-space: nowrap; min-width: 140px;">
+                                <span class="sort-label">
+                                    Дата поступления
+                                    <span class="sort-icon-header">
+                                        {{ icons.icon_sort() }}
+                                    </span>
+                                </span>
+                                <div class="resizer"></div>
+                            </th>
+                            <th class="resizable" data-sort-col="status" style="white-space: nowrap; min-width: 140px;">
+                                <span class="sort-label">
+                                    Статус
+                                    <span class="sort-icon-header">
+                                        {{ icons.icon_sort() }}
+                                    </span>
+                                </span>
+                                <div class="resizer"></div>
+                            </th>
                             <th rowspan="2"></th>
                         </tr>
                     </thead>

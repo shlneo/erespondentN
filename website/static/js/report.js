@@ -360,8 +360,8 @@ if(document.getElementById('sent-report-btn')){
     handleModal(document.getElementById('SentModal'), document.getElementById('sent-report-btn'));
 }
 
-if(cancel_send = document.getElementById('cancel-sending-bnt')){
-    document.getElementById('cancel-sending-bnt').addEventListener('click', function() {
+if(document.getElementById('cancel-sending-btn')){
+    document.getElementById('cancel-sending-btn').addEventListener('click', function() {
         document.getElementById('cancel-sending-form').submit();
     });
 }

@@ -1,3 +1,21 @@
+function updateOnlineCount() {
+    fetch('/api/online-count')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const countElement = document.getElementById('onlineCount');
+                if (countElement) {
+                    countElement.textContent = data.count;
+                }
+            }
+        })
+        .catch(error => console.error('Error updating online count:', error));
+}
+
+setInterval(updateOnlineCount, 30000);
+document.addEventListener('DOMContentLoaded', updateOnlineCount);
+
+
 function addCsrfTokenToForm(form) {
     var csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) return;
@@ -239,6 +257,8 @@ numeric_dotInputs.forEach(function(input) {
 });
 /* end numbers + dot only */
 
+
+/* SORT AND RESIZE TABLE */
 function initResizableTables() {
     const tables = document.querySelectorAll('.table-report-area');
     tables.forEach(table => {
@@ -286,11 +306,782 @@ function initResizableTables() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+function initTableSorting() {
+    const table = document.getElementById('report-table');
+    if (!table) return;
+
+    const headers = table.querySelectorAll('th.resizable[data-sort-col]');
+    
+    headers.forEach(th => {
+        const sortLabel = th.querySelector('.sort-label');
+        if (!sortLabel) return;
+        
+        sortLabel.style.cursor = 'pointer';
+        
+        sortLabel.addEventListener('click', (e) => {
+            if (e.target.classList && e.target.classList.contains('resizer')) return;
+            if (e.target.closest('.resizer')) return;
+            
+            const sortCol = th.getAttribute('data-sort-col');
+            if (!sortCol) return;
+
+            let currentDirection = th.getAttribute('data-sort-direction');
+            let newDirection;
+            
+            const allThs = table.querySelectorAll('th.resizable');
+            allThs.forEach(t => {
+                t.removeAttribute('data-sort-direction');
+                t.classList.remove('sort-active');
+            });
+            
+            if (!currentDirection || currentDirection === 'desc') {
+                newDirection = 'asc';
+            } else {
+                newDirection = 'desc';
+            }
+            
+            th.setAttribute('data-sort-direction', newDirection);
+            th.classList.add('sort-active');
+            
+            sortTable(table, sortCol, newDirection);
+        });
+    });
+}
+
+function initSecondTableSorting() {
+    const table = document.getElementById('fuel-table-report');
+    if (!table) return;
+
+    const headers = table.querySelectorAll('th.resizable[data-sort-col]');
+    
+    headers.forEach(th => {
+        const sortLabel = th.querySelector('.sort-label');
+        if (!sortLabel) return;
+        
+        sortLabel.style.cursor = 'pointer';
+        
+        sortLabel.addEventListener('click', (e) => {
+            if (e.target.classList && e.target.classList.contains('resizer')) return;
+            if (e.target.closest('.resizer')) return;
+            
+            const sortCol = th.getAttribute('data-sort-col');
+            if (!sortCol) return;
+
+            let currentDirection = th.getAttribute('data-sort-direction');
+            let newDirection;
+            
+            const allThs = table.querySelectorAll('th.resizable');
+            allThs.forEach(t => {
+                t.removeAttribute('data-sort-direction');
+                t.classList.remove('sort-active');
+            });
+            
+            if (!currentDirection || currentDirection === 'desc') {
+                newDirection = 'asc';
+            } else {
+                newDirection = 'desc';
+            }
+            
+            th.setAttribute('data-sort-direction', newDirection);
+            th.classList.add('sort-active');
+            
+            sortSecondTable(table, sortCol, newDirection);
+        });
+    });
+}
+
+function sortTable(table, column, direction) {
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr.report_row'));
+    
+    let columnIndex;
+    
+    switch(column) {
+        case 'name':
+            columnIndex = 3;
+            break;
+        case 'okpo':
+            columnIndex = 4;
+            break;
+        case 'year':
+            columnIndex = 5;
+            break;
+        case 'quarter':
+            columnIndex = 6;
+            break;
+        case 'time':
+            columnIndex = 7;
+            break;
+        case 'status':
+            columnIndex = 8;
+            break;
+        default:
+            columnIndex = -1;
+    }
+    
+    if (columnIndex === -1) return;
+    
+    const statusOrder = {
+        'Заполнение': 1,
+        'Контроль пройден': 2,
+        'Согласовано': 3,
+        'На рассмотрении': 4,
+        'Есть замечания': 5,
+        'Одобрен': 6,
+        'Готов к удалению': 7
+    };
+    
+    const sortedRows = rows.sort((rowA, rowB) => {
+        const cellA = rowA.children[columnIndex];
+        const cellB = rowB.children[columnIndex];
+        
+        let valueA, valueB;
+        
+        if (column === 'name') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } else if (column === 'okpo') {
+            valueA = cellA.querySelector('input')?.value.trim() || cellA.textContent.trim();
+            valueB = cellB.querySelector('input')?.value.trim() || cellB.textContent.trim();
+        } else if (column === 'quarter') {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            valueA = parseInt(rawA, 10);
+            valueB = parseInt(rawB, 10);
+        } else if (column === 'year') {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            valueA = parseInt(rawA, 10);
+            valueB = parseInt(rawB, 10);
+        } else if (column === 'time') {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            const parseDate = (str) => {
+                const parts = str.split('-');
+                return new Date(parts[2], parts[1] - 1, parts[0]);
+            };
+            valueA = parseDate(rawA);
+            valueB = parseDate(rawB);
+        } else if (column === 'status') {
+            const textA = cellA.textContent.trim();
+            const textB = cellB.textContent.trim();
+            valueA = statusOrder[textA] || 999;
+            valueB = statusOrder[textB] || 999;
+        }
+        
+        if (typeof valueA === 'number' && typeof valueB === 'number') {
+            return direction === 'asc' ? valueA - valueB : valueB - valueA;
+        }
+        
+        if (valueA < valueB) return direction === 'asc' ? -1 : 1;
+        if (valueA > valueB) return direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+    
+    sortedRows.forEach(row => tbody.appendChild(row));
+}
+
+function sortSecondTable(table, column, direction) {
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr.section_row'));
+    
+    let columnIndex;
+    
+    switch(column) {
+        case 'name':  
+            columnIndex = 1;
+            break;
+        case 'code': 
+            columnIndex = 2;
+            break;
+        case 'oked':    
+            columnIndex = 3;
+            break;
+        case 'ed-izm': 
+            columnIndex = 4;
+            break;
+        case 'section-1': 
+            columnIndex = 5;
+            break;
+        case 'section-2': 
+            columnIndex = 6;
+            break;
+        case 'section-3': 
+            columnIndex = 7;
+            break;
+        case 'section-4': 
+            columnIndex = 8;
+            break;
+        case 'section-5': 
+            columnIndex = 9;
+            break;
+        case 'section-6': 
+            columnIndex = 10;
+            break;
+        case 'note': 
+            columnIndex = 11;
+            break;
+        default:
+            columnIndex = -1;
+    }
+    
+    if (columnIndex === -1) return;
+    
+    const specialCodes = ['9001', '9010', '9100'];
+    
+    const normalRows = [];
+    const specialRows = [];
+    
+    rows.forEach(row => {
+        const codeCell = row.children[2];
+        const codeValue = codeCell.querySelector('input')?.value.trim() || codeCell.textContent.trim();
+        
+        if (specialCodes.includes(codeValue)) {
+            specialRows.push(row);
+        } else {
+            normalRows.push(row);
+        }
+    });
+    
+    const sortedNormalRows = normalRows.sort((rowA, rowB) => {
+        const cellA = rowA.children[columnIndex];
+        const cellB = rowB.children[columnIndex];
+        
+        let valueA, valueB;
+        
+        if (column === 'name') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else if (column === 'code') {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            valueA = parseInt(rawA, 10) || 0;
+            valueB = parseInt(rawB, 10) || 0;
+        } 
+        else if (column === 'oked') {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            valueA = parseInt(rawA, 10) || 0;
+            valueB = parseInt(rawB, 10) || 0;
+        } 
+        else if (column === 'ed-izm') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else if (column === 'note') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            
+            const cleanA = rawA ? rawA.toString().replace(',', '.') : '0';
+            const cleanB = rawB ? rawB.toString().replace(',', '.') : '0';
+            
+            valueA = parseFloat(cleanA) || 0;
+            valueB = parseFloat(cleanB) || 0;
+        }
+        
+        if (typeof valueA === 'number' && typeof valueB === 'number') {
+            return direction === 'asc' ? valueA - valueB : valueB - valueA;
+        }
+        
+        if (valueA < valueB) return direction === 'asc' ? -1 : 1;
+        if (valueA > valueB) return direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+    
+    const allSortedRows = [...sortedNormalRows, ...specialRows];
+    allSortedRows.forEach(row => tbody.appendChild(row));
+}
+
+
+
+function sortFuelTable(table, column, direction) {
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr.section_row'));
+    
+    let columnIndex;
+    
+    switch(column) {
+        case 'name':  
+            columnIndex = 1;
+            break;
+        case 'code': 
+            columnIndex = 2;
+            break;
+        case 'oked':    
+            columnIndex = 3;
+            break;
+        case 'ed-izm': 
+            columnIndex = 4;
+            break;
+        case 'section-1': 
+            columnIndex = 5;
+            break;
+        case 'section-2': 
+            columnIndex = 6;
+            break;
+        case 'section-3': 
+            columnIndex = 7;
+            break;
+        case 'section-4': 
+            columnIndex = 8;
+            break;
+        case 'section-5': 
+            columnIndex = 9;
+            break;
+        case 'section-6': 
+            columnIndex = 10;
+            break;
+        case 'note': 
+            columnIndex = 11;
+            break;
+        default:
+            columnIndex = -1;
+    }
+    
+    if (columnIndex === -1) return;
+    
+    // Специальные коды, которые должны быть внизу
+    const specialCodes = ['9001', '9010', '9100'];
+    
+    const normalRows = [];
+    const specialRows = [];
+    
+    rows.forEach(row => {
+        const codeCell = row.children[2];
+        const codeValue = codeCell.querySelector('input')?.value.trim() || codeCell.textContent.trim();
+        
+        if (specialCodes.includes(codeValue)) {
+            specialRows.push(row);
+        } else {
+            normalRows.push(row);
+        }
+    });
+    
+    const sortedNormalRows = normalRows.sort((rowA, rowB) => {
+        const cellA = rowA.children[columnIndex];
+        const cellB = rowB.children[columnIndex];
+        
+        let valueA, valueB;
+        
+        if (column === 'name') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else if (column === 'code') {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            valueA = parseInt(rawA, 10) || 0;
+            valueB = parseInt(rawB, 10) || 0;
+        } 
+        else if (column === 'oked') {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            valueA = parseInt(rawA, 10) || 0;
+            valueB = parseInt(rawB, 10) || 0;
+        } 
+        else if (column === 'ed-izm') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else if (column === 'note') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            const cleanA = rawA ? rawA.toString().replace(',', '.') : '0';
+            const cleanB = rawB ? rawB.toString().replace(',', '.') : '0';
+            valueA = parseFloat(cleanA) || 0;
+            valueB = parseFloat(cleanB) || 0;
+        }
+        
+        if (typeof valueA === 'number' && typeof valueB === 'number') {
+            return direction === 'asc' ? valueA - valueB : valueB - valueA;
+        }
+        
+        if (valueA < valueB) return direction === 'asc' ? -1 : 1;
+        if (valueA > valueB) return direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+    
+    const allSortedRows = [...sortedNormalRows, ...specialRows];
+    allSortedRows.forEach(row => tbody.appendChild(row));
+}
+
+
+function sortHeatTable(table, column, direction) {
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr.section_row'));
+    
+    let columnIndex;
+    
+    switch(column) {
+        case 'name':  
+            columnIndex = 1;
+            break;
+        case 'code': 
+            columnIndex = 2;
+            break;
+        case 'oked':    
+            columnIndex = 3;
+            break;
+        case 'ed-izm': 
+            columnIndex = 4;
+            break;
+        case 'section-1': 
+            columnIndex = 5;
+            break;
+        case 'section-2': 
+            columnIndex = 6;
+            break;
+        case 'section-3': 
+            columnIndex = 7;
+            break;
+        case 'section-4': 
+            columnIndex = 8;
+            break;
+        case 'section-5': 
+            columnIndex = 9;
+            break;
+        case 'section-6': 
+            columnIndex = 10;
+            break;
+        case 'note': 
+            columnIndex = 11;
+            break;
+        default:
+            columnIndex = -1;
+    }
+    
+    if (columnIndex === -1) return;
+    
+    const specialCodes = ['9001', '9010', '9100'];
+    const normalRows = [];
+    const specialRows = [];
+    
+    rows.forEach(row => {
+        const codeCell = row.children[2];
+        const codeValue = codeCell.querySelector('input')?.value.trim() || codeCell.textContent.trim();
+        
+        if (specialCodes.includes(codeValue)) {
+            specialRows.push(row);
+        } else {
+            normalRows.push(row);
+        }
+    });
+    
+    const sortedNormalRows = normalRows.sort((rowA, rowB) => {
+        const cellA = rowA.children[columnIndex];
+        const cellB = rowB.children[columnIndex];
+        
+        let valueA, valueB;
+        
+        if (column === 'name') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else if (column === 'code') {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            valueA = parseInt(rawA, 10) || 0;
+            valueB = parseInt(rawB, 10) || 0;
+        } 
+        else if (column === 'oked') {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            valueA = parseInt(rawA, 10) || 0;
+            valueB = parseInt(rawB, 10) || 0;
+        } 
+        else if (column === 'ed-izm') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else if (column === 'note') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            const cleanA = rawA ? rawA.toString().replace(',', '.') : '0';
+            const cleanB = rawB ? rawB.toString().replace(',', '.') : '0';
+            valueA = parseFloat(cleanA) || 0;
+            valueB = parseFloat(cleanB) || 0;
+        }
+        
+        if (typeof valueA === 'number' && typeof valueB === 'number') {
+            return direction === 'asc' ? valueA - valueB : valueB - valueA;
+        }
+        
+        if (valueA < valueB) return direction === 'asc' ? -1 : 1;
+        if (valueA > valueB) return direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+    
+    const allSortedRows = [...sortedNormalRows, ...specialRows];
+    allSortedRows.forEach(row => tbody.appendChild(row));
+}
+
+
+function sortElectroTable(table, column, direction) {
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr.section_row'));
+    
+    let columnIndex;
+    
+    switch(column) {
+        case 'name':  
+            columnIndex = 1;
+            break;
+        case 'code': 
+            columnIndex = 2;
+            break;
+        case 'oked':    
+            columnIndex = 3;
+            break;
+        case 'ed-izm': 
+            columnIndex = 4;
+            break;
+        case 'section-1': 
+            columnIndex = 5;
+            break;
+        case 'section-2': 
+            columnIndex = 6;
+            break;
+        case 'section-3': 
+            columnIndex = 7;
+            break;
+        case 'section-4': 
+            columnIndex = 8;
+            break;
+        case 'section-5': 
+            columnIndex = 9;
+            break;
+        case 'section-6': 
+            columnIndex = 10;
+            break;
+        case 'note': 
+            columnIndex = 11;
+            break;
+        default:
+            columnIndex = -1;
+    }
+    
+    if (columnIndex === -1) return;
+    
+    const specialCodes = ['9001', '9010', '9100'];
+    const normalRows = [];
+    const specialRows = [];
+    
+    rows.forEach(row => {
+        const codeCell = row.children[2];
+        const codeValue = codeCell.querySelector('input')?.value.trim() || codeCell.textContent.trim();
+        
+        if (specialCodes.includes(codeValue)) {
+            specialRows.push(row);
+        } else {
+            normalRows.push(row);
+        }
+    });
+    
+    const sortedNormalRows = normalRows.sort((rowA, rowB) => {
+        const cellA = rowA.children[columnIndex];
+        const cellB = rowB.children[columnIndex];
+        
+        let valueA, valueB;
+        
+        if (column === 'name') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else if (column === 'code') {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            valueA = parseInt(rawA, 10) || 0;
+            valueB = parseInt(rawB, 10) || 0;
+        } 
+        else if (column === 'oked') {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            valueA = parseInt(rawA, 10) || 0;
+            valueB = parseInt(rawB, 10) || 0;
+        } 
+        else if (column === 'ed-izm') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else if (column === 'note') {
+            valueA = cellA.querySelector('input')?.value.trim().toLowerCase() || cellA.textContent.trim().toLowerCase();
+            valueB = cellB.querySelector('input')?.value.trim().toLowerCase() || cellB.textContent.trim().toLowerCase();
+        } 
+        else {
+            const rawA = cellA.querySelector('input')?.value || cellA.textContent.trim();
+            const rawB = cellB.querySelector('input')?.value || cellB.textContent.trim();
+            const cleanA = rawA ? rawA.toString().replace(',', '.') : '0';
+            const cleanB = rawB ? rawB.toString().replace(',', '.') : '0';
+            valueA = parseFloat(cleanA) || 0;
+            valueB = parseFloat(cleanB) || 0;
+        }
+        
+        if (typeof valueA === 'number' && typeof valueB === 'number') {
+            return direction === 'asc' ? valueA - valueB : valueB - valueA;
+        }
+        
+        if (valueA < valueB) return direction === 'asc' ? -1 : 1;
+        if (valueA > valueB) return direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+    
+    const allSortedRows = [...sortedNormalRows, ...specialRows];
+    allSortedRows.forEach(row => tbody.appendChild(row));
+}
+
+function initTableSortingAudit() {
+    // Топливная таблица
+    const fuelTable = document.querySelector('#fuel_section_table .table-report-area');
+    if (fuelTable) {
+        const headers = fuelTable.querySelectorAll('th.resizable[data-sort-col]');
+        headers.forEach(th => {
+            const sortLabel = th.querySelector('.sort-label');
+            if (!sortLabel) return;
+            
+            sortLabel.style.cursor = 'pointer';
+            
+            sortLabel.addEventListener('click', (e) => {
+                if (e.target.classList && e.target.classList.contains('resizer')) return;
+                if (e.target.closest('.resizer')) return;
+                
+                const sortCol = th.getAttribute('data-sort-col');
+                if (!sortCol) return;
+                
+                let currentDirection = th.getAttribute('data-sort-direction');
+                let newDirection;
+                
+                const allThs = fuelTable.querySelectorAll('th.resizable');
+                allThs.forEach(t => {
+                    t.removeAttribute('data-sort-direction');
+                    t.classList.remove('sort-active');
+                });
+                
+                if (!currentDirection || currentDirection === 'desc') {
+                    newDirection = 'asc';
+                } else {
+                    newDirection = 'desc';
+                }
+                
+                th.setAttribute('data-sort-direction', newDirection);
+                th.classList.add('sort-active');
+                
+                sortFuelTable(fuelTable, sortCol, newDirection);
+            });
+        });
+    }
+    
+    // Тепловая таблица
+    const heatTable = document.querySelector('#heat_section_table .table-report-area');
+    if (heatTable) {
+        const headers = heatTable.querySelectorAll('th.resizable[data-sort-col]');
+        headers.forEach(th => {
+            const sortLabel = th.querySelector('.sort-label');
+            if (!sortLabel) return;
+            
+            sortLabel.style.cursor = 'pointer';
+            
+            sortLabel.addEventListener('click', (e) => {
+                if (e.target.classList && e.target.classList.contains('resizer')) return;
+                if (e.target.closest('.resizer')) return;
+                
+                const sortCol = th.getAttribute('data-sort-col');
+                if (!sortCol) return;
+                
+                let currentDirection = th.getAttribute('data-sort-direction');
+                let newDirection;
+                
+                const allThs = heatTable.querySelectorAll('th.resizable');
+                allThs.forEach(t => {
+                    t.removeAttribute('data-sort-direction');
+                    t.classList.remove('sort-active');
+                });
+                
+                if (!currentDirection || currentDirection === 'desc') {
+                    newDirection = 'asc';
+                } else {
+                    newDirection = 'desc';
+                }
+                
+                th.setAttribute('data-sort-direction', newDirection);
+                th.classList.add('sort-active');
+                
+                sortHeatTable(heatTable, sortCol, newDirection);
+            });
+        });
+    }
+    
+    // Электро таблица
+    const electroTable = document.querySelector('#electro_section_table .table-report-area');
+    if (electroTable) {
+        const headers = electroTable.querySelectorAll('th.resizable[data-sort-col]');
+        headers.forEach(th => {
+            const sortLabel = th.querySelector('.sort-label');
+            if (!sortLabel) return;
+            
+            sortLabel.style.cursor = 'pointer';
+            
+            sortLabel.addEventListener('click', (e) => {
+                if (e.target.classList && e.target.classList.contains('resizer')) return;
+                if (e.target.closest('.resizer')) return;
+                
+                const sortCol = th.getAttribute('data-sort-col');
+                if (!sortCol) return;
+                
+                let currentDirection = th.getAttribute('data-sort-direction');
+                let newDirection;
+                
+                const allThs = electroTable.querySelectorAll('th.resizable');
+                allThs.forEach(t => {
+                    t.removeAttribute('data-sort-direction');
+                    t.classList.remove('sort-active');
+                });
+                
+                if (!currentDirection || currentDirection === 'desc') {
+                    newDirection = 'asc';
+                } else {
+                    newDirection = 'desc';
+                }
+                
+                th.setAttribute('data-sort-direction', newDirection);
+                th.classList.add('sort-active');
+                
+                sortElectroTable(electroTable, sortCol, newDirection);
+            });
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initTableSortingAudit();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
     if(document.querySelector('.table-report-area')){
         initResizableTables();
+        initTableSorting();
+        initSecondTableSorting();
     }
+});
+/* SORT AND RESIZE TABLE END*/
 
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
     const usernavigation = document.getElementById('user-navigation');
     const overlay = document.querySelector('.overlay');
 
@@ -462,81 +1253,84 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if(document.getElementById('change_period_report_modal')){
         handleModal(document.getElementById('change_period_report_modal'), document.getElementById('link_change_report'));
+        link_change_report = document.getElementById('link_change_report')
+        link_change_report.addEventListener('click', function(event) {
+            event.preventDefault();
+            var reportRow = document.querySelector('.report_row.active-report');
+            if (reportRow) {
+                var reportId = reportRow.querySelector('#report_id').value;
+                var reportYear = reportRow.querySelector('#report_year').value;
+                var reportQuarter = reportRow.querySelector('#report_quarter').value;
+
+                document.getElementById('modal_change_report_id').value = reportId;
+                document.getElementById('selected-year-change').value = reportYear;
+                document.getElementById('selected-quarter-change').value = reportQuarter;
+
+                if (window.periodSelectors && window.periodSelectors.change) {
+                    window.periodSelectors.change.setYear(parseInt(reportYear));
+                    if (reportQuarter) {
+                        window.periodSelectors.change.setQuarter(reportQuarter);
+                    }
+                }
+            }
+            change_period_report_modal.classList.add('active');
+            contextMenuReport.style.display = 'none';
+        });
+
     }
+    
     if(document.getElementById('copy_report_modal')){
         handleModal(document.getElementById('copy_report_modal'), document.getElementById('link_coppy_report'));
+            link_coppy_report.addEventListener('click', function(event) {
+            event.preventDefault();
+            var reportRow = document.querySelector('.report_row.active-report');
+            if (reportRow) {
+                var reportId = reportRow.querySelector('#report_id').value;
+                var reportYear = reportRow.querySelector('#report_year').value;
+                var reportQuarter = reportRow.querySelector('#report_quarter').value;
+
+                document.getElementById('modal_copy_report_id').value = reportId;
+                document.getElementById('selected-year-copy').value = reportYear;
+                document.getElementById('selected-quarter-copy').value = reportQuarter;
+
+                if (window.periodSelectors && window.periodSelectors.copy) {
+                    window.periodSelectors.copy.setYear(parseInt(reportYear));
+                    if (reportQuarter) {
+                        window.periodSelectors.copy.setQuarter(reportQuarter);
+                    }
+                }
+            }
+            copy_report_modal.classList.add('active');
+            contextMenuReport.style.display = 'none';
+        });
     }
 
-    link_change_report = document.getElementById('link_change_report')
-    link_change_report.addEventListener('click', function(event) {
-        event.preventDefault();
-        var reportRow = document.querySelector('.report_row.active-report');
-        if (reportRow) {
-            var reportId = reportRow.querySelector('#report_id').value;
-            var reportYear = reportRow.querySelector('#report_year').value;
-            var reportQuarter = reportRow.querySelector('#report_quarter').value;
 
-            document.getElementById('modal_change_report_id').value = reportId;
-            document.getElementById('selected-year-change').value = reportYear;
-            document.getElementById('selected-quarter-change').value = reportQuarter;
-
-            if (window.periodSelectors && window.periodSelectors.change) {
-                window.periodSelectors.change.setYear(parseInt(reportYear));
-                if (reportQuarter) {
-                    window.periodSelectors.change.setQuarter(reportQuarter);
+    if(document.getElementById('del_reportButton')){
+        const del_reportButton = document.getElementById('del_reportButton');
+        del_reportButton.addEventListener('click', function(event) {
+            var activeRow = document.querySelector('.report_row.active-report');
+            if (activeRow !== null) {
+                var ReportId = activeRow.dataset.id;
+                if (ReportId) {
+                    var deleteForm = document.getElementById('deleteReport');
+                    deleteForm.action = '/delete-report/' + ReportId;
+                    addCsrfTokenToForm(deleteForm);
                 }
+            } else {
+                alert('Выберите отчет для удаления');
+                event.preventDefault();
             }
-        }
-        change_period_report_modal.classList.add('active');
-        contextMenuReport.style.display = 'none';
-    });
-
-    link_coppy_report.addEventListener('click', function(event) {
-        event.preventDefault();
-        var reportRow = document.querySelector('.report_row.active-report');
-        if (reportRow) {
-            var reportId = reportRow.querySelector('#report_id').value;
-            var reportYear = reportRow.querySelector('#report_year').value;
-            var reportQuarter = reportRow.querySelector('#report_quarter').value;
-
-            document.getElementById('modal_copy_report_id').value = reportId;
-            document.getElementById('selected-year-copy').value = reportYear;
-            document.getElementById('selected-quarter-copy').value = reportQuarter;
-
-            if (window.periodSelectors && window.periodSelectors.copy) {
-                window.periodSelectors.copy.setYear(parseInt(reportYear));
-                if (reportQuarter) {
-                    window.periodSelectors.copy.setQuarter(reportQuarter);
-                }
-            }
-        }
-        copy_report_modal.classList.add('active');
-        contextMenuReport.style.display = 'none';
-    });
-
-    const del_reportButton = document.getElementById('del_reportButton');
-    del_reportButton.addEventListener('click', function(event) {
-        var activeRow = document.querySelector('.report_row.active-report');
-        if (activeRow !== null) {
-            var ReportId = activeRow.dataset.id;
-            if (ReportId) {
-                var deleteForm = document.getElementById('deleteReport');
-                deleteForm.action = '/delete-report/' + ReportId;
-                addCsrfTokenToForm(deleteForm);
-            }
-        } else {
-            alert('Выберите отчет для удаления');
-            event.preventDefault();
-        }
-    });
-
-    const agreedVersionButton = document.getElementById('agreedVersionButton');
-    const controlVersionButton = document.getElementById('control_versionButton');
-    const sentVersionButton = document.getElementById('sentVersionButton');
-    const exportVersionButton = document.getElementById('export_versionButton');
-    const toTicketsBtn = document.getElementById('toTicketsBtn');
+        });
+   }
 
     function updateHeaderButtonStyle(agreedActive, controlActive, sentActive, exportActive, ticketsActive) {
+        const agreedVersionButton = document.getElementById('agreedVersionButton');
+        const controlVersionButton = document.getElementById('control_versionButton');
+        const sentVersionButton = document.getElementById('sentVersionButton');
+        const exportVersionButton = document.getElementById('export_versionButton');
+        const toTicketsBtn = document.getElementById('toTicketsBtn');
+        
         if (agreedActive) {
             agreedVersionButton.style.opacity = '1';
             agreedVersionButton.style.cursor = 'pointer';
@@ -594,65 +1388,79 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    const activeAgreedRow = document.querySelector('.report_row.active-report');
-    updateHeaderButtonStyle(activeAgreedRow !== null);
+    if(document.querySelector('.report_row.active-report')){
+        const activeAgreedRow = document.querySelector('.report_row.active-report');
+        updateHeaderButtonStyle(activeAgreedRow !== null);
+    }
 
-    controlVersionButton.addEventListener('click', function(event) {
-        var activeControlRow = document.querySelector('.report_row.active-report');
-        if (activeControlRow !== null) {
-            var controlForm = document.getElementById('control-version-form');
-            var id = activeControlRow.dataset.versionId;
-            if (id) {
-                controlForm.action = '/control-version/' + id;
-                addCsrfTokenToForm(controlForm);
-                controlForm.submit();
+    if(document.getElementById('del_reportButton')){
+        const controlVersionButton = document.getElementById('control_versionButton');
+        controlVersionButton.addEventListener('click', function(event) {
+            var activeControlRow = document.querySelector('.report_row.active-report');
+            if (activeControlRow !== null) {
+                var controlForm = document.getElementById('control-version-form');
+                var id = activeControlRow.dataset.versionId;
+                if (id) {
+                    controlForm.action = '/control-version/' + id;
+                    addCsrfTokenToForm(controlForm);
+                    controlForm.submit();
+                }
+            } else {
+                event.preventDefault();
             }
-        } else {
-            event.preventDefault();
-        }
-    });
+        });
+    }
 
-    agreedVersionButton.addEventListener('click', function(event) {
-        var activeRow = document.querySelector('.report_row.active-report');
-        if (activeRow !== null) {
-            var agreedForm = document.getElementById('agreed-version-form');
-            var id = activeRow.dataset.versionId;
-            if (id) {
-                agreedForm.action = '/agreed-version/' + id;
-                addCsrfTokenToForm(agreedForm);
-                agreedForm.submit();
+    if(document.getElementById('agreedVersionButton')){
+        const agreedVersionButton = document.getElementById('agreedVersionButton');
+        agreedVersionButton.addEventListener('click', function(event) {
+            var activeRow = document.querySelector('.report_row.active-report');
+            if (activeRow !== null) {
+                var agreedForm = document.getElementById('agreed-version-form');
+                var id = activeRow.dataset.versionId;
+                if (id) {
+                    agreedForm.action = '/agreed-version/' + id;
+                    addCsrfTokenToForm(agreedForm);
+                    agreedForm.submit();
+                }
+            } else {
+                event.preventDefault();
             }
-        } else {
-            event.preventDefault();
-        }
-    });
+        });
+    }
 
-    exportVersionButton.addEventListener('click', function(event) {
-        var activeexportRow = document.querySelector('.report_row.active-report');
-        if (activeexportRow !== null) {
-            var exportForm = document.getElementById('export-version-form');
-            var id = activeexportRow.dataset.versionId;
-            if (id) {
-                exportForm.action = '/export-version/' + id;
-                addCsrfTokenToForm(exportForm);
-                exportForm.submit();
+    if(document.getElementById('export_versionButton')){
+        const exportVersionButton = document.getElementById('export_versionButton');
+        exportVersionButton.addEventListener('click', function(event) {
+            var activeexportRow = document.querySelector('.report_row.active-report');
+            if (activeexportRow !== null) {
+                var exportForm = document.getElementById('export-version-form');
+                var id = activeexportRow.dataset.versionId;
+                if (id) {
+                    exportForm.action = '/export-version/' + id;
+                    addCsrfTokenToForm(exportForm);
+                    exportForm.submit();
+                }
+            } else {
+                event.preventDefault();
             }
-        } else {
-            event.preventDefault();
-        }
-    });
-    
-    toTicketsBtn.addEventListener('click', function(event) {
-        var activeRow = document.querySelector('.report_row.active-report');
-        if (activeRow !== null) {
-            var id = activeRow.dataset.versionId;
-            if (id) {
-                window.location.href = '/report-area/tickets/' + id;
+        });
+    }
+
+    if(document.getElementById('toTicketsBtn')){
+        const toTicketsBtn = document.getElementById('toTicketsBtn');
+        toTicketsBtn.addEventListener('click', function(event) {
+            var activeRow = document.querySelector('.report_row.active-report');
+            if (activeRow !== null) {
+                var id = activeRow.dataset.versionId;
+                if (id) {
+                    window.location.href = '/report-area/tickets/' + id;
+                }
+            } else {
+                event.preventDefault();
             }
-        } else {
-            event.preventDefault();
-        }
-    });
+        });
+    }
 });
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -81,55 +81,61 @@
 
     <div class="report-area">
         {%if report%}
-        <table class="table-report-area"  id="report-table">
+        <table class="table-report-area" id="report-table">
             <thead class="table-title">
                 <tr>
-                    <th data-sortable="false" style="cursor: default;"></th>
-                    <th data-sortable="false" style="cursor: default;"></th>
-                    <th data-sortable="true" data-sort-type="string" style="white-space: nowrap; min-width: 320px;">
+                    <th class="resizable" rowspan="2"></th>
+                    <th class="resizable" rowspan="2"></th>
+                    <th class="resizable" rowspan="2" data-sort-col="name" style="white-space: nowrap; min-width: 320px;">
                         <span class="sort-label">
                             Наименование предприятия
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
                         </span>
                         <div class="resizer"></div>
                     </th>
-                    <th data-sortable="true" data-sort-type="number" style="min-width: 120px;">
+                    <th class="resizable" rowspan="2" data-sort-col="okpo" style="min-width: 120px;">
                         <span class="sort-label">
                             ОКПО
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
                         </span>
                         <div class="resizer"></div>
                     </th>
-                    <th id="sort-year-header" class="sortable-header" data-sort-col="year" style="min-width: 80px;">
-                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                    <th class="resizable" rowspan="2" data-sort-col="year" style="min-width: 80px;">
+                        <span class="sort-label">
                             Год
                             <span class="sort-icon-header">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M7 17L12 22L17 17" />
-                                    <path d="M7 7L12 2L17 7" />
-                                </svg>
+                                {{ icons.icon_sort() }}
                             </span>
                         </span>
                         <div class="resizer"></div>
                     </th>
-                    <th id="sort-quarter-header" class="sortable-header" data-sort-col="quarter" style="min-width: 80px;">
-                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                    <th class="resizable" rowspan="2" data-sort-col="quarter" style="min-width: 80px;">
+                        <span class="sort-label">
                             Квартал
                             <span class="sort-icon-header">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M7 17L12 22L17 17" />
-                                    <path d="M7 7L12 2L17 7" />
-                                </svg>
+                                {{ icons.icon_sort() }}
                             </span>
                         </span>
                         <div class="resizer"></div>
                     </th>
-                    <th id="sort-status-header" class="sortable-header" data-sort-col="status" style="min-width: 140px;">
-                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                    <th class="resizable" rowspan="2" data-sort-col="time" style="min-width: 140px;">
+                        <span class="sort-label">
+                            Дата создания
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th class="resizable" rowspan="2" data-sort-col="status" style="min-width: 140px;">
+                         <span class="sort-label">
                             Статус
                             <span class="sort-icon-header">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M7 17L12 22L17 17" />
-                                    <path d="M7 7L12 2L17 7" />
-                                </svg>
+                                {{ icons.icon_sort() }}
                             </span>
                         </span>
                         <div class="resizer"></div>
@@ -165,10 +171,11 @@
                     <td>
                         <input type="text" id="report_quarter" value="{{ row.quarter }}" readonly>
                     </td>
-                    
                     {% set version = row.versions[0] if row.versions else None %}
-                    
                     {% if version %}
+                        <td>
+                            <input type="text" id="report_begin_time" value="{{ version.begin_time.strftime('%d-%m-%Y') }}" readonly>
+                        </td>
                         <td>
                             {{ content.status_report(version) }}
                         </td>
@@ -393,129 +400,4 @@
         </button>
     </form>
 </div>
-
-<script>
-    let currentSortColumn = null;
-    let currentSortDirection = 'asc';
-    
-    function getStatusOrder(statusText) {
-        const statusMap = {
-            'Контроль пройден': 1,
-            'Одобрен': 2,
-            'Согласовано': 3,
-            'На рассмотрении': 4,
-            'Есть замечания': 5,
-            'Заполнение': 6,
-            'Готов к удалению': 7
-        };
-        
-        for (const [key, value] of Object.entries(statusMap)) {
-            if (statusText.includes(key)) {
-                return value;
-            }
-        }
-        return 99;
-    }
-    
-    function getCellValueForSort(row, colName) {
-        if (colName === 'year') {
-            const yearCell = row.cells[4];
-            if (yearCell) {
-                const input = yearCell.querySelector('input');
-                if (input && input.value) {
-                    return parseInt(input.value, 10) || 0;
-                }
-                return parseInt(yearCell.innerText, 10) || 0;
-            }
-            return 0;
-        }
-        
-        if (colName === 'quarter') {
-            const quarterCell = row.cells[5];
-            if (quarterCell) {
-                const input = quarterCell.querySelector('input');
-                if (input && input.value) {
-                    return parseInt(input.value, 10) || 0;
-                }
-                return parseInt(quarterCell.innerText, 10) || 0;
-            }
-            return 0;
-        }
-        
-        if (colName === 'status') {
-            const statusCell = row.cells[6];
-            if (statusCell) {
-                let statusText = '';
-                const badge = statusCell.querySelector('.status-badge span:last-child');
-                if (badge) {
-                    statusText = badge.innerText;
-                } else {
-                    statusText = statusCell.innerText;
-                }
-                return getStatusOrder(statusText);
-            }
-            return 99;
-        }
-        
-        return 0;
-    }
-    
-    function sortTableByColumn(colName) {
-        const tbody = document.querySelector('#report-table tbody');
-        if (!tbody) return;
-        
-        const rows = Array.from(tbody.querySelectorAll('tr'));
-        const isSameColumn = currentSortColumn === colName;
-        const newDirection = isSameColumn && currentSortDirection === 'asc' ? 'desc' : 'asc';
-        
-        rows.sort((a, b) => {
-            let valA = getCellValueForSort(a, colName);
-            let valB = getCellValueForSort(b, colName);
-            
-            if (newDirection === 'asc') {
-                return valA - valB;
-            } else {
-                return valB - valA;
-            }
-        });
-        
-        rows.forEach(row => tbody.appendChild(row));
-        
-        currentSortColumn = colName;
-        currentSortDirection = newDirection;
-        
-        const headers = document.querySelectorAll('.sortable-header');
-        headers.forEach(header => {
-            header.classList.remove('sort-active');
-            const headerCol = header.getAttribute('data-sort-col');
-            if (headerCol === colName) {
-                header.classList.add('sort-active');
-            }
-        });
-    }
-    
-    function initSorting() {
-        const yearHeader = document.querySelector('#sort-year-header');
-        const quarterHeader = document.querySelector('#sort-quarter-header');
-        const statusHeader = document.querySelector('#sort-status-header');
-        
-        if (yearHeader) {
-            yearHeader.addEventListener('click', () => sortTableByColumn('year'));
-        }
-        
-        if (quarterHeader) {
-            quarterHeader.addEventListener('click', () => sortTableByColumn('quarter'));
-        }
-        
-        if (statusHeader) {
-            statusHeader.addEventListener('click', () => sortTableByColumn('status'));
-        }
-    }
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initSorting);
-    } else {
-        initSorting();
-    }
-</script>
 {% endblock %}

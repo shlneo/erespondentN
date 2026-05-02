@@ -22,7 +22,7 @@
                         </section>
                         <section>
                             <div class = "functions_menu">
-                                <li data-section="fuel_section_link" class = "activefunctions_menu">         
+                                <li data-section="fuel_section_link" class = "active_functions_menu">         
                                     <img src="{{ url_for('static', filename='img/Toplivo.png')}}" alt="">
                                     <a class = "li-title">
                                         <span>Топливо</span>
@@ -87,46 +87,13 @@
             </span>
         </div>
     </div>
-
     <div class="report-area">
         <div id="fuel_section_table"> 
             <table class = "table-report-area">
-                <thead class="table-title">
-                    <tr>
-                        <th class="resizable" rowspan="2"></th>
-                        <th class="resizable" style = "white-space: nowrap;" rowspan="2">Наименование вида продукции (работ услуг)<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2" style = "white-space: nowrap;">Код строки<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2" style = "white-space: nowrap;">Код по ОКЭД<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2">Единица измерения<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2">Произведено продукции (работ, услуг) за отчетный период<div class="resizer"></div></th>
-                        <th class="resizable" colspan="2">Израсходовано на единицу продукции (работы, услуги) за отчетный период, кг у.т.<div class="resizer"></div></th>
-                        <th class="resizable" colspan="3">Израсходовано на всю произведенную продукцию (работу, услугу) за отчетный период, т у.т.<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2">Примечание<div class="resizer"></div></th>
-                        <th rowspan="2"></th>
-                    </tr>
-                    <tr>
-                        <th class="resizable">по утвержденной норме (предельному уровню)<div class="resizer"></div></th>
-                        <th class="resizable">фактически<div class="resizer"></div></th>
-                        <th class="resizable">по утвержденной норме (предельному уровню)<div class="resizer"></div></th>
-                        <th class="resizable">фактически<div class="resizer"></div></th>
-                        <th class="resizable" style = "width: 80px;">Экономия(-), перерасход(+)<div class="resizer"></div></th> 
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <th class="resizable">A<div class="resizer"></div></th>
-                        <th class="resizable">Б<div class="resizer"></div></th>
-                        <th class="resizable">В<div class="resizer"></div></th>
-                        <th class="resizable">Г<div class="resizer"></div></th>
-                        <th class="resizable">1<div class="resizer"></div></th>
-                        <th class="resizable">2<div class="resizer"></div></th>
-                        <th class="resizable">3<div class="resizer"></div></th>
-                        <th class="resizable">4<div class="resizer"></div></th>
-                        <th class="resizable">5<div class="resizer"></div></th>
-                        <th class="resizable">6<div class="resizer"></div></th>
-                        <th class="resizable">7<div class="resizer"></div></th>
-                        <th rowspan="2"></th>
-                    </tr>
-                </thead>
+                {{ content.report_table_tittle({
+                    'unit_measure': 'кг у.т.',
+                    'total_measure': 'т у.т.'
+                }) }}
                 <tbody>
                     {%if sections_fuel %}
                         {% for row in sections_fuel %}
@@ -255,42 +222,10 @@
         </div>
         <div id="heat_section_table" style="display: none;">
             <table class = "table-report-area">
-                <thead class="table-title">
-                    <tr>
-                        <th class="resizable" rowspan="2"></th>
-                        <th class="resizable" style = "white-space: nowrap;" rowspan="2">Наименование вида продукции (работ услуг)<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2" style = "white-space: nowrap;">Код строки<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2" style = "white-space: nowrap;">Код по ОКЭД<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2">Единица измерения<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2">Произведено продукции (работ, услуг) за отчетный период<div class="resizer"></div></th>
-                        <th class="resizable" colspan="2">Израсходовано на единицу продукции (работы, услуги) за отчетный период, Мкал<div class="resizer"></div></th>
-                        <th class="resizable" colspan="3">Израсходовано на всю произведенную продукцию (работу, услугу) за отчетный период, Гкал<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2">Примечание<div class="resizer"></div></th>
-                        <th rowspan="2"></th>
-                    </tr>
-                    <tr>
-                        <th class="resizable">по утвержденной норме (предельному уровню)<div class="resizer"></div></th>
-                        <th class="resizable">фактически<div class="resizer"></div></th>
-                        <th class="resizable">по утвержденной норме (предельному уровню)<div class="resizer"></div></th>
-                        <th class="resizable">фактически<div class="resizer"></div></th>
-                        <th class="resizable" style = "width: 80px;">Экономия(-), перерасход(+)<div class="resizer"></div></th> 
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <th class="resizable">A<div class="resizer"></div></th>
-                        <th class="resizable">Б<div class="resizer"></div></th>
-                        <th class="resizable">В<div class="resizer"></div></th>
-                        <th class="resizable">Г<div class="resizer"></div></th>
-                        <th class="resizable">1<div class="resizer"></div></th>
-                        <th class="resizable">2<div class="resizer"></div></th>
-                        <th class="resizable">3<div class="resizer"></div></th>
-                        <th class="resizable">4<div class="resizer"></div></th>
-                        <th class="resizable">5<div class="resizer"></div></th>
-                        <th class="resizable">6<div class="resizer"></div></th>
-                        <th class="resizable">7<div class="resizer"></div></th>
-                        <th rowspan="2"></th>
-                    </tr>
-                </thead>
+                {{ content.report_table_tittle({
+                    'unit_measure': 'Мкал',
+                    'total_measure': 'Гкал'
+                }) }}
                 <tbody>
                     {%if sections_heat%}
                         {% for row in sections_heat %}
@@ -411,42 +346,10 @@
         </div>
         <div id="electro_section_table" style="display: none;">
             <table class = "table-report-area">
-                <thead class="table-title">
-                    <tr>
-                        <th class="resizable" rowspan="2"></th>
-                        <th class="resizable" style="white-space: nowrap;" rowspan="2">Наименование вида продукции (работ услуг)<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2" style = "white-space: nowrap;">Код строки<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2" style = "white-space: nowrap;">Код по ОКЭД<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2">Единица измерения<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2">Произведено продукции (работ, услуг) за отчетный период<div class="resizer"></div></th>
-                        <th class="resizable" colspan="2">Израсходовано на единицу продукции (работы, услуги) за отчетный период, кВтч<div class="resizer"></div></th>
-                        <th class="resizable" colspan="3">Израсходовано на всю произведенную продукцию (работу, услугу) за отчетный период, тыс.кВтч<div class="resizer"></div></th>
-                        <th class="resizable" rowspan="2">Примечание<div class="resizer"></div></th>
-                        <th rowspan="2"></th>
-                    </tr>
-                    <tr>
-                        <th class="resizable">по утвержденной норме (предельному уровню)<div class="resizer"></div></th>
-                        <th class="resizable">фактически<div class="resizer"></div></th>
-                        <th class="resizable">по утвержденной норме (предельному уровню)<div class="resizer"></div></th>
-                        <th class="resizable">фактически<div class="resizer"></div></th>
-                        <th class="resizable" style = "width: 80px;">Экономия(-), перерасход(+)<div class="resizer"></div></th> 
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <th class="resizable">A<div class="resizer"></div></th>
-                        <th class="resizable">Б<div class="resizer"></div></th>
-                        <th class="resizable">В<div class="resizer"></div></th>
-                        <th class="resizable">Г<div class="resizer"></div></th>
-                        <th class="resizable">1<div class="resizer"></div></th>
-                        <th class="resizable">2<div class="resizer"></div></th>
-                        <th class="resizable">3<div class="resizer"></div></th>
-                        <th class="resizable">4<div class="resizer"></div></th>
-                        <th class="resizable">5<div class="resizer"></div></th>
-                        <th class="resizable">6<div class="resizer"></div></th>
-                        <th class="resizable">7<div class="resizer"></div></th>
-                        <th rowspan="2"></th>
-                    </tr>
-                </thead>
+                {{ content.report_table_tittle({
+                    'unit_measure': 'кВтч',
+                    'total_measure': 'тыс.кВтч'
+                }) }}
                 <tbody>
                     {%if sections_electro%}
                         {% for row in sections_electro %}

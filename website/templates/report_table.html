@@ -29,14 +29,14 @@
                             <div class = "functions_menu">
                                 <li onclick="window.location.href='/report-area/fuel/{{current_version.id}}'" 
                                 {%if section_number == 1 %} 
-                                    class = "activefunctions_menu"
+                                    class = "active_functions_menu"
                                 {%endif%}>         
                                     <img src="{{ url_for('static', filename='img/Toplivo.png')}}" alt="">
                                     <a class = "li-title"><span>Топливо</span></a>   
                                 </li>
                                 <li onclick="window.location.href='/report-area/heat/{{current_version.id}}'"
                                 {%if section_number == 2 %} 
-                                    class = "activefunctions_menu"
+                                    class = "active_functions_menu"
                                 {%endif%}>                      
                                     <img src="{{ url_for('static', filename='img/Teplo.png')}}" alt="">
                                     <a class = "li-title"><span>Тепло</span></a>
@@ -44,7 +44,7 @@
 
                                 <li onclick="window.location.href='/report-area/electro/{{current_version.id}}'" 
                                 {%if section_number == 3 %} 
-                                    class = "activefunctions_menu"
+                                    class = "active_functions_menu"
                                 {%endif%} >           
                                     <img src="{{ url_for('static', filename='img/Electro.png')}}" alt="">
                                     <a class = "li-title"><span>Электро</span></a>   
@@ -78,7 +78,7 @@
                                     <form id="cancel-sending-form" action="/cancel-sent-version/{{current_version.id}}" method="POST" style="display: none;">
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     </form>                       
-                                    <li id = "cancel-sending-bnt">           
+                                    <li id = "cancel-sending-btn">           
                                         <img src="{{ url_for('static', filename='img/cancel-send.png')}}" alt="">
                                         <a class = "li-title">
                                             <span>Отменить</span>   
@@ -131,7 +131,7 @@
                 {{ icons.icon_arrow_right() }}
             </span>
             <span>
-                <a style = "font-weight: 600;">Статус </a>
+                <a style = "font-weight: 600;">Текущий статус </a>
                 {% set version = current_version %}       
                 {% if version %}
                     {{ content.status_report(version) }}
@@ -150,32 +150,128 @@
         </div>
     </div>
     <div class = "report-area">
-        <table class = "table-report-area">
+        <table class = "table-report-area" id = "fuel-table-report">
             <thead class="table-title">
                 <tr>
                     <th class="resizable" rowspan="2"></th>
-                    <th class="resizable" style = "white-space: nowrap;" rowspan="2">Наименование вида продукции (работ услуг)<div class="resizer"></div></th>
-                    <th class="resizable" rowspan="2" style = "white-space: nowrap;">Код строки<div class="resizer"></div></th>
-                    <th class="resizable" rowspan="2" style = "white-space: nowrap;">Код по ОКЭД<div class="resizer"></div></th>
-                    <th class="resizable" rowspan="2">Единица измерения<div class="resizer"></div></th>
-                    <th class="resizable" rowspan="2">Произведено продукции (работ, услуг) за отчетный период<div class="resizer"></div></th>
-                    <th class="resizable" colspan="2">Израсходовано на единицу продукции (работы, услуги) за отчетный период, 
-                        {%if section_number == 1 %}кг у.т.{%elif section_number == 2 %}Мкал{%elif section_number == 3 %}кВтч{%endif%}
+                    <th class="resizable" data-sort-col="name" style = "white-space: nowrap;" rowspan="2">
+                        <span class="sort-label">
+                            Наименование вида продукции (работ услуг)
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
                         <div class="resizer"></div>
                     </th>
-                    <th class="resizable" colspan="3">Израсходовано на всю произведенную продукцию (работу, услугу) за отчетный период, 
-                        {%if section_number == 1 %} т у.т.{%elif section_number == 2 %}Гкал{%elif section_number == 3 %}тыс.кВтч{%endif%}
+                    <th class="resizable" data-sort-col="code" rowspan="2" style = "white-space: nowrap;">
+                        <span class="sort-label">
+                            Код строки
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
                         <div class="resizer"></div>
                     </th>
-                    <th class="resizable" rowspan="2">Примечание<div class="resizer"></div></th>
+                    <th class="resizable" data-sort-col="oked" rowspan="2" style = "white-space: nowrap;">
+                        <span class="sort-label">
+                            Код по ОКЭД
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th class="resizable" data-sort-col="ed-izm" rowspan="2">
+                        <span class="sort-label">
+                            Единица измерения
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th class="resizable" data-sort-col="section-1" rowspan="2">
+                        <span class="sort-label">
+                            Произведено продукции (работ, услуг) за отчетный период
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th class="resizable" colspan="2">
+                        <span class="sort-label">
+                            Израсходовано на единицу продукции (работы, услуги) за отчетный период, 
+                            {%if section_number == 1 %}кг у.т.{%elif section_number == 2 %}Мкал{%elif section_number == 3 %}кВтч{%endif%}
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    </th>
+                    <th class="resizable" colspan="3">
+                        <span class="sort-label">
+                            Израсходовано на всю произведенную продукцию (работу, услугу) за отчетный период, 
+                            {%if section_number == 1 %} т у.т.{%elif section_number == 2 %}Гкал{%elif section_number == 3 %}тыс.кВтч{%endif%}
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    </th>
+                    <th class="resizable" data-sort-col="note" rowspan="2">
+                        <span class="sort-label">
+                            Примечание
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
                     <th rowspan="2"></th>
                 </tr>
                 <tr>
-                    <th class="resizable">по утвержденной норме (предельному уровню)<div class="resizer"></div></th>
-                    <th class="resizable">фактически<div class="resizer"></div></th>
-                    <th class="resizable">по утвержденной норме (предельному уровню)<div class="resizer"></div></th>
-                    <th class="resizable">фактически<div class="resizer"></div></th>
-                    <th class="resizable" style = "width: 80px;">Экономия(-), перерасход(+)<div class="resizer"></div></th> 
+                    <th class="resizable" data-sort-col="section-2">
+                        <span class="sort-label">
+                            по утвержденной норме (предельному уровню)
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th class="resizable" data-sort-col="section-3">
+                        <span class="sort-label">
+                            фактически
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th class="resizable" data-sort-col="section-4">
+                        <span class="sort-label">
+                            по утвержденной норме (предельному уровню)
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th class="resizable" data-sort-col="section-5">
+                        <span class="sort-label">
+                            фактически
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
+                    <th class="resizable"  data-sort-col="section-6" style = "width: 80px;">
+                        <span class="sort-label">
+                            Экономия(-), перерасход(+)
+                            <span class="sort-icon-header">
+                                {{ icons.icon_sort() }}
+                            </span>
+                        </span>
+                        <div class="resizer"></div>
+                    </th>
                 </tr>
                 <tr>
                     <th></th>

@@ -376,8 +376,8 @@ class AuditModule {
         navItems.forEach(item => {
             item.removeEventListener('click', this.handleNavClick);
             this.handleNavClick = (event) => {
-                navItems.forEach(i => i.classList.remove('activefunctions_menu'));
-                item.classList.add('activefunctions_menu');
+                navItems.forEach(i => i.classList.remove('active_functions_menu'));
+                item.classList.add('active_functions_menu');
                 
                 const action = item.getAttribute('data-action');
                 window.location.href = `/audit-area/${action}?year=${this.getQueryParam('year')}&quarter=${this.getQueryParam('quarter')}`;
@@ -388,7 +388,7 @@ class AuditModule {
         const currentAction = window.location.pathname.split('/').pop();
         navItems.forEach(item => {
             if (item.getAttribute('data-action') === currentAction) {
-                item.classList.add('activefunctions_menu');
+                item.classList.add('active_functions_menu');
             }
         });
     }
@@ -659,7 +659,19 @@ class AuditModule {
         return html;
     }
 
+    formatDate(dateString) {
+        if (!dateString) return '';
+        
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        
+        return `${day}-${month}-${year}`;
+    }
+
     getReportRowHTML(report) {
+        const formattedDate = this.formatDate(report.sent_time);
         return `
             <tr class="report_row ${report.has_not ? 'hascomment-row' : ''}" data-id="${report.id}" draggable="true">
                 <td>
@@ -689,7 +701,7 @@ class AuditModule {
                     <input type="text" value="${report.quarter}" readonly style="width: 100%; border: none; background: transparent;">
                 </td>
                 <td>
-                    <input type="text" value="${report.sent_time}" readonly style="width: 100%; border: none; background: transparent;">
+                    <input type="text" value="${formattedDate}" readonly style="width: 100%; border: none; background: transparent;">
                 </td>
                 <td>
                     ${this.getStatusBadge(report.status)}

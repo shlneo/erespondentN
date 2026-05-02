@@ -55,7 +55,7 @@ class Report(db.Model):
     year = db.Column(db.Integer)
     quarter = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  
-    time_of_receipt = db.Column(db.DateTime) 
+    # time_of_receipt = db.Column(db.DateTime) 
     versions = db.relationship('Version_report', backref='report', cascade="all, delete-orphan")
 
 class Version_report(db.Model):

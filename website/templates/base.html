@@ -74,10 +74,12 @@
             </nav>
         </div>
         <div class="header-right">   
-            <div class="online-cont">
-                <div class="online-indicator"></div>
-                <span class="online-count">12</span>
-            </div>
+            {% if current_user.is_authenticated %}
+                <div class="online-cont">
+                    <div class="online-indicator"></div>
+                    <span class="online-count">{{ online_users_count }}</span>
+                </div>
+            {% endif %}
             <div class="user-container">
                 <div class="avatar-wrapper">
                     <div class="avatar-circle">
@@ -595,7 +597,7 @@
                 </div>
             </div>
               <div class="footer-col">
-                <h4 onclick="window.location.href='/'"></h4>
+                <h4 onclick="window.location.href='/contacts'">Контакты</h4>
                 <ul>
                     <li>
                         {{ icons.icon_email() }}

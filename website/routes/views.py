@@ -9,9 +9,21 @@ from .. import db
 from sqlalchemy import asc, case, desc
 from functools import wraps
 
-from ..time import get_previous_quarter, get_report_year
+from datetime import datetime, timedelta
+from ..time import current_utc_time, get_previous_quarter, get_report_year
 
 views = Blueprint('views', __name__)
+
+@views.context_processor
+def inject_online_users():
+    def get_online_count():
+        try:
+            five_minutes_ago = current_utc_time() - timedelta(minutes=5)
+            return User.query.filter(User.last_active >= five_minutes_ago).count()
+        except:
+            return 0
+    
+    return dict(online_users_count=get_online_count())
 
 def owner_only(f):
     @wraps(f)
@@ -67,7 +79,15 @@ def respondent_only(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
+def get_online_users_count():
+    try:
+        five_minutes_ago = current_utc_time() - timedelta(minutes=5)
+        count = User.query.filter(User.last_active >= five_minutes_ago).count()
+        return count
+    except Exception as e:
+        current_app.logger.error(f"Error counting online users: {e}")
+        return 0
+    
 @views.route('/', methods=['GET'])
 def beginPage():
     user_data = User.query.filter_by(type="Респондент").count()
@@ -649,3 +669,19 @@ def contacts():
     return render_template('contacts.html', 
         current_user=current_user
     )
+    
+@views.route('/api/online-count', methods=['GET'])
+def api_online_count():
+    try:
+        five_minutes_ago = current_utc_time() - timedelta(minutes=5)
+        count = User.query.filter(User.last_active >= five_minutes_ago).count()
+        return jsonify({
+            'success': True,
+            'count': count
+        })
+    except Exception as e:
+        current_app.logger.error(f"Error in online count API: {e}")
+        return jsonify({
+            'success': False,
+            'count': 0
+        }), 500

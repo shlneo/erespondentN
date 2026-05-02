@@ -8,7 +8,7 @@ class ReportView(ModelView):
     can_create = True
     can_edit = True
     can_export = True
-    column_list = ['id', 'org_id', 'year', 'quarter', 'user_id', 'time_of_receipt', 'versions']
+    column_list = ['id', 'org_id', 'year', 'quarter', 'user_id', 'versions']
     
     column_searchable_list = ['org_id', 'id']
 
