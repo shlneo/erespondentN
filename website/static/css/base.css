@@ -2754,7 +2754,7 @@ main {
     height: 28px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5053,6 +5053,8 @@ main {
     border: 1px solid #e2e8f0;
     background-color: #f8fafc;
     color: #0f172a;
+        align-items: stretch;
+
     transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, border-bottom 0.2s ease;
 }
 
@@ -5105,6 +5107,9 @@ th .resizer {
     transition: background-color 0.2s;
 }
 
+th.resizable {
+}
+
 th.resizable .resizer {
     position: absolute;
     top: 0;
@@ -5138,7 +5143,7 @@ th.resizable .resizer {
     transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
-.sort-label{
+.sort-label {
     display: flex;
     justify-content: center;
     cursor: pointer;
@@ -6624,8 +6629,6 @@ th.resizable .resizer {
 }
 
 /* Message audit modal dezign END*/
-
-
 .choose-product-area {
     top: 150px;
     position: absolute;
@@ -6633,54 +6636,95 @@ th.resizable .resizer {
     width: 100%;
     max-width: 500px;
     height: auto;
-    max-height: 300px;
     border-radius: 10px;
     background-color: white;
-    border: none; 
-    z-index: 100; 
+    border: none;
+    z-index: 100;
     display: none;
-    align-items: center;
+    flex-direction: column;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
 }
 
+.choose-product-area .table-report-area {
+    width: 100%;
+    display: table;
+    border-collapse: collapse;
+}
 
-.choose-product-area .table-report-area{
+.choose-product-area .table-report-area tbody {
+    display: block;
     overflow-y: auto;
     max-height: 250px;
 }
 
-.choose-product-area .table-report-area tr:hover{
-    background-color: #f3f3f3;
+.choose-product-area .table-report-area thead,
+.choose-product-area .table-report-area tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
 }
 
-.serchProduct_cont{
+.choose-product-area .table-report-area thead {
+    width: calc(100% - 0px);
+}
+
+.choose-product-area .table-report-area tbody tr td:first-child,
+.choose-product-area .table-report-area thead th:first-child {
+    width: 25%;
+}
+
+.choose-product-area .table-report-area tbody tr td:nth-child(2),
+.choose-product-area .table-report-area thead th:nth-child(2) {
+    width: 55%;
+}
+
+.choose-product-area .table-report-area tbody tr td:nth-child(3),
+.choose-product-area .table-report-area thead th:nth-child(3) {
+    width: 20%;
+}
+
+.choose-product-area .table-report-area tbody tr:hover {
+    background-color: #f3f3f3;
+    cursor: pointer;
+}
+
+#noResultsRow td {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-style: italic;
+}
+
+.serchProduct_cont {
     display: flex;
     flex-direction: row;
     text-align: center;
     align-items: center;
     justify-content: left;
     margin: 10px;
+    flex-shrink: 0;
 }
 
-.serchProduct_cont input{
+.serchProduct_cont input {
     width: 100%;
     max-width: none;
     height: 26px;
     padding: 0 10px;
     margin-left: 20px;
-    text-align: right;
+    text-align: left;
     font-size: 12px;
     border-radius: 5px;
     border: 1px solid rgb(217, 217, 217);
     font-weight: 500;
 }
 
-.serchProduct_cont a{
+.serchProduct_cont a {
     font-size: 14px;
     font-weight: 500;
 }
 
-#nameOfProductButton{
+#nameOfProductButton {
     height: calc(100% - 6px);
     display: flex;
     text-align: center;
@@ -6691,22 +6735,17 @@ th.resizable .resizer {
     align-items: center;
     font-weight: 500;
     cursor: pointer;
-    position: absolute; 
+    position: absolute;
     padding: 2px;
     top: 0;
-    right: 0; 
+    right: 0;
     background-color: #f0f0f0;
     border: 1px solid rgb(217, 217, 217);
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 }
 
-
-.modal_table .table-report-area tr:hover{
-    background-color: #ebebeb;
-}
-
-.choose-product-area button{
+.choose-product-area button {
     font-size: 12px;
     margin: 3px 20px 0 0;
     width: 180px;
@@ -6714,6 +6753,9 @@ th.resizable .resizer {
     z-index: 1;
 }
 
+.modal_table .table-report-area tr:hover{
+    background-color: #ebebeb;
+}
 /*sections page end*/
 /*audit page*/
 
@@ -10341,6 +10383,22 @@ th.resizable .resizer {
 
     .modal_table{
         /* border-spacing: 0 18px; */
+    }
+
+    .progress-modal-bar-container {
+        width: 100%;
+        height: 6px;
+        background-color: black;
+        border-radius: 3px;
+        margin: 25px 0;
+        overflow: hidden;
+    }
+
+    .progress-modal-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #ffffff, var(--blue-back));
+        border-radius: 3px;
+        transition: width 0.3s ease;
     }
 
     .modal_table td{

@@ -135,10 +135,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     nameOfProductButton.addEventListener('click', function() {
         if (chooseProductArea.style.display === 'none' || chooseProductArea.style.display === '') {
-            chooseProductArea.style.display = 'block';
+            chooseProductArea.style.display = 'flex';
             nameOfProductButton.textContent = '-';
-        } else {
-            chooseProductArea.style.display = 'none';
+            document.querySelector('input[name="search_product"]').value = '';
+            filterProducts('');
+        } else {        chooseProductArea.style.display = 'none';
             nameOfProductButton.textContent = '+';
         }
     });
@@ -249,30 +250,58 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
-
-document.querySelector('input[name="search_product"]').addEventListener('input', function() {
-    var filterText = this.value.trim().toLowerCase();
-    var chooseProdTableBody = document.querySelector('#chooseProdTableBody');
-    const noResultsproduct = document.getElementById('noResultsRow');
-    var hasVisibleRows = false;
-
-    Array.from(chooseProdTableBody.querySelectorAll('tr')).forEach(function(row) {
-        var codeProduct = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-        var productName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+function filterProducts(searchText) {
+    const tbody = document.getElementById('chooseProdTableBody');
+    const rows = tbody.querySelectorAll('tr:not(#noResultsRow)');
+    const noResultsRow = document.getElementById('noResultsRow');
+    let hasVisibleRows = false;
     
-        if (codeProduct.includes(filterText) || productName.includes(filterText)) {
-            row.style.display = '';
-            hasVisibleRows = true;
-        } else {
-            row.style.display = 'none'; 
+    searchText = searchText.toLowerCase().trim();
+    
+    rows.forEach(row => {
+        const codeCell = row.cells[0]; // Код продукта
+        const nameCell = row.cells[1]; // Наименование продукта
+        let shouldShow = false;
+        
+        if (codeCell && nameCell) {
+            const code = codeCell.textContent.toLowerCase();
+            const name = nameCell.textContent.toLowerCase();
+            
+            if (searchText === '') {
+                shouldShow = true;
+            } else {
+                shouldShow = (code.includes(searchText) || name.includes(searchText));
+            }
         }
+        
+        row.style.display = shouldShow ? '' : 'none';
+        if (shouldShow) hasVisibleRows = true;
     });
-    
-    if (!hasVisibleRows) {
-        noResultsproduct.style.display = 'block';
+
+    if (hasVisibleRows || searchText === '') {
+        noResultsRow.style.display = 'none';
     } else {
-        noResultsproduct.style.display = 'none';
+        noResultsRow.style.display = '';
+    }
+}
+
+const searchInput = document.querySelector('input[name="search_product"]');
+if (searchInput) {
+    searchInput.addEventListener('input', function(e) {
+        filterProducts(e.target.value);
+    });
+}
+
+document.getElementById('chooseProdTableBody').addEventListener('click', function(e) {
+    const row = e.target.closest('tr');
+    if (row && row.getAttribute('data-id')) {
+        const productId = row.getAttribute('data-id');
+        const productCode = row.cells[0].textContent;
+        const productName = row.cells[1].textContent;
+        
+        console.log('Выбран продукт:', { id: productId, code: productCode, name: productName });
+        chooseProductArea.style.display = 'none';
+        nameOfProductButton.textContent = '+';
     }
 });
 

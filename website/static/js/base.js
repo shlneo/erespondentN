@@ -15,7 +15,6 @@ function updateOnlineCount() {
 setInterval(updateOnlineCount, 30000);
 document.addEventListener('DOMContentLoaded', updateOnlineCount);
 
-
 function addCsrfTokenToForm(form) {
     var csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) return;
